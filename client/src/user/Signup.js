@@ -30,8 +30,8 @@ const Signup = (props) => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const info = (msg) => {
-    message.info(msg);
+  const success = (msg) => {
+    message.success(msg);
   };
 
   const clickSubmit = (values) => {
@@ -44,7 +44,7 @@ const Signup = (props) => {
       if (data.error) {
         showErrorModal(data.error);
       } else {
-        info(data.message);
+        success(data.message);
         setRedirectToReferrer(true);
       }
     });

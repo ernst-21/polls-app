@@ -62,7 +62,7 @@ const update = async (params, credentials, user) => {
 
 const remove = async (params, credentials) => {
   try {
-    let response = await fetch('/api/users/' + params.userId, {
+    let response = await fetch('http://localhost:5000/api/users/' + params.userId, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',

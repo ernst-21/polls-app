@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import auth from '../auth/auth-helper';
 import {read} from './api-user';
-import { Typography, Card, Avatar, Button } from 'antd';
+import { Typography, Card, Avatar } from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
+import DeleteUser from './DeleteUser';
 
 const {Title} = Typography;
 
@@ -45,13 +46,14 @@ const Profile = () => {
       <Title level={3}>Profile</Title>
       <Avatar size={150}><UserOutlined style={{fontSize: '3rem'}}/></Avatar>
       <Title level={2}>{user.name}</Title>
-      {auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id && <>
-        <Link to={'/user/edit/' + user._id} style={{ textAlign: 'center' }}>
+      {auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id && <div style={{ textAlign: 'center'}}>
+        <Title level={3}>{user.email}</Title>
+        <Link to={'/user/edit/' + user._id}>
           <EditOutlined style={{ fontSize: '1.5rem' }} />
           <h4>Edit</h4>
         </Link>
-        <Button>DELETE</Button>
-      </> }
+        <DeleteUser userId={user._id}/>
+      </div> }
     </Card>
   );
 };

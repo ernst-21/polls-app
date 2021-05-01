@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import auth from './../auth/auth-helper';
 import { read, update } from './api-user.js';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useParams } from 'react-router-dom';
 import { Button, Card, Checkbox, Form, Input, message } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 
@@ -20,10 +20,11 @@ const tailLayout = {
   }
 };
 
-const EditProfile = ({match}) => {
-  const [user, setUser] = useState({});
+const EditProfile = () => {
+  const [user, setUser] = useState();
   const jwt = auth.isAuthenticated();
   const { error, showErrorModal, httpError } = useHttpError();
+  const userId = useParams().userId;
 
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const EditProfile = ({match}) => {
     const signal = abortController.signal;
 
     read({
-      userId: match.params.userId
+      userId: userId
     }, { t: jwt.token }, signal).then((data) => {
       if (data && data.error) {
         errorMessage(data.error);
@@ -60,7 +61,7 @@ const EditProfile = ({match}) => {
       abortController.abort();
     };
 
-  }, [match.params.userId, jwt.token]);
+  }, [userId, jwt.token]);
 
   const clickSubmit = (values) => {
     const usr = {
@@ -69,7 +70,7 @@ const EditProfile = ({match}) => {
       password: values.confirm || undefined
     };
     update({
-      userId: match.params.userId
+      userId: userId
     }, {
       t: jwt.token
     }, usr).then((data) => {
@@ -83,14 +84,14 @@ const EditProfile = ({match}) => {
     });
   };
 
-  if (user.redirectToProfile) {
+  if (user && user.redirectToProfile) {
     return (<Redirect to={'/user/' + user.userId} />);
   }
 
   return (
     <Card
       title="Edit Profile"
-      extra={<Link to={`/user/${match.params.userId}`}>Cancel</Link>}
+      extra={<Link to={`/user/${userId}`}>Cancel</Link>}
       className="card"
     >
       <Form
@@ -103,7 +104,7 @@ const EditProfile = ({match}) => {
         className="form-container"
       >
         <Form.Item
-          defaultValue={user.name}
+          initialValue={user ? user.name : null}
           label="Username"
           name="name"
           rules={[
@@ -116,7 +117,7 @@ const EditProfile = ({match}) => {
           <Input />
         </Form.Item>
         <Form.Item
-          defaultValue={user.email}
+          initialValue={user ? user.email : null}
           name="email"
           label="E-mail"
           rules={[

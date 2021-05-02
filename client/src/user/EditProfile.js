@@ -5,6 +5,7 @@ import { Link, Redirect, useParams } from 'react-router-dom';
 import { Button, Card, Checkbox, Form, Input, message } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
+import useUploadImage from '../hooks/useUploadImage';
 
 
 const layout = {
@@ -25,9 +26,8 @@ const tailLayout = {
 const EditProfile = () => {
   const [user, setUser] = useState();
   const jwt = auth.isAuthenticated();
-  //const [isLoading, setIsLoading] = useState(false);
-  //const [ imageUrl, setImageUrl ] = useState('');
-  //const [image, setImage] = useState([{}]);
+  const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
+  const [image, setImage] = useState('');
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = useParams().userId;
 
@@ -68,12 +68,21 @@ const EditProfile = () => {
 
   }, [userId, jwt.token]);
 
+  const handleImageChange = (info) => {
+    setImage(info.file.originFileObj);
+  };
+
+  const handleImgDelete = () => {
+    setImage('');
+    deleteImageUrl();
+  };
+
 
   const clickSubmit = (values) => {
     const usr = {
       name: values.name || undefined,
       email: values.email || undefined,
-      //pic: imageUrl,
+      pic: imageUrl,
       password: values.confirm || undefined
     };
     update({
@@ -84,7 +93,6 @@ const EditProfile = () => {
       if (data && data.error) {
         showErrorModal(data.error);
       } else {
-        console.log(data);
         setUser({ ...user, userId: data._id, redirectToProfile: true });
         info('Account successfully updated');
       }
@@ -102,7 +110,13 @@ const EditProfile = () => {
       className='card'
     >
       <div>
-        <AvatarUpload />
+        <AvatarUpload onChange={handleImageChange}
+          customRequest={() => uploadPic(image)}
+          handleDelete={handleImgDelete}
+          url={imageUrl}
+          src={imageUrl}
+          img={image}
+        />
         <Form
           {...layout}
           name="basic"

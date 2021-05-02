@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
-import useUploadImage from '../hooks/useUploadImage';
+
 
 function beforeUpload(file) {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -16,23 +16,11 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 
-const AvatarUpload = () => {
-  const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
-  const [image, setImage] = useState('');
-
-  const onChange = (info) => {
-    console.log(info.file.originFileObj);
-    setImage(info.file.originFileObj);
-  };
-
-  const handleDelete = () => {
-    setImage('');
-    deleteImageUrl();
-  };
+const AvatarUpload = (props) => {
 
   const uploadButton = (
     <div>
-      {image ? <LoadingOutlined /> : <PlusOutlined />}
+      {props.img ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
@@ -45,15 +33,15 @@ const AvatarUpload = () => {
           name="avatar"
           listType="picture-card"
           className="avatar-uploader"
-          onChange={onChange}
+          onChange={props.onChange}
           showUploadList={false}
           multiple={false}
-          customRequest={() => uploadPic(image)}
+          customRequest={props.customRequest}
           beforeUpload={beforeUpload}>
-          {image && imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+          {props.img && props.url ? <img src={props.src} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
       </ImgCrop>
-      {image && <DeleteOutlined onClick={handleDelete} />}
+      {props.img && <DeleteOutlined onClick={props.handleDelete} />}
     </div>
   );
 };

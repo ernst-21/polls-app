@@ -14,7 +14,7 @@ const create = async (req, res, next) => {
 };
 const list = async (req, res) => {
   try {
-    let users = await User.find().select('name email updated created');
+    let users = await User.find().select('name email updated created pic');
     res.json(users);
   } catch (err) {
     return res.status(400).json({
@@ -49,10 +49,11 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
   try {
     let user = req.profile;
-    const { name, email, password } = req.body;
+    const { name, email, password, pic } = req.body;
     user.name = name;
     user.email = email;
     user.password = password;
+    user.pic = pic;
     user.updated = Date.now();
     await user.save();
     user.hashed_password = undefined;

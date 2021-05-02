@@ -35,7 +35,7 @@ const Users = () => {
         <Link to={'/user/' + item._id}>
           <List.Item>
             <List.Item.Meta
-              avatar={<Avatar size={55}><UserOutlined /></Avatar> }
+              avatar={<Avatar size={55} src={item.pic} icon={<UserOutlined/>} /> }
             />
             <Title level={4}>{item.name}</Title>
           </List.Item>

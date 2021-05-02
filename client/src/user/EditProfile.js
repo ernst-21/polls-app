@@ -4,6 +4,8 @@ import { read, update } from './api-user.js';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import { Button, Card, Checkbox, Form, Input, message } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
+import AvatarUpload from './AvatarUpload';
+
 
 const layout = {
   labelCol: {
@@ -15,7 +17,7 @@ const layout = {
 };
 const tailLayout = {
   wrapperCol: {
-    offset: 8,
+    offset: 4,
     span: 16
   }
 };
@@ -23,6 +25,9 @@ const tailLayout = {
 const EditProfile = () => {
   const [user, setUser] = useState();
   const jwt = auth.isAuthenticated();
+  //const [isLoading, setIsLoading] = useState(false);
+  //const [ imageUrl, setImageUrl ] = useState('');
+  //const [image, setImage] = useState([{}]);
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = useParams().userId;
 
@@ -63,10 +68,12 @@ const EditProfile = () => {
 
   }, [userId, jwt.token]);
 
+
   const clickSubmit = (values) => {
     const usr = {
       name: values.name || undefined,
       email: values.email || undefined,
+      //pic: imageUrl,
       password: values.confirm || undefined
     };
     update({
@@ -92,106 +99,109 @@ const EditProfile = () => {
     <Card
       title="Edit Profile"
       extra={<Link to={`/user/${userId}`}>Cancel</Link>}
-      className="card"
+      className='card'
     >
-      <Form
-        {...layout}
-        name="basic"
-        initialValues={{
-          remember: true
-        }}
-        onFinish={clickSubmit}
-        className="form-container"
-      >
-        <Form.Item
-          initialValue={user ? user.name : null}
-          label="Username"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your username!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          initialValue={user ? user.email : null}
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              type: 'email',
-              message: 'The input is not valid E-mail!'
-            },
-            {
-              required: true,
-              message: 'Please input your E-mail!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!'
-            },
-            () => ({
-              validator(_, value) {
-                if (!value || value.length >= 6) {
-                  return Promise.resolve();
-                }
+      <div>
+        <AvatarUpload />
+        <Form
+          {...layout}
+          name="basic"
+          initialValues={{
+            remember: true
+          }}
+          onFinish={clickSubmit}
 
-                return Promise.reject(
-                  new Error('Password must contain at least 6 characters.')
-                );
+        >
+          <Form.Item
+            initialValue={user ? user.name : null}
+            label="Username"
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your username!'
               }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="confirm"
-          label="Confirm Password"
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please confirm your password!'
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(
-                  new Error('The two passwords that you entered do not match!')
-                );
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            initialValue={user ? user.email : null}
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!'
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!'
               }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please input your password!'
+              },
+              () => ({
+                validator(_, value) {
+                  if (!value || value.length >= 6) {
+                    return Promise.resolve();
+                  }
 
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            Update
-          </Button>
-        </Form.Item>
-      </Form>
+                  return Promise.reject(
+                    new Error('Password must contain at least 6 characters.')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            name="confirm"
+            label="Confirm Password"
+            dependencies={['password']}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please confirm your password!'
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+
+                  return Promise.reject(
+                    new Error('The two passwords that you entered do not match!')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+              Update
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </Card>
   );
 };

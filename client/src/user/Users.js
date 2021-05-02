@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { list } from './api-user';
-import { List, Avatar } from 'antd';
+import { List, Avatar, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+
+const {Title} = Typography;
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -27,14 +29,15 @@ const Users = () => {
   return (
     <List
       itemLayout="horizontal"
+      style={{marginTop: '2rem'}}
       dataSource={users}
       renderItem={item => (
         <Link to={'/user/' + item._id}>
           <List.Item>
             <List.Item.Meta
-              avatar={<Avatar><UserOutlined /></Avatar> }
-              title={item.name}
+              avatar={<Avatar size={55}><UserOutlined /></Avatar> }
             />
+            <Title level={4}>{item.name}</Title>
           </List.Item>
         </Link>
       )}

@@ -42,7 +42,7 @@ const Profile = () => {
 
 
   return (
-    <Card style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
+    <Card className='card' style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
       <Title level={3}>Profile</Title>
       <Avatar size={150}><UserOutlined style={{fontSize: '3rem'}}/></Avatar>
       <Title level={2}>{user.name}</Title>

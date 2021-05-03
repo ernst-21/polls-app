@@ -44,7 +44,7 @@ const Profile = () => {
   return (
     <Card className='card' style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
       <Title level={3}>Profile</Title>
-      <Avatar size={150} src={user.pic} icon={user.pic ? <UserOutlined /> : null} />
+      <Avatar size={150} src={user.pic} icon={<UserOutlined />} />
       <Title level={2}>{user.name}</Title>
       {auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id && <div style={{ textAlign: 'center'}}>
         <Title level={3}>{user.email}</Title>

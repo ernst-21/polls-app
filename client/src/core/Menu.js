@@ -9,7 +9,7 @@ const isActive = (history, path) => {
   if (history.location.pathname == path)
     return { color: '#28079d' };
   else
-    return { color: '#798be0' };
+    return { color: '#1890FF' };
 };
 
 

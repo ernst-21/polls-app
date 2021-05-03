@@ -50,9 +50,13 @@ const update = async (req, res, next) => {
   try {
     let user = req.profile;
     const { name, email, password, pic } = req.body;
-    user.name = name;
-    user.email = email;
-    user.password = password;
+    user.name = name || user.name;
+    user.email = email || user.email;
+    if (password) {
+      user.hashed_password = user.encryptPassword(password)
+    } else {
+      user.hashed_password = user.hashed_password;
+    }
     user.pic = pic;
     user.updated = Date.now();
     await user.save();

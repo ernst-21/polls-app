@@ -8,6 +8,8 @@ import EditProfile from './user/EditProfile';
 import Profile from './user/Profile';
 import PrivateRoute from './auth/PrivateRoute';
 import Menu from './core/Menu';
+import RetrievePassword from './auth/RetrievePassword';
+import EmailRequest from './auth/EmailRequest';
 
 const MainRouter = () => {
   return (
@@ -19,6 +21,8 @@ const MainRouter = () => {
           <Route path="/users" component={Users} />
           <Route path="/signup" component={Signup} />
           <Route path="/signin" component={Signin} />
+          <Route path="/reset" component={RetrievePassword} />
+          <Route path="/email" component={EmailRequest} />
           <PrivateRoute path="/user/edit/:userId" component={EditProfile} />
           <Route path="/user/:userId" component={Profile} />
         </Switch>

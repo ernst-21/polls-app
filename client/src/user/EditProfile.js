@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import auth from './../auth/auth-helper';
 import { read, update } from './api-user.js';
-import { Link, Redirect, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Avatar, Button, Card, Checkbox, Form, Input, message } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
@@ -30,6 +30,7 @@ const EditProfile = () => {
   const [image, setImage] = useState('');
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = useParams().userId;
+  const history = useHistory();
 
   useEffect(() => {
     if (error) {
@@ -60,7 +61,7 @@ const EditProfile = () => {
       if (data && data.error) {
         errorMessage(data.error);
       } else {
-        setUser({ ...data, password: '', redirectToProfile: false });
+        setUser({ ...data, password: '', redirectToSignin: false });
       }
     });
 
@@ -82,7 +83,7 @@ const EditProfile = () => {
     const usr = {
       name: values.name || undefined,
       email: values.email || undefined,
-      pic: imageUrl || undefined,
+      pic: imageUrl || user.pic || undefined,
       password: values.confirm || undefined
     };
     update(
@@ -97,26 +98,25 @@ const EditProfile = () => {
       if (data && data.error) {
         showErrorModal(data.error);
       } else {
-        setUser({ ...user, userId: data._id, redirectToProfile: true });
-        info('Account successfully updated');
+        setUser({ ...user, userId: data._id, redirectToSignin: true });
+        auth.clearJWT(() => history.push('/signin'));
+        info('Account successfully updated. Please signin');
       }
     });
   };
 
-  if (user && user.redirectToProfile) {
-    return <Redirect to={'/user/' + user.userId} />;
-  }
 
   return (
     <Card
-      title="Edit Profile"
+      title='Edit Profile'
       extra={<Link to={`/user/${userId}`}>Cancel</Link>}
       className="card"
     >
       <div>
+        <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px'}}>* Empty values will not overwrite your actual credentials.</p>
         {user && user.pic ? (
           <div className="upload-avatar__container">
-            <Avatar size={110} src={user.pic} />
+            <Avatar size={110} src={user.pic} alt='avatar' />
             {user.pic && (
               <DeleteOutlined style={{marginTop: '.4rem'}} onClick={() => setUser({ ...user, pic: '' })} />
             )}

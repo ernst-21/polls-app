@@ -161,6 +161,7 @@ const Signup = (props) => {
               Submit
           </Button>
         </Form.Item>
+        <Link to='/email' style={{display: 'flex', float: 'right'}}>Forgot password?</Link>
       </Form>
     </Card>
   );

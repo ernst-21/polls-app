@@ -1,6 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Card, Form, Input } from 'antd';
+import React, {useEffect, useState} from 'react';
+import { Link, Redirect } from 'react-router-dom';
+import { Button, Card, Form, Input, message } from 'antd';
+import { emailToPass } from '../user/api-user';
+import { useHttpError } from '../hooks/http-hook';
 
 const layout = {
   labelCol: {
@@ -18,6 +20,39 @@ const tailLayout = {
 };
 
 const EmailRequest = () => {
+  const [redirect, setRedirect] = useState(false);
+  const {httpError, showErrorModal, error} = useHttpError();
+
+  useEffect(() => {
+    if (error) {
+      httpError();
+    }
+    return () => showErrorModal(null);
+  }, [error, httpError, showErrorModal]);
+
+  const success = (msg) => {
+    message.success(msg);
+  };
+
+  const clickSubmit = (values) => {
+    const user = {
+      email: values.email || undefined,
+
+    };
+    emailToPass(user).then((data) => {
+      if (data.error) {
+        showErrorModal(data.error);
+      } else {
+        success(data.message);
+        setRedirect(true);
+      }
+    });
+  };
+
+  if (redirect) {
+    return <Redirect to='/info'/>;
+  }
+
   return (
     <Card
       title="Please enter your e-mail to update your password."
@@ -30,7 +65,7 @@ const EmailRequest = () => {
         initialValues={{
           remember: true
         }}
-        onFinish={() => console.log('Email sent')}
+        onFinish={clickSubmit}
         className="form-container"
       >
         <Form.Item

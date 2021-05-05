@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const transporter = require('../config/nodemailerConfig');
 const errorHandler = require('../helpers/dbErrorHandler');
 
 const create = async (req, res, next) => {
@@ -53,7 +54,7 @@ const update = async (req, res, next) => {
     user.name = name || user.name;
     user.email = email || user.email;
     if (password) {
-      user.hashed_password = user.encryptPassword(password)
+      user.hashed_password = user.encryptPassword(password);
     } else {
       user.hashed_password = user.hashed_password;
     }
@@ -86,9 +87,34 @@ const remove = async (req, res, next) => {
   }
 };
 
+const retrieve = async (req, res) => {
+
+  let user = await User.findOne({ email: req.body.email });
+  if (user) {
+    let verificationLink = `http://localhost:3000/reset/edit/${user._id}`;
+    try {
+      let mailOptions = {
+        from: '"Password Retrieve" <dev.testing2121@gmail.com>',
+        to: user.email,
+        subject: `Password retrieve for: ${user.name}`,
+        html: `<p>Hi, please click on the following link to set your new password <a href="${verificationLink}">click here</a>.</p>`
+      };
+      await transporter.sendMail(mailOptions);
+      return res.status(250).json({message: 'Email sent successfully. Please check your email.'})
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({error: error})
+    }
+
+  } else {
+    res.status(400).json({error: 'User not found'});
+  }
+};
+
 exports.create = create;
 exports.list = list;
 exports.userByID = userByID;
 exports.read = read;
 exports.update = update;
 exports.remove = remove;
+exports.retrieve = retrieve;

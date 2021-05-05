@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.route('/api/users').get(userCtrl.list).post(userCtrl.create);
 
+router.route('/api/users/reset').post(userCtrl.retrieve);
+
 router.param('userId', userCtrl.userByID);
 
 router

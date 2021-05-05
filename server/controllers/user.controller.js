@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const transporter = require('../config/nodemailerConfig');
+const crypto = require('crypto');
 const errorHandler = require('../helpers/dbErrorHandler');
 
 const create = async (req, res, next) => {
@@ -87,27 +88,58 @@ const remove = async (req, res, next) => {
   }
 };
 
-const retrieve = async (req, res) => {
-
-  let user = await User.findOne({ email: req.body.email });
-  if (user) {
-    let verificationLink = `http://localhost:3000/reset/edit/${user._id}`;
-    try {
-      let mailOptions = {
-        from: '"Password Retrieve" <dev.testing2121@gmail.com>',
-        to: user.email,
-        subject: `Password retrieve for: ${user.name}`,
-        html: `<p>Hi, please click on the following link to set your new password <a href="${verificationLink}">click here</a>.</p>`
-      };
-      await transporter.sendMail(mailOptions);
-      return res.status(250).json({message: 'Email sent successfully. Please check your email.'})
-    } catch (err) {
+const retrieve = (req, res) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
       console.log(err);
-      res.status(400).json({error: error})
     }
+    const token = buffer.toString('hex');
+    let verificationLink = `http://localhost:3000/reset/edit/${token}`;
+    User.findOne({ email: req.body.email }).then(user => {
+      if (!user) {
+        res.status(422).json({ error: 'User not found' });
+      } else {
+        user.resetToken = token;
+        user.expireToken = Date.now() + 3600000;
+        user.save().then(result => {
+          try {
+            let mailOptions = {
+              from: '"Password Retrieve" <no-reply@gmail.com>',
+              to: user.email,
+              subject: `Password retrieve for: ${user.name}`,
+              html: `<p>Hi, please click on the following link to set your new password <a href="${verificationLink}">Click here</a>. The token contained in the link will expire in one hour. After that time you will need to request a new token via e-mail.</p>`
+            };
+            transporter.sendMail(mailOptions);
+            return res.status(250).json({ message: 'Email sent successfully. Please check your email.' });
+          } catch (err) {
+            console.log(err);
+            res.status(400).json({ error: error });
+          }
+        });
+      }
+    });
+  });
+};
 
-  } else {
-    res.status(400).json({error: 'User not found'});
+const reset = async (req, res) => {
+  const token = req.params.token;
+  try {
+    let user = await User.findOne({ resetToken: token, expireToken: { $gt: Date.now() } });
+    const newPassword = req.body.password;
+    if (!user) {
+      return res.status(422).json({ error: 'User not found or token expired. Please request a token to reset your password' });
+    }
+    if (newPassword) {
+      user.hashed_password = user.encryptPassword(newPassword);
+    } else {
+      user.hashed_password = user.hashed_password;
+    }
+    user.updated = Date.now();
+    await user.save();
+    return res.json({ message: 'Password Reset Successful. Please sign in.' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ error: err });
   }
 };
 
@@ -118,3 +150,4 @@ exports.read = read;
 exports.update = update;
 exports.remove = remove;
 exports.retrieve = retrieve;
+exports.reset = reset;

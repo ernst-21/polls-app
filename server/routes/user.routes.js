@@ -8,6 +8,8 @@ router.route('/api/users').get(userCtrl.list).post(userCtrl.create);
 
 router.route('/api/users/reset').post(userCtrl.retrieve);
 
+router.route('/api/users/reset-password/:token').put(userCtrl.reset);
+
 router.param('userId', userCtrl.userByID);
 
 router

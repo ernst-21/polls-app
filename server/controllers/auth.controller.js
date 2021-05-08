@@ -22,6 +22,7 @@ const signin = async (req, res) => {
       token,
       user: {
         _id: user._id,
+        role: user.role,
         name: user.name,
         email: user.email
       }
@@ -45,7 +46,17 @@ const requireSignin = expressJwt({
 });
 
 const hasAuthorization = (req, res, next) => {
-  const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
+  const authorized = req.profile && req.auth && req.profile._id == req.auth._id && req.profile.role === 'admin';
+  if (!authorized) {
+    return res.status('403').json({
+      error: 'User is not authorized'
+    });
+  }
+  next();
+};
+
+const isPowerAndAdmin = (req, res, next) => {
+  const authorized = req.profile && req.auth && req.profile._id == req.auth._id && req.profile.role === 'powerUser' || 'admin';
   if (!authorized) {
     return res.status('403').json({
       error: 'User is not authorized'
@@ -58,3 +69,4 @@ exports.signin = signin;
 exports.signout = signout;
 exports.requireSignin = requireSignin;
 exports.hasAuthorization = hasAuthorization;
+exports.isPowerAndAdmin = isPowerAndAdmin;

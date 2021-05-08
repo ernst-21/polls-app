@@ -11,15 +11,19 @@ import Menu from './core/Menu';
 import ResetPassword from './auth/ResetPassword';
 import EmailRequest from './auth/EmailRequest';
 import InfoSuccess from './user/InfoSuccess';
+import PollBreadcrumb from './auth/PollBreadcrumb';
+import PollsView from './polls/PollsView';
 
 const MainRouter = () => {
   return (
     <div>
       <Menu />
       <main>
+        <PollBreadcrumb />
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/users" component={Users} />
+          <Route path="/polls" component={PollsView} />
           <Route path="/signup" component={Signup} />
           <Route path="/signin" component={Signin} />
           <Route path="/reset/edit/:token" component={ResetPassword} />

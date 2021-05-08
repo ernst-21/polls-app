@@ -5,7 +5,8 @@ const compress = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const userRoutes = require('./routes/user.routes');
-const authRoutes = require('./routes/auth.routes')
+const authRoutes = require('./routes/auth.routes');
+const pollRoutes = require('./routes/poll.routes');
 
 const app = express();
 
@@ -31,6 +32,8 @@ app.use((err, req, res, next) => {
     res.status(400).json({"error" : err.name + ": " + err.message})
     console.log(err)
   }
-})
+});
+
+app.use('/', pollRoutes);
 
 module.exports = app;

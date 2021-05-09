@@ -9,8 +9,8 @@ const PollSchema = new mongoose.Schema({
   voters : [{type: ObjectId, ref: 'User'}],
   answerYes: [{ type: ObjectId, ref: 'User' }],
   answerNo: [{ type: ObjectId, ref: 'User' }],
-  modified: Boolean,
-  closed: Boolean,
+  modified: {type: Boolean, default: false},
+  closed: {type: Boolean, default: false},
   updated: Date,
   created: {
     type: Date,

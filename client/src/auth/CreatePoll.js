@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useHttpError } from '../hooks/http-hook';
 import { Button, Card, Form, Input, message } from 'antd';
-import { create } from './api-polls';
-import { Link } from 'react-router-dom';
+import { create } from '../polls/api-polls';
+import auth from './auth-helper';
 
 const layout = {
   labelCol: {
@@ -20,6 +20,7 @@ const tailLayout = {
 };
 
 const CreatePoll = () => {
+  const jwt = auth.isAuthenticated();
   const { error, showErrorModal, httpError } = useHttpError();
 
   useEffect(() => {
@@ -34,16 +35,18 @@ const CreatePoll = () => {
   };
 
   const clickSubmit = (values) => {
-    const user = {
-      name: values.name || undefined,
-      email: values.email || undefined,
-      password: values.confirm || undefined
+    const poll = {
+      question: values.question
     };
-    create(user).then((data) => {
+    create(poll, {
+      t: jwt.token
+    }).then((data) => {
       if (data.error) {
         showErrorModal(data.error);
       } else {
-        success(data.message);
+        location.reload();
+        console.log(data);
+        success('Poll successfully created');
 
       }
     });
@@ -52,8 +55,6 @@ const CreatePoll = () => {
   return (
     <Card
       title="Create a Poll"
-      extra={<Link to="/polls">Back to Polls List</Link>}
-      className="card"
     >
       <Form
         {...layout}

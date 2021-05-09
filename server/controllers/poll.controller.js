@@ -15,7 +15,7 @@ const create = async (req, res, next) => {
 };
 const list = async (req, res) => {
   try {
-    let polls = await Poll.find().select('question answerYes answerNo _id voters created');
+    let polls = await Poll.find().select('question answerYes answerNo _id voters created closed');
     res.json(polls);
   } catch (err) {
     return res.status(400).json({
@@ -92,9 +92,9 @@ const remove = async (req, res, next) => {
 
 const voteYes = async (req, res) => {
   await Poll.findByIdAndUpdate(
-    req.body.pollId,
+    req.params.pollId,
     {
-      $push: { answerYes: req.user._id }
+      $push: { answerYes: req.body.userId, voters: req.body.userId }
     },
     { new: true }
   ).exec((err, result) => {
@@ -108,9 +108,9 @@ const voteYes = async (req, res) => {
 
 const voteNo = async (req, res) => {
   await Poll.findByIdAndUpdate(
-    req.body.pollId,
+    req.params.pollId,
     {
-      $push: { answerNo: req.user._id }
+      $push: { answerNo: req.body.userId, voters: req.body.userId }
     },
     { new: true }
   )

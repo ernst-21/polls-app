@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { list } from './api-polls';
-import { Col, List, Row, Typography } from 'antd';
+import { list, voteYes, voteNo} from './api-polls';
+import { Col, List, Row, Typography, message } from 'antd';
 import { BarsOutlined, AppstoreOutlined } from '@ant-design/icons';
 import Poll from './Poll';
 import SideBar from '../core/SideBar';
+import auth from '../auth/auth-helper';
+import { useHttpError } from '../hooks/http-hook';
 
 const { Title } = Typography;
 
@@ -15,16 +17,35 @@ const isActive = (active) => {
 };
 
 const PollsView = () => {
+  const jwt = auth.isAuthenticated();
   const [collapsed, setCollapsed] = useState(false);
+  const [userId, setUserId] = useState('');
   const [component, setComponent] = useState(null);
   const [polls, setPolls] = useState([]);
   const [barsActive, setBarsActive] = useState(true);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = useState();
+  const { error, showErrorModal, httpError } = useHttpError();
+
+  useEffect(() => {
+    setValue(value);
+    if (jwt) {
+      setUserId(auth.isAuthenticated().user._id);
+    }
+  }, [value, jwt]);
 
   const onChange = (e) => {
-    console.log('radio checked', e.target.value);
     setValue(e.target.value);
-    console.log(value);
+  };
+
+  useEffect(() => {
+    if (error) {
+      httpError();
+    }
+    return () => showErrorModal(null);
+  }, [error, httpError, showErrorModal]);
+
+  const success = (msg) => {
+    message.success(msg);
   };
 
   useEffect(() => {
@@ -44,15 +65,60 @@ const PollsView = () => {
     };
   }, []);
 
+  const submitYes = (id) => {
+    const user = {
+      userId: userId
+    };
+    voteYes(
+      {
+        pollId: id
+      },
+      {
+        t: jwt.token
+      },
+      user
+    ).then((data) => {
+      if (data && data.error) {
+        showErrorModal(data.error);
+      } else {
+        location.reload();
+        success('Poll successfully voted.');
+      }
+    });
+  };
+
+  const submitNo = (id) => {
+    const user = {
+      userId: userId
+    };
+    voteNo(
+      {
+        pollId: id
+      },
+      {
+        t: jwt.token
+      },
+      user
+    ).then((data) => {
+      if (data && data.error) {
+        showErrorModal(data.error);
+      } else {
+        location.reload();
+        success('Poll successfully voted.');
+      }
+    });
+  };
+
   const showAside = (item, id) => {
     setCollapsed(true);
     setComponent(<Poll
       question={item.question}
-      yesPct={(item.answerYes / item.voters) * 100}
-      noPct={(item.answerNo / item.voters) * 100}
+      yesPct={Math.round((item.answerYes.length / item.voters.length) * 100)}
+      noPct={Math.round((item.answerNo.length / item.voters.length) * 100)}
       value={value}
+      voted={item.voters.includes(userId)}
       onChange={onChange}
-      onClick={() => console.log(id, value)} />);
+      onClick={value === 'yes' ? () => submitYes(id) : () => submitNo(id)} />);
   };
 
   return (
@@ -91,10 +157,12 @@ const PollsView = () => {
                 {polls.map(item => {
                   return <Col key={item._id} className="gutter-row" span={7}><Poll
                     question={item.question}
-                    yesPct={(item.answerYes / item.voters) * 100}
-                    noPct={(item.answerNo / item.voters) * 100}
+                    yesPct={Math.round((item.answerYes.length / item.voters.length) * 100)}
+                    noPct={Math.round((item.answerNo.length / item.voters.length) * 100)}
                     value={value}
-                    onChange={onChange} onClick={() => console.log(item._id, value)} /></Col>;
+                    voted={item.voters.includes(userId)}
+                    onChange={onChange}
+                    onClick={value === 'yes' ? () => submitYes(item._id) : () => submitNo(item._id)} /></Col>;
                 })}
               </Row>)}
           </div>

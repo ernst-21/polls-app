@@ -61,109 +61,111 @@ const Signup = (props) => {
   }
 
   return (
-    <Card
-      title="Register"
-      extra={<Link to="/signin">Already registered? Login instead</Link>}
-      className="card"
-    >
-      <Form
-        {...layout}
-        name="basic"
-        initialValues={{
-          remember: true
-        }}
-        onFinish={clickSubmit}
-        className="form-container"
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Card
+        title="Register"
+        extra={<Link to="/signin">Already registered? Login instead</Link>}
+        style={{ width: '50%', marginTop: '1rem' }}
       >
-        <Form.Item
-          label="Username"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your username!'
-            }
-          ]}
+        <Form
+          {...layout}
+          name="basic"
+          initialValues={{
+            remember: true
+          }}
+          onFinish={clickSubmit}
+          className="form-container"
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              type: 'email',
-              message: 'The input is not valid E-mail!'
-            },
-            {
-              required: true,
-              message: 'Please input your E-mail!'
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!'
-            },
-            () => ({
-              validator(_, value) {
-                if (!value || value.length >= 6) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(
-                  new Error('Password must contain at least 6 characters.')
-                );
+          <Form.Item
+            label="Username"
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your username!'
               }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="confirm"
-          label="Confirm Password"
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please confirm your password!'
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(
-                  new Error('The two passwords that you entered do not match!')
-                );
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!'
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!'
               }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please input your password!'
+              },
+              () => ({
+                validator(_, value) {
+                  if (!value || value.length >= 6) {
+                    return Promise.resolve();
+                  }
 
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
+                  return Promise.reject(
+                    new Error('Password must contain at least 6 characters.')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            name="confirm"
+            label="Confirm Password"
+            dependencies={['password']}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please confirm your password!'
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+
+                  return Promise.reject(
+                    new Error('The two passwords that you entered do not match!')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
               Submit
-          </Button>
-        </Form.Item>
-        <Link to='/email' style={{display: 'flex', float: 'right'}}>Forgot password?</Link>
-      </Form>
-    </Card>
+            </Button>
+          </Form.Item>
+          <Link to='/email' style={{ display: 'flex', float: 'right' }}>Forgot password?</Link>
+        </Form>
+      </Card>
+    </div>
   );
 }
 ;

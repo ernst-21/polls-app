@@ -57,7 +57,7 @@ const EmailRequest = () => {
     <Card
       title="Please enter your e-mail to update your password."
       extra={<Link to="/signin">Cancel</Link>}
-      className="card"
+
     >
       <Form
         {...layout}
@@ -66,7 +66,7 @@ const EmailRequest = () => {
           remember: true
         }}
         onFinish={clickSubmit}
-        className="form-container"
+
       >
         <Form.Item
           name="email"

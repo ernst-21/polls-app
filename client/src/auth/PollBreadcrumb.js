@@ -5,17 +5,17 @@ import { Breadcrumb } from 'antd';
 
 const isActive = (history, path) => {
   if (history.location.pathname == path)
-    return { color: '#28079d' };
+    return { color: '#28079d', fontSize: '16px' };
   else
-    return { color: '#1890FF' };
+    return { color: '#1890FF', fontSize: '16px' };
 };
 
 const PollBreadcrumb = withRouter(({ history }) => (
   <>
     {
       auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'powerUser') && (
-        <div className='breadcrumb'>
-          <div className='bread-container'>
+        <div style={{marginTop: '2rem'}}>
+          <div>
             <Breadcrumb>
               <Breadcrumb.Item>
                 <Link to="/manage-polls" style={isActive(history, '/manage-polls')}>Manage Polls</Link>

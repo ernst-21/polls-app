@@ -93,9 +93,9 @@ const remove = async (params, credentials) => {
   }
 };
 
-const voteYes = async (params, credentials, user) => {
+const vote = async (params, credentials, user) => {
   try {
-    let response = await fetch('http://localhost:5000/api/polls/pos/' + params.pollId, {
+    let response = await fetch('http://localhost:5000/api/polls/vote/' + params.pollId, {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
@@ -110,21 +110,6 @@ const voteYes = async (params, credentials, user) => {
   }
 };
 
-const voteNo   = async (params, credentials, user) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/neg/' + params.pollId, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      },
-      body: JSON.stringify(user)
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
 
-export { create, list, read, update, remove, voteYes, voteNo, close };
+
+export { create, list, read, update, remove, vote, close };

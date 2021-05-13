@@ -29,7 +29,6 @@ const Users = () => {
   return (
     <List
       itemLayout="horizontal"
-      style={{ marginTop: '2rem' }}
       dataSource={users}
       renderItem={item => (
         item.role !== 'admin' && item.role !== 'powerUser' &&

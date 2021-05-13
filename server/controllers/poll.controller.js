@@ -15,7 +15,7 @@ const create = async (req, res, next) => {
 };
 const list = async (req, res) => {
   try {
-    let polls = await Poll.find().select('question answerYes answerNo _id voters created closed');
+    let polls = await Poll.find().select('question answers chosenAnswer _id voters created closed');
     res.json(polls);
   } catch (err) {
     return res.status(400).json({
@@ -48,15 +48,15 @@ const close = async (req, res) => {
   try {
     let poll = req.profile;
     poll.closed = true;
-    await poll.save()
-    res.json(poll)
+    await poll.save();
+    res.json(poll);
   } catch (err) {
     return res.status(400).json({
       error:
         'Something went wrong and poll could not be updated. Please try again.'
     });
   }
-}
+};
 
 const update = async (req, res, next) => {
   try {
@@ -90,11 +90,12 @@ const remove = async (req, res, next) => {
   }
 };
 
-const voteYes = async (req, res) => {
+const vote = async (req, res) => {
+
   await Poll.findByIdAndUpdate(
     req.params.pollId,
     {
-      $push: { answerYes: req.body.userId, voters: req.body.userId }
+      $push: { chosenAnswer: req.body.chosenAnswer, voters: req.body.userId }
     },
     { new: true }
   ).exec((err, result) => {
@@ -106,22 +107,22 @@ const voteYes = async (req, res) => {
   });
 };
 
-const voteNo = async (req, res) => {
-  await Poll.findByIdAndUpdate(
-    req.params.pollId,
-    {
-      $push: { answerNo: req.body.userId, voters: req.body.userId }
-    },
-    { new: true }
-  )
-    .exec((err, result) => {
-      if (err) {
-        return res.status(422).json({ error: err });
-      } else {
-        res.json(result);
-      }
-    });
-};
+// const voteNo = async (req, res) => {
+//   await Poll.findByIdAndUpdate(
+//     req.params.pollId,
+//     {
+//       $push: { answerNo: req.body.userId, voters: req.body.userId }
+//     },
+//     { new: true }
+//   )
+//     .exec((err, result) => {
+//       if (err) {
+//         return res.status(422).json({ error: err });
+//       } else {
+//         res.json(result);
+//       }
+//     });
+// };
 
 exports.create = create;
 exports.list = list;
@@ -129,7 +130,7 @@ exports.pollByID = pollByID;
 exports.read = read;
 exports.update = update;
 exports.remove = remove;
-exports.voteYes = voteYes;
-exports.voteNo = voteNo;
+exports.vote = vote;
+// exports.voteNo = voteNo;
 exports.close = close;
 

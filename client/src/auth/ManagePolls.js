@@ -56,16 +56,6 @@ const ManagePolls = () => {
 
     },
     {
-      title: 'Voted Yes',
-      dataIndex: 'yes',
-      key: 'yes'
-    },
-    {
-      title: 'Voted No',
-      dataIndex: 'no',
-      key: 'no'
-    },
-    {
       title: 'Voters',
       dataIndex: 'voters',
       key: 'voters'
@@ -112,8 +102,6 @@ const ManagePolls = () => {
         return {
           key: item._id,
           questions: item.question,
-          yes: item.answerYes.length,
-          no: item.answerNo.length,
           voters: item.voters.length,
           closed: item.closed.toString().toUpperCase()
         };
@@ -129,7 +117,7 @@ const ManagePolls = () => {
   return (
     <>
       <div>
-        <Button type='primary' style={{display: 'flex', marginBottom: '1rem', float: 'right'}} onClick={showAside}>CREATE</Button>
+        <Button type='primary' onClick={showAside}>CREATE</Button>
         <Table columns={columns} dataSource={sourceData} />
       </div>
       {collapsed && <SideBar

@@ -7,8 +7,8 @@ const PollSchema = new mongoose.Schema({
     required: 'Question is required'
   },
   voters : [{type: ObjectId, ref: 'User'}],
-  answerYes: [{ type: ObjectId, ref: 'User' }],
-  answerNo: [{ type: ObjectId, ref: 'User' }],
+  answers: [{ type: String }],
+  chosenAnswer: [{ type: String }],
   modified: {type: Boolean, default: false},
   closed: {type: Boolean, default: false},
   updated: Date,
@@ -17,6 +17,5 @@ const PollSchema = new mongoose.Schema({
     default: Date.now
   }
 });
-
 
 module.exports = mongoose.model('Poll', PollSchema);

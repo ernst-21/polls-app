@@ -57,7 +57,7 @@ const ResetPassword = () => {
     <Card
       title="Reset Password"
       extra={<Link to='/signin'>Cancel</Link>}
-      className="card"
+
     >
       <Form
         {...layout}

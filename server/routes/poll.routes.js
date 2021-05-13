@@ -6,8 +6,7 @@ const router = express.Router();
 
 router.route('/api/polls').get(pollCtrl.list).post(authCtrl.requireSignin, authCtrl.isPowerAndAdmin, pollCtrl.create);
 
-router.route('/api/polls/pos/:pollId').put(authCtrl.requireSignin, pollCtrl.voteYes);
-router.route('/api/polls/neg/:pollId').put(authCtrl.requireSignin, pollCtrl.voteNo);
+router.route('/api/polls/vote/:pollId').put(authCtrl.requireSignin, pollCtrl.vote);
 
 router.param('pollId', pollCtrl.pollByID);
 

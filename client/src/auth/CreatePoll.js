@@ -63,7 +63,7 @@ const CreatePoll = () => {
           remember: true
         }}
         onFinish={clickSubmit}
-        className="form-container"
+
       >
         <Form.Item
           label="Question"

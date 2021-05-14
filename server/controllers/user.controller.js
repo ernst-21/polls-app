@@ -105,7 +105,7 @@ const updateUserProfile = async (req, res, next) => {
     console.log(err);
     return res.status(400).json({
       error:
-        'Something went wrong and your account could not be updated. Please input your data again.'
+        'Something went wrong and the account could not be updated. Please input the data again.'
     });
   }
 };

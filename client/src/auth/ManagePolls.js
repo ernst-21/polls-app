@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { close, list, remove } from '../polls/api-polls';
+import { close, list, remove, open } from '../polls/api-polls';
 import { Button, Table, Space, message } from 'antd';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
@@ -61,6 +61,25 @@ const ManagePolls = () => {
     });
   };
 
+  const openPoll = (id) => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    open({ pollId: id }, { t: jwt.token }).then((data) => {
+      if (data && data.error) {
+        showErrorModal(data.error);
+      } else {
+        success('Poll open');
+        list(signal).then((data) => {
+          if (data && data.error) {
+            console.log(data.error);
+          } else {
+            setPolls(data);
+          }
+        });
+      }
+    });
+  };
+
   const columns = [
     {
       title: 'Questions',
@@ -85,7 +104,8 @@ const ManagePolls = () => {
       render: (record) => (
         <Space size="middle">
           <a onClick={() => deletePoll(record.key)}>Delete</a>
-          <a onClick={() => closePoll(record.key)}>Close</a>
+          {record.isClosed ? (<a onClick={() => openPoll(record.key)}>Open Poll</a>) : (<a onClick={() => closePoll(record.key)}>Close</a>)}
+
         </Space>
       )
     }
@@ -115,7 +135,8 @@ const ManagePolls = () => {
           key: item._id,
           questions: item.question,
           voters: item.voters.length,
-          closed: item.closed.toString().toUpperCase()
+          closed: item.closed.toString().toUpperCase(),
+          isClosed: item.closed
         };
       }));
     }
@@ -129,7 +150,6 @@ const ManagePolls = () => {
         </Link>
         <Table columns={columns} dataSource={sourceData} />
       </div>
-
     </>
   );
 };

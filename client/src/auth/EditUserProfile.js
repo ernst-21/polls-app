@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import auth from './auth-helper';
 import useUploadImage from '../hooks/useUploadImage';
 import { useHttpError } from '../hooks/http-hook';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { Avatar, Button, Card, Checkbox, Form, Input, message } from 'antd';
+import { Avatar, Button, Card, Form, Input, message } from 'antd';
 import { read, updateUser } from '../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
 import AvatarUpload from '../user/AvatarUpload';
@@ -24,14 +23,15 @@ const tailLayout = {
   }
 };
 
-const EditUserProfile = () => {
+const EditUserProfile = (props) => {
   const [user, setUser] = useState();
   const jwt = auth.isAuthenticated();
   const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
   const [image, setImage] = useState('');
   const { error, showErrorModal, httpError } = useHttpError();
-  const userId = useParams().userId;
-  const history = useHistory();
+  const userId = props.userId;
+  const nodeRef = useRef();
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (error) {
@@ -101,7 +101,8 @@ const EditUserProfile = () => {
         showErrorModal(data.error);
       } else {
         setUser({ ...user, userId: data._id, redirectToManageUsers: true });
-        history.push('/manage-users');
+        form.resetFields();
+        location.reload();
         info('User successfully updated');
       }
     });
@@ -112,15 +113,16 @@ const EditUserProfile = () => {
     <div>
       <Card
         title='Edit Profile'
-        extra={<Link to='/manage-users'>Cancel</Link>}
+        extra={<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>}
       >
         <div>
-          <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px'}}>* Empty values will not overwrite your actual credentials.</p>
+          <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px' }}>* Empty values will not overwrite
+            actual credentials.</p>
           {user && user.pic ? (
             <div>
               <Avatar size={110} src={user.pic} alt='avatar' />
               {user.pic && (
-                <DeleteOutlined style={{marginTop: '.4rem'}} onClick={() => setUser({ ...user, pic: '' })} />
+                <DeleteOutlined style={{ marginTop: '.4rem' }} onClick={() => setUser({ ...user, pic: '' })} />
               )}
             </div>
           ) : (
@@ -135,6 +137,7 @@ const EditUserProfile = () => {
           )}
 
           <Form
+            form={form}
             {...layout}
             name="basic"
             initialValues={{
@@ -233,12 +236,8 @@ const EditUserProfile = () => {
             >
               <Input.Password />
             </Form.Item>
-            <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
             <Form.Item {...tailLayout}>
-              <Button type="primary" htmlType="submit">
+              <Button style={{marginTop: '.5rem'}} type="primary" htmlType="submit">
                 Update
               </Button>
             </Form.Item>

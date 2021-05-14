@@ -58,6 +58,20 @@ const close = async (req, res) => {
   }
 };
 
+const open = async (req, res) => {
+  try {
+    let poll = req.profile;
+    poll.closed = false;
+    await poll.save();
+    res.json(poll);
+  } catch (err) {
+    return res.status(400).json({
+      error:
+        'Something went wrong and poll could not be updated. Please try again.'
+    });
+  }
+};
+
 const update = async (req, res, next) => {
   try {
     let poll = req.profile;
@@ -115,4 +129,5 @@ exports.update = update;
 exports.remove = remove;
 exports.vote = vote;
 exports.close = close;
+exports.open = open;
 

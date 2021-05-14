@@ -20,4 +20,40 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 );
 
-export default PrivateRoute;
+const AdminPowerUserRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      (auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || 'power-user')) ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/',
+            state: { from: props.location }
+          }}
+        />
+      )
+    }
+  />
+);
+
+const AdminRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      (auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin')) ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/',
+            state: { from: props.location }
+          }}
+        />
+      )
+    }
+  />
+);
+
+export {PrivateRoute, AdminPowerUserRoute, AdminRoute};

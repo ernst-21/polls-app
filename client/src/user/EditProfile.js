@@ -105,131 +105,133 @@ const EditProfile = () => {
     });
   };
 
-
   return (
-    <Card
-      title='Edit Profile'
-      extra={<Link to={`/user/${userId}`}>Cancel</Link>}
-      className="card"
-    >
-      <div>
-        <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px'}}>* Empty values will not overwrite your actual credentials.</p>
-        {user && user.pic ? (
-          <div className="upload-avatar__container">
-            <Avatar size={110} src={user.pic} alt='avatar' />
-            {user.pic && (
-              <DeleteOutlined style={{marginTop: '.4rem'}} onClick={() => setUser({ ...user, pic: '' })} />
-            )}
-          </div>
-        ) : (
-          <AvatarUpload
-            onChange={handleImageChange}
-            customRequest={() => uploadPic(image)}
-            handleDelete={handleImgDelete}
-            url={imageUrl}
-            src={imageUrl}
-            img={image}
-          />
-        )}
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Card
+        title='Edit Profile'
+        extra={<Link to={`/user/${userId}`}>Cancel</Link>}
+        style={{ width: '60%', marginTop: '1rem' }}
+      >
+        <div>
+          <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px' }}>* Empty values will not overwrite
+            your actual credentials.</p>
+          {user && user.pic ? (
+            <div className="upload-avatar__container">
+              <Avatar size={110} src={user.pic} alt='avatar' />
+              {user.pic && (
+                <DeleteOutlined style={{ marginTop: '.4rem' }} onClick={() => setUser({ ...user, pic: '' })} />
+              )}
+            </div>
+          ) : (
+            <AvatarUpload
+              onChange={handleImageChange}
+              customRequest={() => uploadPic(image)}
+              handleDelete={handleImgDelete}
+              url={imageUrl}
+              src={imageUrl}
+              img={image}
+            />
+          )}
 
-        <Form
-          {...layout}
-          name="basic"
-          initialValues={{
-            remember: true
-          }}
-          onFinish={clickSubmit}
-        >
-          <Form.Item
-            initialValue={user ? user.name : null}
-            label="Username"
-            name="name"
-            rules={[
-              {
-                required: false,
-                message: 'Please input your username!'
-              }
-            ]}
+          <Form
+            {...layout}
+            name="basic"
+            initialValues={{
+              remember: true
+            }}
+            onFinish={clickSubmit}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            initialValue={user ? user.email : null}
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail!'
-              },
-              {
-                required: false
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="New Password"
-            name="password"
-            hasFeedback
-            rules={[
-              {
-                required: false
-              },
-              () => ({
-                validator(_, value) {
-                  if (!value || value.length >= 6) {
-                    return Promise.resolve();
-                  }
-
-                  return Promise.reject(
-                    new Error('Password must contain at least 6 characters.')
-                  );
+            <Form.Item
+              initialValue={user ? user.name : null}
+              label="Username"
+              name="name"
+              rules={[
+                {
+                  required: false,
+                  message: 'Please input your username!'
                 }
-              })
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
-            name="confirm"
-            label="Confirm New Password"
-            dependencies={['password']}
-            hasFeedback
-            rules={[
-              {
-                required: false
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-
-                  return Promise.reject(
-                    new Error(
-                      'Passwords do not match!'
-                    )
-                  );
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              initialValue={user ? user.email : null}
+              name="email"
+              label="E-mail"
+              rules={[
+                {
+                  type: 'email',
+                  message: 'The input is not valid E-mail!'
+                },
+                {
+                  required: false
                 }
-              })
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="New Password"
+              name="password"
+              hasFeedback
+              rules={[
+                {
+                  required: false
+                },
+                () => ({
+                  validator(_, value) {
+                    if (!value || value.length >= 6) {
+                      return Promise.resolve();
+                    }
 
-          <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit">
-              Update
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </Card>
+                    return Promise.reject(
+                      new Error('Password must contain at least 6 characters.')
+                    );
+                  }
+                })
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="confirm"
+              label="Confirm New Password"
+              dependencies={['password']}
+              hasFeedback
+              rules={[
+                {
+                  required: false
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+
+                    return Promise.reject(
+                      new Error(
+                        'Passwords do not match!'
+                      )
+                    );
+                  }
+                })
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
+
+            <Form.Item {...tailLayout}>
+              <Button type="primary" htmlType="submit">
+                Update
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </Card>
+    </div>
   );
 };
 

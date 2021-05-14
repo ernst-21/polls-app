@@ -77,6 +77,22 @@ const close = async (params, credentials) => {
   }
 };
 
+const open = async (params, credentials) => {
+  try {
+    let response = await fetch('http://localhost:5000/api/polls/open/' + params.pollId, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + credentials.t
+      }
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const remove = async (params, credentials) => {
   try {
     let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
@@ -112,4 +128,4 @@ const vote = async (params, credentials, user) => {
 
 
 
-export { create, list, read, update, remove, vote, close };
+export { create, list, read, update, remove, vote, close, open };

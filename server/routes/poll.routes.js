@@ -12,6 +12,8 @@ router.param('pollId', pollCtrl.pollByID);
 
 router.route('/api/polls/close/:pollId').put(authCtrl.requireSignin, authCtrl.isPowerAndAdmin, pollCtrl.close)
 
+router.route('/api/polls/open/:pollId').put(authCtrl.requireSignin, authCtrl.isPowerAndAdmin, pollCtrl.open)
+
 router
   .route('/api/polls/:pollId')
   .get(authCtrl.requireSignin, pollCtrl.read)

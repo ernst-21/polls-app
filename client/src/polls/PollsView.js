@@ -90,7 +90,7 @@ const PollsView = () => {
       // eslint-disable-next-line react/display-name
       render: (record) => (
         <Space size="middle">
-          {record.hasVoted ? (<a onClick={() => {
+          {record.hasVoted || record.closed ? (<a onClick={() => {
             showAside(record, record.key);
           }}>View Details</a>) : (
             <a onClick={() => {

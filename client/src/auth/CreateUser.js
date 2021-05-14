@@ -61,7 +61,7 @@ const CreateUser = (props) => {
     return (<Redirect to={from} />);
   }
   return (
-    <div>
+    <div style={{display: 'flex', justifyContent: 'center'}}>
       <Card
         title="Create User"
         extra={<Link to="/manage-users">Cancel</Link>}
@@ -153,7 +153,6 @@ const CreateUser = (props) => {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-
                   return Promise.reject(
                     new Error('The two passwords that you entered do not match!')
                   );
@@ -166,7 +165,6 @@ const CreateUser = (props) => {
           <Form.Item {...tailLayout} name="remember" valuePropName="checked">
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
-
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit">
               Submit

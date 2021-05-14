@@ -66,7 +66,6 @@ const EmailRequest = () => {
           remember: true
         }}
         onFinish={clickSubmit}
-
       >
         <Form.Item
           name="email"

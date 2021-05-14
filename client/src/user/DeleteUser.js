@@ -44,6 +44,7 @@ export default function DeleteUser(props) {
         } else {
           success('User successfully deleted');
           setRedirectToTable(true);
+          location.reload();
         }
       });
   };

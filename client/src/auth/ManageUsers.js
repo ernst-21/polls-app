@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Modal, message } from 'antd';
+import { Space, Table, Button, Modal, message, Card } from 'antd';
+import Profile from '../user/Profile';
+import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
 import { list, removeUser } from '../user/api-user';
 import { Link } from 'react-router-dom';
+import SideBar from '../core/SideBar';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState('');
+  const [collapsed, setCollapsed] = useState(false);
+  const [component, setComponent] = useState(null);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
 
@@ -73,6 +78,16 @@ const ManageUsers = () => {
     });
   };
 
+  const editUser = (id) => {
+    setCollapsed(true);
+    setComponent(<Card><EditUserProfile closeSideBar={() => setCollapsed(false)} userId={id} /></Card>);
+  };
+
+  const viewProfile = (id) => {
+    setCollapsed(true);
+    setComponent(<Card><Profile userId={id} editProfile={() => editUser(id)}/></Card>);
+  };
+
   const showModal = (id) => {
     setUserId(id);
     setIsModalVisible(true);
@@ -111,8 +126,10 @@ const ManageUsers = () => {
       render: (record) => (
         <Space size="middle">
           <a onClick={() => showModal(record.key)}>Delete</a>
-          <Link to={`/user/edit-user/${record.key}`}>Edit</Link>
-          <Link to={`/user/${record.key}`}>View</Link>
+          {/*<Link to={`/user/edit-user/${record.key}`}>Edit</Link>*/}
+          <a onClick={() => editUser(record.key)}>Edit</a>
+          {/*<Link to={`/user/${record.key}`}>View</Link>*/}
+          <a onClick={() => viewProfile(record.key)}>View</a>
         </Space>
       )
     }
@@ -127,6 +144,12 @@ const ManageUsers = () => {
       <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
+      {collapsed && <SideBar
+        style={{height: '100vh', witdth: '45%', overflow: 'hidden'}}
+        isSidebarOpen={collapsed}
+        component={component}
+        onClick={() => setCollapsed(false)}
+      />}
     </div>
   );
 };

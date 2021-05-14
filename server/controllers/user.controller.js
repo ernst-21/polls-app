@@ -51,13 +51,49 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
   try {
     let user = req.profile;
-    const { name, email, password, pic } = req.body;
+    const { name, email, password, pic, role } = req.body;
     user.name = name || user.name;
     user.email = email || user.email;
     if (password) {
       user.hashed_password = user.encryptPassword(password);
     } else {
       user.hashed_password = user.hashed_password;
+    }
+    if (role) {
+      user.role = role;
+    } else {
+      user.role = user.role;
+    }
+    user.pic = pic;
+    user.updated = Date.now();
+    await user.save();
+    user.hashed_password = undefined;
+    user.salt = undefined;
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      error:
+        'Something went wrong and your account could not be updated. Please input your data again.'
+    });
+  }
+};
+
+const updateUserProfile = async (req, res, next) => {
+  try {
+    let user = req.profile;
+    const { name, email, password, pic, role } = req.body;
+    user.name = name || user.name;
+    user.email = email || user.email;
+    if (password) {
+      user.hashed_password = user.encryptPassword(password);
+    } else {
+      user.hashed_password = user.hashed_password;
+    }
+    if (role) {
+      user.role = role;
+    } else {
+      user.role = user.role;
     }
     user.pic = pic;
     user.updated = Date.now();
@@ -75,6 +111,20 @@ const update = async (req, res, next) => {
 };
 
 const remove = async (req, res, next) => {
+  try {
+    let user = req.profile;
+    let deletedUser = await user.remove();
+    deletedUser.hashed_password = undefined;
+    deletedUser.salt = undefined;
+    res.json(deletedUser);
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    });
+  }
+};
+
+const removeUser = async (req, res, next) => {
   try {
     let user = req.profile;
     let deletedUser = await user.remove();
@@ -148,6 +198,8 @@ exports.list = list;
 exports.userByID = userByID;
 exports.read = read;
 exports.update = update;
+exports.updateUserProfile = updateUserProfile;
 exports.remove = remove;
+exports.removeUser = removeUser;
 exports.retrieve = retrieve;
 exports.reset = reset;

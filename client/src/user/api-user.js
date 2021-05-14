@@ -60,9 +60,42 @@ const update = async (params, credentials, user) => {
   }
 };
 
+const updateUser = async (params, credentials, user) => {
+  try {
+    let response = await fetch('http://localhost:5000/api/users/edit-user/' + params.userId, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + credentials.t
+      },
+      body: JSON.stringify(user)
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const remove = async (params, credentials) => {
   try {
     let response = await fetch('http://localhost:5000/api/users/' + params.userId, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + credentials.t
+      }
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const removeUser = async (params, credentials) => {
+  try {
+    let response = await fetch('http://localhost:5000/api/users/remove-user/' + params.userId, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -108,4 +141,4 @@ const resetPass = async (params, user) => {
   }
 };
 
-export { create, list, read, update, remove, emailToPass, resetPass };
+export { create, list, read, update, remove, emailToPass, resetPass, updateUser, removeUser };

@@ -107,23 +107,6 @@ const vote = async (req, res) => {
   });
 };
 
-// const voteNo = async (req, res) => {
-//   await Poll.findByIdAndUpdate(
-//     req.params.pollId,
-//     {
-//       $push: { answerNo: req.body.userId, voters: req.body.userId }
-//     },
-//     { new: true }
-//   )
-//     .exec((err, result) => {
-//       if (err) {
-//         return res.status(422).json({ error: err });
-//       } else {
-//         res.json(result);
-//       }
-//     });
-// };
-
 exports.create = create;
 exports.list = list;
 exports.pollByID = pollByID;
@@ -131,6 +114,5 @@ exports.read = read;
 exports.update = update;
 exports.remove = remove;
 exports.vote = vote;
-// exports.voteNo = voteNo;
 exports.close = close;
 

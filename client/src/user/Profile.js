@@ -46,9 +46,9 @@ const Profile = () => {
       <Title level={3}>Profile</Title>
       <Avatar size={150} src={user.pic} icon={<UserOutlined />} />
       <Title level={2}>{user.name}</Title>
-      {auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id && <div style={{ textAlign: 'center'}}>
+      {((auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id) || (auth.isAuthenticated().user && auth.isAuthenticated().user._id !== user._id && auth.isAuthenticated().user.role === 'admin')) && <div style={{ textAlign: 'center'}}>
         <Title level={3}>{user.email}</Title>
-        <Link to={'/user/edit/' + user._id}>
+        <Link to={auth.isAuthenticated().user.role !== 'admin' ? '/user/edit/' + user._id : '/user/edit-user/' + user._id}>
           <EditOutlined style={{ fontSize: '1.5rem' }} />
           <h4>Edit</h4>
         </Link>

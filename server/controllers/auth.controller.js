@@ -14,7 +14,7 @@ const signin = async (req, res) => {
         .status('401')
         .send({ error: "Email and password don't match." });
     }
-    const token = jwt.sign({ _id: user._id }, config.jwtSecret);
+    const token = jwt.sign({ _id: user._id, role: user.role }, config.jwtSecret);
 
     res.cookie('t', token, { expire: new Date() + 9999 });
 
@@ -46,7 +46,7 @@ const requireSignin = expressJwt({
 });
 
 const hasAuthorization = (req, res, next) => {
-  const authorized = req.profile && req.auth && req.profile._id == req.auth._id && req.profile.role === 'admin';
+  const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
   if (!authorized) {
     return res.status('403').json({
       error: 'User is not authorized'
@@ -56,7 +56,17 @@ const hasAuthorization = (req, res, next) => {
 };
 
 const isPowerAndAdmin = (req, res, next) => {
-  const authorized = req.profile && req.auth && req.profile._id == req.auth._id && req.profile.role === 'powerUser' || 'admin';
+  const authorized = req.auth === 'power-user' || 'admin';
+  if (!authorized) {
+    return res.status('403').json({
+      error: 'User is not authorized'
+    });
+  }
+  next();
+};
+
+const isAdmin = (req, res, next) => {
+  const authorized = req.auth.role === 'admin';
   if (!authorized) {
     return res.status('403').json({
       error: 'User is not authorized'
@@ -70,3 +80,4 @@ exports.signout = signout;
 exports.requireSignin = requireSignin;
 exports.hasAuthorization = hasAuthorization;
 exports.isPowerAndAdmin = isPowerAndAdmin;
+exports.isdAdmin = isAdmin;

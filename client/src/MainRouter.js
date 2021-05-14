@@ -13,7 +13,10 @@ import InfoSuccess from './user/InfoSuccess';
 import PollBreadcrumb from './auth/PollBreadcrumb';
 import PollsView from './polls/PollsView';
 import ManagePolls from './auth/ManagePolls';
+import ManageUsers from './auth/ManageUsers';
 import CreatePoll from './auth/CreatePoll';
+import CreateUser from './auth/CreateUser';
+import EditUserProfile from './auth/EditUserProfile';
 
 
 const MainRouter = () => {
@@ -26,12 +29,15 @@ const MainRouter = () => {
           {/*<Route path="/users" component={Users} />*/}
           <Route path="/polls" component={PollsView} />
           <Route path="/manage-polls" component={ManagePolls} />
+          <Route path="/manage-users" component={ManageUsers} />
           <Route path="/create-poll" component={CreatePoll} />
+          <Route path="/create-user" component={CreateUser} />
           <Route path="/signup" component={Signup} />
           <Route path="/signin" component={Signin} />
           <Route path="/reset/edit/:token" component={ResetPassword} />
           <Route path="/email" component={EmailRequest} />
           <Route path="/info" component={InfoSuccess} />
+          <Route path="/user/edit-user/:userId" component={EditUserProfile} />
           <PrivateRoute path="/user/edit/:userId" component={EditProfile} />
           <Route path="/user/:userId" component={Profile} />
         </Switch>

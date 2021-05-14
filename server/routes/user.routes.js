@@ -12,6 +12,10 @@ router.route('/api/users/reset-password/:token').put(userCtrl.reset);
 
 router.param('userId', userCtrl.userByID);
 
+router.route('/api/users/edit-user/:userId').put(authCtrl.requireSignin, authCtrl.isdAdmin, userCtrl.updateUserProfile);
+
+router.route('/api/users/remove-user/:userId').delete(authCtrl.requireSignin, authCtrl.isdAdmin, userCtrl.removeUser);
+
 router
   .route('/api/users/:userId')
   .get(authCtrl.requireSignin, userCtrl.read)

@@ -13,7 +13,7 @@ const isActive = (history, path) => {
 const PollBreadcrumb = withRouter(({ history }) => (
   <>
     {
-      auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'powerUser') && (
+      auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'power-user') && (
         <div style={{marginTop: '2rem'}}>
           <div>
             <Breadcrumb>

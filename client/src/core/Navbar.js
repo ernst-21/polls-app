@@ -5,9 +5,7 @@ import { HomeFilled } from '@ant-design/icons';
 import auth from '../auth/auth-helper';
 import SignoutBtn from '../auth/Signout';
 
-
-
-const Navbar = withRouter(({ history }) => (
+const Navbar = withRouter(() => (
   <Menu mode="horizontal" theme='dark'>
     <Menu.Item>
       <Link to="/"><HomeFilled className='home-icon' /></Link>
@@ -39,10 +37,7 @@ const Navbar = withRouter(({ history }) => (
         </Link>
       </Menu.Item>
       <Menu.Item>
-
-        <SignoutBtn onClick={() => {
-          auth.clearJWT(() => history.push('/signin'));
-        }}>Sign out</SignoutBtn>
+        <SignoutBtn />
       </Menu.Item>
     </>}
   </Menu>

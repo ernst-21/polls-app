@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { close, list, remove } from '../polls/api-polls';
 import { Button, Table, Space, message } from 'antd';
-import SideBar from '../core/SideBar';
-import CreatePoll from './CreatePoll';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
 
@@ -11,8 +10,6 @@ const ManagePolls = () => {
   const jwt = auth.isAuthenticated();
   const [polls, setPolls] = useState([]);
   const { error, showErrorModal, httpError } = useHttpError();
-  const [collapsed, setCollapsed] = useState(false);
-  const [component, setComponent] = useState(null);
   const [sourceData, setSourceData] = useState([]);
 
   useEffect(() => {
@@ -27,23 +24,39 @@ const ManagePolls = () => {
   };
 
   const deletePoll = (id) => {
-    remove({pollId: id}, { t: jwt.token } ).then((data) => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    remove({ pollId: id }, { t: jwt.token }).then((data) => {
       if (data && data.error) {
         showErrorModal(data.error);
       } else {
-        location.reload();
         success('Poll deleted');
+        list(signal).then((data) => {
+          if (data && data.error) {
+            console.log(data.error);
+          } else {
+            setPolls(data);
+          }
+        });
       }
     });
   };
 
   const closePoll = (id) => {
-    close({pollId: id}, { t: jwt.token } ).then((data) => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    close({ pollId: id }, { t: jwt.token }).then((data) => {
       if (data && data.error) {
         showErrorModal(data.error);
       } else {
-        location.reload();
         success('Poll closed');
+        list(signal).then((data) => {
+          if (data && data.error) {
+            console.log(data.error);
+          } else {
+            setPolls(data);
+          }
+        });
       }
     });
   };
@@ -52,7 +65,7 @@ const ManagePolls = () => {
     {
       title: 'Questions',
       dataIndex: 'questions',
-      key: 'questions',
+      key: 'questions'
 
     },
     {
@@ -71,7 +84,6 @@ const ManagePolls = () => {
       // eslint-disable-next-line react/display-name
       render: (record) => (
         <Space size="middle">
-          <a onClick={() => console.log(record.key)}>Edit</a>
           <a onClick={() => deletePoll(record.key)}>Delete</a>
           <a onClick={() => closePoll(record.key)}>Close</a>
         </Space>
@@ -109,22 +121,15 @@ const ManagePolls = () => {
     }
   }, [polls]);
 
-  const showAside = () => {
-    setCollapsed(true);
-    setComponent(<CreatePoll />);
-  };
-
   return (
     <>
       <div>
-        <Button type='primary' onClick={showAside}>CREATE</Button>
+        <Link to='/create-poll'>
+          <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
+        </Link>
         <Table columns={columns} dataSource={sourceData} />
       </div>
-      {collapsed && <SideBar
-        isSidebarOpen={collapsed}
-        component={component}
-        onClick={() => setCollapsed(false)}
-      />}
+
     </>
   );
 };

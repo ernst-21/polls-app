@@ -9,7 +9,7 @@ const SignoutBtn = () => {
 
   return (
     <Button type="primary" onClick={() => {
-      auth.clearJWT(() => history.push('/'));
+      auth.clearJWT(() => history.push('/signin'));
     }}>
       Logout
     </Button>

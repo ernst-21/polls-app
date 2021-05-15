@@ -54,73 +54,75 @@ const ResetPassword = () => {
   }
 
   return (
-    <Card
-      title="Reset Password"
-      extra={<Link to='/signin'>Cancel</Link>}
-
-    >
-      <Form
-        {...layout}
-        name="basic"
-        onFinish={clickSubmit}
-        className="form-container"
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Card
+        title="Reset Password"
+        extra={<Link to='/signin'>Cancel</Link>}
+        style={{ width: '50%', marginTop: '1rem' }}
       >
-        <Form.Item
-          label="Enter new password"
-          name="password"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please input your new password!'
-            },
-            () => ({
-              validator(_, value) {
-                if (!value || value.length >= 6) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(
-                  new Error('Password must contain at least 6 characters.')
-                );
-              }
-            })
-          ]}
+        <Form
+          {...layout}
+          name="basic"
+          onFinish={clickSubmit}
+          className="form-container"
         >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="confirm"
-          label="Confirm new password"
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please confirm your new password!'
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
+          <Form.Item
+            label="Enter new password"
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please input your new password!'
+              },
+              () => ({
+                validator(_, value) {
+                  if (!value || value.length >= 6) {
+                    return Promise.resolve();
+                  }
 
-                return Promise.reject(
-                  new Error('The two passwords that you entered do not match!')
-                );
-              }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+                  return Promise.reject(
+                    new Error('Password must contain at least 6 characters.')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            name="confirm"
+            label="Confirm new password"
+            dependencies={['password']}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please confirm your new password!'
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+
+                  return Promise.reject(
+                    new Error('The two passwords that you entered do not match!')
+                  );
+                }
+              })
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
   );
 };
 

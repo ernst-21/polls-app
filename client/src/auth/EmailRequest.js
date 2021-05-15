@@ -54,42 +54,44 @@ const EmailRequest = () => {
   }
 
   return (
-    <Card
-      title="Please enter your e-mail to update your password."
-      extra={<Link to="/signin">Cancel</Link>}
-
-    >
-      <Form
-        {...layout}
-        name="basic"
-        initialValues={{
-          remember: true
-        }}
-        onFinish={clickSubmit}
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Card
+        title="Please enter your e-mail to update your password."
+        extra={<Link to="/signin">Cancel</Link>}
+        style={{ width: '50%', marginTop: '1rem' }}
       >
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              type: 'email',
-              message: 'The input is not valid E-mail!'
-            },
-            {
-              required: true,
-              message: 'Please input your E-mail!'
-            }
-          ]}
+        <Form
+          {...layout}
+          name="basic"
+          initialValues={{
+            remember: true
+          }}
+          onFinish={clickSubmit}
         >
-          <Input />
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!'
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
   );
 };
 

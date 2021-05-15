@@ -24,6 +24,13 @@ const tailLayout = {
   }
 };
 
+const isAdminRoute = (window, path) => {
+  if (window.location.pathname == path)
+    return { width: '50%', marginTop: '1rem' };
+  else
+    return { width: '100%' };
+};
+
 const EditUserProfile = (props) => {
   const [user, setUser] = useState();
   const jwt = auth.isAuthenticated();
@@ -112,10 +119,11 @@ const EditUserProfile = (props) => {
 
 
   return (
-    <div>
+    <div style={{display: 'flex', justifyContent: 'center'}}>
       <Card
         title='Edit Profile'
         extra={window.location.pathname === `/user/edit-user/${adminId}` ? (<Link to={'/user/' + adminId}>Cancel</Link>) : (<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>)}
+        style={isAdminRoute(window, `/user/edit-user/${adminId}`)}
       >
         <div>
           <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px' }}>* Empty values will not overwrite

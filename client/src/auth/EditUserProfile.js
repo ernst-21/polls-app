@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import auth from './auth-helper';
 import useUploadImage from '../hooks/useUploadImage';
 import { useHttpError } from '../hooks/http-hook';
+import {useParams, Link} from 'react-router-dom';
 import { Avatar, Button, Card, Form, Input, message } from 'antd';
 import { read, updateUser } from '../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -30,6 +31,7 @@ const EditUserProfile = (props) => {
   const [image, setImage] = useState('');
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = props.userId;
+  const adminId = useParams().userId;
   const nodeRef = useRef();
   const [form] = Form.useForm();
 
@@ -54,7 +56,7 @@ const EditUserProfile = (props) => {
 
     read(
       {
-        userId: userId
+        userId: userId || adminId
       },
       { t: jwt.token },
       signal
@@ -69,7 +71,7 @@ const EditUserProfile = (props) => {
     return function cleanup() {
       abortController.abort();
     };
-  }, [userId, jwt.token]);
+  }, [userId, jwt.token, adminId]);
 
   const handleImageChange = (info) => {
     setImage(info.file.originFileObj);
@@ -113,7 +115,7 @@ const EditUserProfile = (props) => {
     <div>
       <Card
         title='Edit Profile'
-        extra={<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>}
+        extra={window.location.pathname === `/user/edit-user/${adminId}` ? (<Link to={'/user/' + adminId}>Cancel</Link>) : (<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>)}
       >
         <div>
           <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px' }}>* Empty values will not overwrite

@@ -60,10 +60,14 @@ const Profile = (props) => {
             <h4>Edit</h4>
           </Link>)
           :
-          (<a onClick={props.editProfile} ref={nodeRef}>
+          (window.location.pathname === `/user/${user._id}` && auth.isAuthenticated().user.role === 'admin' ? (<Link to={'/user/edit-user/' + user._id}>
             <EditOutlined style={{ fontSize: '1.5rem' }} />
             <h4>Edit</h4>
-          </a>)}
+          </Link>) : (<a onClick={props.editProfile} ref={nodeRef}>
+            <EditOutlined style={{ fontSize: '1.5rem' }} />
+            <h4>Edit</h4>
+          </a>))
+        }
         <DeleteUser userId={user._id || props.userId} />
       </div>}
     </Card>

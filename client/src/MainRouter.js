@@ -14,6 +14,7 @@ import PollsView from './polls/PollsView';
 import ManagePolls from './auth/ManagePolls';
 import ManageUsers from './auth/ManageUsers';
 import CreatePoll from './auth/CreatePoll';
+import EditUserProfile from './auth/EditUserProfile';
 import CreateUser from './auth/CreateUser';
 
 const MainRouter = () => {
@@ -34,6 +35,7 @@ const MainRouter = () => {
           <Route path="/email" component={EmailRequest} />
           <Route path="/info" component={InfoSuccess} />
           <PrivateRoute path="/user/edit/:userId" component={EditProfile} />
+          <AdminRoute path="/user/edit-user/:userId" component={EditUserProfile} />
           <Route path="/user/:userId" component={Profile} />
         </Switch>
       </div>

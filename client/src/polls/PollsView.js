@@ -32,7 +32,7 @@ const PollsView = () => {
 
   useEffect(() => {
     if (polls.length > 0) {
-      setSourceData(polls.map(item => {
+      setSourceData(polls.reverse().map(item => {
         return {
           key: item._id,
           question: item.question,
@@ -184,7 +184,7 @@ const PollsView = () => {
         </div>
         <div style={{ marginTop: '1rem' }}>
           {barsInActive ? (<Row style={{ display: 'flex', justifyContent: 'center' }} gutter={[24, 32]}>
-            {polls.map(item => {
+            {polls.reverse().map(item => {
               return <Col key={item._id} className="gutter-row" span={7}><Poll
                 question={item.question}
                 chosenAnswer={item.chosenAnswer}

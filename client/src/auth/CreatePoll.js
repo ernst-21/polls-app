@@ -25,7 +25,8 @@ const tailLayout = {
 const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
   const [poll, setPoll] = useState();
-  const [doneReady, setDoneReady] = useState(false);
+  const [validateReady, setValidateReady] = useState(false);
+  const [preview, setPreview] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [validateOptions, setValidateOptions] = useState(false);
   const [form] = Form.useForm();
@@ -55,14 +56,22 @@ const CreatePoll = () => {
         title: 'Error',
         content: 'Options must be unique. Please check the given options',
         onOk() {
-          setValidateOptions(false);
+          setPreview(false);
           setPoll(undefined);
         }
       });
     }
   };
 
-  const done = () => {
+  const checkOption = async (rule, value) => {
+    if (!value || value.trim().length === 0) {
+      await setValidateReady(false);
+    } else {
+      await setValidateReady(true);
+    }
+  };
+
+  const validate = () => {
     const values = form.getFieldsValue();
     const answers = values.answers ? filterOutUndefined(values.answers) : null;
     const additionalOptions = answers && answers.length > 0 ? answers.map(item => item.option.trim()) : null;
@@ -74,6 +83,7 @@ const CreatePoll = () => {
     if (options && options.length >= 2) {
       const noDuplicates = !hasDuplicates(options);
       if (noDuplicates) {
+        setPreview(true);
         setValidateOptions(true);
         setPoll({ question: values.question, options: options });
       }
@@ -81,7 +91,6 @@ const CreatePoll = () => {
   };
 
   const info = () => {
-    console.log(poll);
     Modal.info({
       title: 'Poll Preview',
       content: (
@@ -96,11 +105,11 @@ const CreatePoll = () => {
     form.resetFields();
     setPoll(undefined);
     setValidateOptions(false);
+    setValidateReady(false);
 
   };
 
   const clickSubmit = () => {
-    console.log(poll);
     const finalPoll = {
       question: poll.question,
       answers: poll.options
@@ -113,6 +122,8 @@ const CreatePoll = () => {
       } else {
         success('Poll successfully created');
         form.resetFields();
+        setValidateReady(false);
+        setValidateOptions(false);
       }
     });
   };
@@ -126,7 +137,8 @@ const CreatePoll = () => {
         style={{ width: '70%', marginTop: '1rem' }}
       >
         <Form {...layout} form={form} name="dynamic_form_nest_item" onFinish={clickSubmit}>
-          <Form.Item name="question" label="Question" rules={[{ required: true, message: 'Missing question' }]}>
+          <Form.Item name="question" label="Question"
+            rules={[{ required: true, message: 'Missing question' }]}>
             <Input />
           </Form.Item>
 
@@ -134,7 +146,7 @@ const CreatePoll = () => {
             label="Option #1"
             name='first'
             fieldKey='first'
-            rules={[{ required: true, message: 'Missing option' }]}
+            rules={[{ required: true, message: 'Option #2 is required' }]}
           >
             <Input />
           </Form.Item>
@@ -142,17 +154,24 @@ const CreatePoll = () => {
             label="Option #2"
             name='second'
             fieldKey='second'
-            rules={[{ required: true, message: 'Missing option' }, ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('option1') !== value) {
-                  setDoneReady(true);
-                  return Promise.resolve();
+            dependencies={['question', 'first']}
+            rules={[{ required: true, message: 'Option #2 is required' },
+              ({ getFieldValue }) => ({
+                async validator(_, value) {
+                  if (!value || getFieldValue('first') === value) {
+                    await setValidateReady(false);
+                  }
+                  if (!value || !getFieldValue('question') || !getFieldValue('first')) {
+                    await setValidateReady(false);
+                  }
+                  if (value && getFieldValue('question').trim().length > 0 && getFieldValue('first').trim().length > 0) {
+                    await setValidateReady(true);
+                  } else {
+                    await setValidateReady(false);
+                  }
                 }
-                return Promise.reject(
-                  new Error('Every option in the poll must be unique!')
-                );
-              }
-            })]}
+              })
+            ]}
           >
             <Input />
           </Form.Item>
@@ -169,11 +188,18 @@ const CreatePoll = () => {
                         {...field}
                         name={[field.name, 'option']}
                         fieldKey={[field.fieldKey, 'option']}
-                        rules={[{ required: true, unique: true, message: 'Type an option or close this field' }]}
+                        rules={[{
+                          required: true,
+                          message: 'Type an option or close this field to validate the poll'
+                        }, { validator: checkOption }]}
                       >
                         <Input />
                       </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(field.name)} />
+                      <MinusCircleOutlined onClick={() => {
+                        remove(field.name);
+                        setValidateReady(true);
+                        setPreview(false);
+                      }} />
                     </Space>
                   </div>
                 ))}
@@ -186,26 +212,27 @@ const CreatePoll = () => {
             )}
           </Form.List>
 
-          <div style={{ display: 'flex' }}>
-            {doneReady && <Form.Item>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {validateReady && <Form.Item>
               <Button
                 type='link'
-                onClick={() => done()}
+                onClick={() => validate()}
               >
-                Validate Options
+                Validate
               </Button>
 
             </Form.Item>}
-            {poll && poll.options && validateOptions && <Button
+            {validateOptions && preview && <Button
               type='link'
               onClick={info}
             >
               Preview
             </Button>}
-            {validateOptions && <Button
+            {validateOptions && preview && <Button
               type='link'
               onClick={() => {
                 setValidateOptions(false);
+                setPreview(false);
                 setPoll(undefined);
               }}
             >
@@ -217,12 +244,11 @@ const CreatePoll = () => {
               <Button htmlType="button" onClick={onReset}>
                 Reset
               </Button>
-              <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions}>
+              <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions || !validateReady}>
                 Submit
               </Button>
             </div>
           </Form.Item>
-
         </Form>
       </Card>
     </div>

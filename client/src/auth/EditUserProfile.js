@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import auth from './auth-helper';
 import useUploadImage from '../hooks/useUploadImage';
 import { useHttpError } from '../hooks/http-hook';
-import {useParams, Link} from 'react-router-dom';
-import { Avatar, Button, Card, Form, Input, message } from 'antd';
+import { useParams, Link } from 'react-router-dom';
+import { Avatar, Button, Card, Form, Input, message, Select } from 'antd';
 import { read, updateUser } from '../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
 import AvatarUpload from '../user/AvatarUpload';
 
+const { Option } = Select;
 
 const layout = {
   labelCol: {
@@ -72,6 +73,7 @@ const EditUserProfile = (props) => {
         errorMessage(data.error);
       } else {
         setUser({ ...data, password: '', redirectToManageUsers: false });
+
       }
     });
 
@@ -90,6 +92,7 @@ const EditUserProfile = (props) => {
   };
 
   const clickSubmit = (values) => {
+
     const usr = {
       name: values.name || undefined,
       email: values.email || undefined,
@@ -119,10 +122,11 @@ const EditUserProfile = (props) => {
 
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Card
         title='Edit Profile'
-        extra={window.location.pathname === `/user/edit-user/${adminId}` ? (<Link to={'/user/' + adminId}>Cancel</Link>) : (<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>)}
+        extra={window.location.pathname === `/user/edit-user/${adminId}` ? (
+          <Link to={'/user/' + adminId}>Cancel</Link>) : (<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>)}
         style={isAdminRoute(window, `/user/edit-user/${adminId}`)}
       >
         <div>
@@ -146,12 +150,15 @@ const EditUserProfile = (props) => {
             />
           )}
 
-          <Form
+          {user && <Form
             form={form}
             {...layout}
             name="basic"
             initialValues={{
-              remember: true
+              remember: true,
+              name: user.name,
+              email: user.email,
+              role: user.role
             }}
             onFinish={clickSubmit}
           >
@@ -185,17 +192,13 @@ const EditUserProfile = (props) => {
               <Input />
             </Form.Item>
             <Form.Item
-              initialValue={user ? user.role : null}
-              label="Role"
               name="role"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please input your username!'
-                }
-              ]}
-            >
-              <Input />
+              label="Role">
+              <Select style={{ width: 120 }}>
+                <Option value="admin">Admin</Option>
+                <Option value="user">User</Option>
+                <Option value="power-user">Power-User</Option>
+              </Select>
             </Form.Item>
             <Form.Item
               label="New Password"
@@ -247,11 +250,11 @@ const EditUserProfile = (props) => {
               <Input.Password />
             </Form.Item>
             <Form.Item {...tailLayout}>
-              <Button style={{marginTop: '.5rem'}} type="primary" htmlType="submit">
+              <Button style={{ marginTop: '.5rem' }} type="primary" htmlType="submit">
                 Update
               </Button>
             </Form.Item>
-          </Form>
+          </Form>}
         </div>
       </Card>
     </div>

@@ -1,63 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { useHttpError } from '../hooks/http-hook';
-import { Button, Card, Form, Input, message, Modal } from 'antd';
+import { Form, Input, Button, Space, Modal, Card, message } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { create } from '../polls/api-polls';
+import Poll from '../polls/Poll';
 import auth from './auth-helper';
 import { Link } from 'react-router-dom';
-import Poll from '../polls/Poll';
+import { create } from '../polls/api-polls';
+import { useHttpError } from '../hooks/http-hook';
 
 const layout = {
   labelCol: {
-    span: 7
+    span: 6
   },
   wrapperCol: {
-    span: 10
+    span: 16
   }
 };
 const tailLayout = {
   wrapperCol: {
-    offset: 7,
-    span: 8
-  }
-};
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 7 }
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 20 }
-  }
-};
-const formItemLayoutWithOutLabel = {
-  wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 20, offset: 7 }
+    offset: 8,
+    span: 16
   }
 };
 
 const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
-  const [question, setQuestion] = useState('');
-  const [option, setOption] = useState();
+  const [poll, setPoll] = useState();
+  const [doneReady, setDoneReady] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [validateOptions, setValidateOptions] = useState(false);
   const [form] = Form.useForm();
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
 
   useEffect(() => {
     if (error) {
@@ -70,20 +41,71 @@ const CreatePoll = () => {
     message.success(msg);
   };
 
-  const handleQuestion = (values) => {
-    setQuestion(values.question);
+  const filterOutUndefined = (array) => {
+    return array.filter(item => item !== undefined);
   };
 
-  const handleOptions = (values) => {
-    setOption(values.options);
+  const hasDuplicates = (array) => {
+    const newArray = array.map(item => {
+      return item.trim().toLowerCase();
+    });
+    const duplicate = (new Set(newArray)).size !== newArray.length;
+    if (duplicate) {
+      Modal.error({
+        title: 'Error',
+        content: 'Options must be unique. Please check the given options',
+        onOk() {
+          setValidateOptions(false);
+          setPoll(undefined);
+        }
+      });
+    }
+  };
+
+  const done = () => {
+    const values = form.getFieldsValue();
+    const answers = values.answers ? filterOutUndefined(values.answers) : null;
+    const additionalOptions = answers && answers.length > 0 ? answers.map(item => item.option.trim()) : null;
+    const filteredAdditionalOptions = additionalOptions ? additionalOptions.filter(item => item !== '') : null;
+    let options = [values.first, values.second];
+    if (filteredAdditionalOptions) {
+      filteredAdditionalOptions.map(item => options.push(item));
+    }
+    if (options && options.length >= 2) {
+      const noDuplicates = !hasDuplicates(options);
+      if (noDuplicates) {
+        setValidateOptions(true);
+        setPoll({ question: values.question, options: options });
+      }
+    }
+  };
+
+  const info = () => {
+    console.log(poll);
+    Modal.info({
+      title: 'Poll Preview',
+      content: (
+        <Poll style={{ marginTop: '1rem' }} question={poll.question} answers={poll.options} />
+      ),
+      onOk() {
+      }
+    });
+  };
+
+  const onReset = () => {
+    form.resetFields();
+    setPoll(undefined);
+    setValidateOptions(false);
+
   };
 
   const clickSubmit = () => {
-    const poll = {
-      question: question,
-      answers: option
+    console.log(poll);
+    const finalPoll = {
+      question: poll.question,
+      answers: poll.options
     };
-    create(poll, {
+    create(finalPoll, {
       t: jwt.token
     }).then((data) => {
       if (data.error) {
@@ -91,151 +113,122 @@ const CreatePoll = () => {
       } else {
         success('Poll successfully created');
         form.resetFields();
-        setQuestion('');
-        setOption(null);
       }
     });
   };
 
+
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Card
-        title="Create a Poll"
-        extra={
-          <Link to="/manage-polls">Manage Polls</Link>
-        }
-        style={{ marginTop: '1rem' }}
+        title="Create Poll"
+        extra={<Link to="/manage-polls">Back to Manage Polls</Link>}
+        style={{ width: '70%', marginTop: '1rem' }}
       >
-        <div>
-          <Form
-            {...layout}
-            name="basic"
-            initialValues={{
-              remember: false
-            }}
-            onFinish={handleQuestion}
+        <Form {...layout} form={form} name="dynamic_form_nest_item" onFinish={clickSubmit}>
+          <Form.Item name="question" label="Question" rules={[{ required: true, message: 'Missing question' }]}>
+            <Input />
+          </Form.Item>
 
+          <Form.Item
+            label="Option #1"
+            name='first'
+            fieldKey='first'
+            rules={[{ required: true, message: 'Missing option' }]}
           >
-            <Form.Item
-              label="Question"
-              name="question"
-              rules={[
-                {
-                  required: false
-
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Option #2"
+            name='second'
+            fieldKey='second'
+            rules={[{ required: true, message: 'Missing option' }, ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('option1') !== value) {
+                  setDoneReady(true);
+                  return Promise.resolve();
                 }
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item {...tailLayout}>
-              {question ? (<Button type="secondary" htmlType='submit'>
-                Reset Question
-              </Button>) : (<Button type="secondary" htmlType='submit'>
-                Save Question
-              </Button>)}
-            </Form.Item>
-          </Form>
-          <Form form={form} name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={handleOptions}>
-            <Form.List
-              name="options"
-              rules={[
-                {
-                  validator: async (_, options) => {
-                    if (!options || options.length < 2) {
-                      return Promise.reject(new Error('At least 2 options'));
-                    }
-                  }
-                }
-              ]}
-            >
-              {(fields, { add, remove }, { errors }) => (
-                <>
-                  {fields.map((field, index) => (
-                    <Form.Item
-                      {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                      label={index === 0 ? 'Options' : ''}
-                      required={false}
-                      key={field.key}
-                    >
+                return Promise.reject(
+                  new Error('Every option in the poll must be unique!')
+                );
+              }
+            })]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.List
+            name="answers"
+          >
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(field => (
+                  <div key={field.key} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Space align="baseline">
                       <Form.Item
+                        label='Options'
                         {...field}
-                        validateTrigger={['onChange', 'onBlur']}
-                        rules={[
-                          {
-                            required: true,
-                            whitespace: true,
-                            message: 'Please input an option or delete this field.'
-                          }
-                        ]}
-                        noStyle
+                        name={[field.name, 'option']}
+                        fieldKey={[field.fieldKey, 'option']}
+                        rules={[{ required: true, unique: true, message: 'Type an option or close this field' }]}
                       >
-                        <Input placeholder="option" style={{ width: '60%' }} />
+                        <Input />
                       </Form.Item>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          className="dynamic-delete-button"
-                          onClick={() => {
-                            remove(field.name);
-                            console.log(field.name);
-                          }}
-                        />
-                      ) : null}
-                    </Form.Item>
-                  ))}
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      style={{ width: '60%' }}
-                      icon={<PlusOutlined />}
-                    >
-                      Add Option
-                    </Button>
-                    <Button
-                      type="dashed"
-                      onClick={() => {
-                        add('The head item', 0);
-                      }}
-                      style={{ width: '60%', marginTop: '20px' }}
-                      icon={<PlusOutlined />}
-                    >
-                      Add Option at head
-                    </Button>
-                    <Form.ErrorList errors={errors} />
-                  </Form.Item>
-                </>
-              )}
-            </Form.List>
-            <Form.Item>
-              <Button type="secondary" htmlType="submit">
-                Save Options
+                      <MinusCircleOutlined onClick={() => remove(field.name)} />
+                    </Space>
+                  </div>
+                ))}
+                {!validateOptions && <Form.Item {...tailLayout}>
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add options
+                  </Button>
+                </Form.Item>}
+              </>
+            )}
+          </Form.List>
+
+          <div style={{ display: 'flex' }}>
+            {doneReady && <Form.Item>
+              <Button
+                type='link'
+                onClick={() => done()}
+              >
+                Validate Options
               </Button>
-            </Form.Item>
-          </Form>
-          <div style={{ display: 'flex', placeItems: 'center', flexDirection: 'column' }}>
-            <Button disabled={!question || !option}
+
+            </Form.Item>}
+            {poll && poll.options && validateOptions && <Button
               type='link'
-              onClick={showModal}
+              onClick={info}
             >
               Preview
-            </Button>
-            <Button
-              disabled={!question || !option}
-              style={{ marginTop: '2rem', width: '40%' }}
-              htmlType='submit' type='primary' onClick={clickSubmit}
+            </Button>}
+            {validateOptions && <Button
+              type='link'
+              onClick={() => {
+                setValidateOptions(false);
+                setPoll(undefined);
+              }}
             >
-              Submit Poll
-            </Button>
+              Keep adding options
+            </Button>}
           </div>
-        </div>
-      </Card>
+          <Form.Item>
+            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+              <Button htmlType="button" onClick={onReset}>
+                Reset
+              </Button>
+              <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions}>
+                Submit
+              </Button>
+            </div>
+          </Form.Item>
 
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <Poll question={question} answers={option} />
-      </Modal>
-    </>
+        </Form>
+      </Card>
+    </div>
   );
+
 };
 
 export default CreatePoll;
+

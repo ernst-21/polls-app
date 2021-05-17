@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { close, list, remove, open } from '../polls/api-polls';
-import { Button, Table, Space, message } from 'antd';
+import { Button, Table, Space, message, Modal } from 'antd';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
 
@@ -9,6 +9,8 @@ import { useHttpError } from '../hooks/http-hook';
 const ManagePolls = () => {
   const jwt = auth.isAuthenticated();
   const [polls, setPolls] = useState([]);
+  const [pollId, setPollId] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
 
@@ -103,9 +105,8 @@ const ManagePolls = () => {
       // eslint-disable-next-line react/display-name
       render: (record) => (
         <Space size="middle">
-          <a onClick={() => deletePoll(record.key)}>Delete</a>
+          <a onClick={() => showModal(record.key)}>Delete</a>
           {record.isClosed ? (<a onClick={() => openPoll(record.key)}>Open Poll</a>) : (<a onClick={() => closePoll(record.key)}>Close</a>)}
-
         </Space>
       )
     }
@@ -142,6 +143,20 @@ const ManagePolls = () => {
     }
   }, [polls]);
 
+  const showModal = (id) => {
+    setPollId(id);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+    deletePoll(pollId);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <>
       <div>
@@ -149,6 +164,9 @@ const ManagePolls = () => {
           <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
         </Link>
         <Table columns={columns} dataSource={sourceData} />
+        <Modal title="Delete Poll" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+          <p>By clicking OK this poll will be deleted. This action cannot be undone</p>
+        </Modal>
       </div>
     </>
   );

@@ -133,16 +133,18 @@ const EditProfile = () => {
             />
           )}
 
-          <Form
+          {user && <Form
             {...layout}
             name="basic"
             initialValues={{
-              remember: true
+              remember: false,
+              name: user.name,
+              email: user.email,
             }}
             onFinish={clickSubmit}
           >
             <Form.Item
-              initialValue={user ? user.name : null}
+              //initialValue={'gshadgajsdgha'}
               label="Username"
               name="name"
               rules={[
@@ -155,7 +157,7 @@ const EditProfile = () => {
               <Input />
             </Form.Item>
             <Form.Item
-              initialValue={user ? user.email : null}
+              initialValue={user ? user.email : 'hh'}
               name="email"
               label="E-mail"
               rules={[
@@ -228,7 +230,7 @@ const EditProfile = () => {
                 Update
               </Button>
             </Form.Item>
-          </Form>
+          </Form>}
         </div>
       </Card>
     </div>

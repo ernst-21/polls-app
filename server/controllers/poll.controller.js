@@ -72,26 +72,6 @@ const open = async (req, res) => {
   }
 };
 
-const update = async (req, res, next) => {
-  try {
-    let poll = req.profile;
-    const { question, answerYes, answerNo } = req.body;
-    poll.question = question || poll.question;
-    poll.answerYes = answerYes || poll.answerYes;
-    poll.answerNo = answerNo || poll.answerNo;
-    poll.updated = Date.now();
-    poll.modified = true;
-    await poll.save();
-    res.json(poll);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
-      error:
-        'Something went wrong and poll could not be updated. Please input your data again.'
-    });
-  }
-};
-
 const remove = async (req, res, next) => {
   try {
     let poll = req.profile;
@@ -125,7 +105,6 @@ exports.create = create;
 exports.list = list;
 exports.pollByID = pollByID;
 exports.read = read;
-exports.update = update;
 exports.remove = remove;
 exports.vote = vote;
 exports.close = close;

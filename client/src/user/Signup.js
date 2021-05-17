@@ -74,7 +74,6 @@ const Signup = (props) => {
             remember: true
           }}
           onFinish={clickSubmit}
-          className="form-container"
         >
           <Form.Item
             label="Username"

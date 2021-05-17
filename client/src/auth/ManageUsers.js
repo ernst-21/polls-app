@@ -126,9 +126,7 @@ const ManageUsers = () => {
       render: (record) => (
         <Space size="middle">
           <a onClick={() => showModal(record.key)}>Delete</a>
-          {/*<Link to={`/user/edit-user/${record.key}`}>Edit</Link>*/}
           <a onClick={() => editUser(record.key)}>Edit</a>
-          {/*<Link to={`/user/${record.key}`}>View</Link>*/}
           <a onClick={() => viewProfile(record.key)}>View</a>
         </Space>
       )
@@ -141,7 +139,7 @@ const ManageUsers = () => {
         <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
       </Link>
       <Table dataSource={sourceData} columns={columns} />
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
       {collapsed && <SideBar

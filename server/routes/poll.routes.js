@@ -17,7 +17,6 @@ router.route('/api/polls/open/:pollId').put(authCtrl.requireSignin, authCtrl.isP
 router
   .route('/api/polls/:pollId')
   .get(authCtrl.requireSignin, pollCtrl.read)
-  .put(authCtrl.requireSignin, authCtrl.isPowerAndAdmin, pollCtrl.update)
   .delete(authCtrl.requireSignin, authCtrl.isPowerAndAdmin, pollCtrl.remove);
 
 module.exports = router;

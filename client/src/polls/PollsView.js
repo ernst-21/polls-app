@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { list, vote } from './api-polls';
-import { Col, Table, Row, Space, Card, message } from 'antd';
-import { BarsOutlined, AppstoreOutlined, AppstoreFilled } from '@ant-design/icons';
+import { Col, Table, Row, Space, Card, message, Tag } from 'antd';
+import { BarsOutlined, AppstoreOutlined, AppstoreFilled  } from '@ant-design/icons';
 import Poll from './Poll';
 import SideBar from '../core/SideBar';
 import auth from '../auth/auth-helper';
 import { useHttpError } from '../hooks/http-hook';
+import {useTableFilter} from '../hooks/useTableFilter';
 
 const isActive = (active) => {
   if (active)
@@ -16,6 +17,7 @@ const isActive = (active) => {
 
 const PollsView = () => {
   const jwt = auth.isAuthenticated();
+  const {getColumnSearchProps} = useTableFilter();
   const [collapsed, setCollapsed] = useState(false);
   const [userId, setUserId] = useState('');
   const [component, setComponent] = useState(null);
@@ -23,6 +25,8 @@ const PollsView = () => {
   const [sourceData, setSourceData] = useState([]);
   const [barsInActive, setBarsInActive] = useState(true);
   const { error, showErrorModal, httpError } = useHttpError();
+
+
 
   useEffect(() => {
     if (jwt) {
@@ -41,6 +45,8 @@ const PollsView = () => {
           answers: item.answers,
           chosenAnswer: item.chosenAnswer,
           closed: item.closed,
+          isClosed: item.closed  ===  false ? 'OPEN' : 'CLOSED',
+          isNew: item.voters.length === 0 ? 'NEW' : null,
           hasVoted: item.voters.includes(userId)
         };
       }));
@@ -75,14 +81,44 @@ const PollsView = () => {
 
   const columns = [
     {
+      ...getColumnSearchProps('question'),
       title: 'Polls',
       dataIndex: 'question',
-      key: 'question'
+      key: 'question',
+    },
+    {
+      ...getColumnSearchProps('isNew'),
+      title: 'New',
+      dataIndex: 'isNew',
+      key: 'isNew',
+      // eslint-disable-next-line react/display-name
+      render: record => (
+        <span>
+          {record && <Tag color='green'>
+            NEW
+          </Tag>}
+        </span>
+      ),
+
     },
     {
       title: 'Voters',
       dataIndex: 'voterNumber',
-      key: 'voterNumber'
+      key: 'voterNumber',
+    },
+    {
+      ...getColumnSearchProps('isClosed'),
+      title: 'Status',
+      dataIndex: 'isClosed',
+      key: 'isClosed',
+      // eslint-disable-next-line react/display-name
+      render: (record) => (
+        <Space>
+          <Tag color={record === 'CLOSED' ? 'volcano' : 'green'}>
+            {record}
+          </Tag>
+        </Space>
+      ),
     },
     {
       title: 'Action',

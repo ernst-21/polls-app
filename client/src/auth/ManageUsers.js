@@ -7,6 +7,7 @@ import { useHttpError } from '../hooks/http-hook';
 import { list, removeUser } from '../user/api-user';
 import { Link } from 'react-router-dom';
 import SideBar from '../core/SideBar';
+import {useTableFilter} from '../hooks/useTableFilter';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
@@ -17,6 +18,7 @@ const ManageUsers = () => {
   const [component, setComponent] = useState(null);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
+  const {getColumnSearchProps} = useTableFilter();
 
   useEffect(() => {
     if (error) {
@@ -104,17 +106,20 @@ const ManageUsers = () => {
 
   const columns = [
     {
+      ...getColumnSearchProps('name'),
       title: 'Name',
       dataIndex: 'name',
       key: 'name'
 
     },
     {
+      ...getColumnSearchProps('email'),
       title: 'Email',
       dataIndex: 'email',
       key: 'email'
     },
     {
+      ...getColumnSearchProps('role'),
       title: 'Role',
       dataIndex: 'role',
       key: 'role'

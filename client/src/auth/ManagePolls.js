@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { close, list, remove, open } from '../polls/api-polls';
-import { Button, Table, Space, message, Modal } from 'antd';
+import { Button, Table, Space, message, Modal, Tag } from 'antd';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
+import { useTableFilter } from '../hooks/useTableFilter';
 
 
 const ManagePolls = () => {
@@ -13,6 +14,7 @@ const ManagePolls = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
+  const {getColumnSearchProps} = useTableFilter();
 
   useEffect(() => {
     if (error) {
@@ -84,10 +86,24 @@ const ManagePolls = () => {
 
   const columns = [
     {
+      ...getColumnSearchProps('questions'),
       title: 'Questions',
       dataIndex: 'questions',
       key: 'questions'
-
+    },
+    {
+      ...getColumnSearchProps('isNew'),
+      title: 'New',
+      dataIndex: 'isNew',
+      key: 'isNew',
+      // eslint-disable-next-line react/display-name
+      render: record => (
+        <span>
+          {record && <Tag color='green'>
+            NEW
+          </Tag>}
+        </span>
+      )
     },
     {
       title: 'Voters',
@@ -95,9 +111,18 @@ const ManagePolls = () => {
       key: 'voters'
     },
     {
-      title: 'Closed',
-      dataIndex: 'closed',
-      key: 'closed'
+      ...getColumnSearchProps('isClosed'),
+      title: 'Status',
+      dataIndex: 'isClosed',
+      key: 'isClosed',
+      // eslint-disable-next-line react/display-name
+      render: (record) => (
+        <Space>
+          <Tag color={record === 'CLOSED' ? 'volcano' : 'green'}>
+            {record}
+          </Tag>
+        </Space>
+      ),
     },
     {
       title: 'Action',
@@ -106,7 +131,8 @@ const ManagePolls = () => {
       render: (record) => (
         <Space size="middle">
           <a onClick={() => showModal(record.key)}>Delete</a>
-          {record.isClosed ? (<a onClick={() => openPoll(record.key)}>Open Poll</a>) : (<a onClick={() => closePoll(record.key)}>Close</a>)}
+          {record.closed ? (<a onClick={() => openPoll(record.key)}>Open Poll</a>) : (
+            <a onClick={() => closePoll(record.key)}>Close Poll</a>)}
         </Space>
       )
     }
@@ -131,13 +157,14 @@ const ManagePolls = () => {
 
   useEffect(() => {
     if (polls.length > 0) {
-      setSourceData(polls.map(item => {
+      setSourceData(polls.reverse().map(item => {
         return {
           key: item._id,
           questions: item.question,
           voters: item.voters.length,
-          closed: item.closed.toString().toUpperCase(),
-          isClosed: item.closed
+          closed: item.closed,
+          isClosed: item.closed  ===  false ? 'OPEN' : 'CLOSED',
+          isNew: item.voters.length === 0 ? 'NEW' : ''
         };
       }));
     }

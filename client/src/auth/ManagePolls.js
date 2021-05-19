@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { close, list, remove, open } from '../polls/api-polls';
 import { Button, Table, Space, message, Modal, Tag, Skeleton, Empty } from 'antd';
 import auth from './auth-helper';
@@ -11,11 +11,33 @@ const ManagePolls = () => {
   const jwt = auth.isAuthenticated();
   const [polls, setPolls] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [pollId, setPollId] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
   const { getColumnSearchProps } = useTableFilter();
+
+  useEffect(() => {
+    setIsLoading(true);
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    list(signal).then((data) => {
+      if (data && data.error) {
+        console.log(data.error);
+      } else if (data) {
+        setPolls(data);
+        setIsLoading(false);
+      } else if (!data) {
+        setRedirectToNetError(true);
+      }
+    });
+
+    return function cleanup() {
+      abortController.abort();
+    };
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -33,16 +55,21 @@ const ManagePolls = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     remove({ pollId: id }, { t: jwt.token }).then((data) => {
+      if (!data) {
+        setRedirectToNetError(true);
+      }
       if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success('Poll deleted');
         list(signal).then((data) => {
           if (data && data.error) {
             console.log(data.error);
-          } else {
+          } else if (data) {
             setPolls(data);
             setIsLoading(false);
+          } else if (!data) {
+            setRedirectToNetError(true);
           }
         });
       }
@@ -54,6 +81,9 @@ const ManagePolls = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     close({ pollId: id }, { t: jwt.token }).then((data) => {
+      if (!data) {
+        setRedirectToNetError(true);
+      }
       if (data && data.error) {
         showErrorModal(data.error);
       } else {
@@ -61,9 +91,11 @@ const ManagePolls = () => {
         list(signal).then((data) => {
           if (data && data.error) {
             console.log(data.error);
-          } else {
+          } else if (data) {
             setPolls(data);
             setIsLoading(false);
+          } else if (!data) {
+            setRedirectToNetError(true);
           }
         });
       }
@@ -75,16 +107,21 @@ const ManagePolls = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     open({ pollId: id }, { t: jwt.token }).then((data) => {
+      if (!data) {
+        setRedirectToNetError(true);
+      }
       if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success('Poll open');
         list(signal).then((data) => {
           if (data && data.error) {
             console.log(data.error);
-          } else {
+          } else if (data) {
             setPolls(data);
             setIsLoading(false);
+          } else if (!data) {
+            setRedirectToNetError(true);
           }
         });
       }
@@ -146,25 +183,6 @@ const ManagePolls = () => {
   ];
 
   useEffect(() => {
-    setIsLoading(true);
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    list(signal).then((data) => {
-      if (data && data.error) {
-        console.log(data.error);
-      } else {
-        setPolls(data);
-        setIsLoading(false);
-      }
-    });
-
-    return function cleanup() {
-      abortController.abort();
-    };
-  }, []);
-
-  useEffect(() => {
     if (!isLoading) {
       setSourceData(polls.reverse().map(item => {
         return {
@@ -195,6 +213,10 @@ const ManagePolls = () => {
 
   const pollsClosed = polls.filter(item => item.closed === true);
   const pollsNew = polls.filter(item => item.voters.length === 0);
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
+  }
 
   return (
     <>

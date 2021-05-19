@@ -1,7 +1,9 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
+import {Redirect} from 'react-router-dom';
 
 const useUploadImage = () => {
   const [imageUrl, setImageUrl] = useState('');
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
 
   const uploadPic = (img) => {
 
@@ -17,12 +19,16 @@ const useUploadImage = () => {
       .then((data) => {
         setImageUrl(data.url);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {console.log(err); setRedirectToNetError(true);});
   };
 
   const deleteImageUrl = () => {
     setImageUrl(null);
   };
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
+  }
 
   return {imageUrl, uploadPic, deleteImageUrl};
 };

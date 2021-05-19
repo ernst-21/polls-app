@@ -21,6 +21,7 @@ const tailLayout = {
 
 const EmailRequest = () => {
   const [redirect, setRedirect] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const {httpError, showErrorModal, error} = useHttpError();
 
   useEffect(() => {
@@ -40,17 +41,23 @@ const EmailRequest = () => {
 
     };
     emailToPass(user).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success(data.message);
         setRedirect(true);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
 
   if (redirect) {
     return <Redirect to='/info'/>;
+  }
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
   }
 
   return (

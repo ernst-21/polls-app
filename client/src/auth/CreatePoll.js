@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {Redirect} from 'react-router-dom';
 import { Form, Input, Button, Space, Modal, Card, message, Tooltip } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Poll from '../polls/Poll';
@@ -25,6 +26,7 @@ const tailLayout = {
 const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
   const [poll, setPoll] = useState();
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [validateReady, setValidateReady] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [validateOptions, setValidateOptions] = useState(false);
@@ -111,17 +113,22 @@ const CreatePoll = () => {
     create(finalPoll, {
       t: jwt.token
     }).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success('Poll successfully created');
         form.resetFields();
         setValidateReady(false);
         setValidateOptions(false);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
 
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
+  }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>

@@ -9,6 +9,7 @@ import { useHttpError } from '../hooks/http-hook';
 export default function DeleteUser(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [redirect, setRedirect] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [redirectToTable, setRedirectToTable] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
 
@@ -32,19 +33,23 @@ export default function DeleteUser(props) {
       }, { t: jwt.token }).then((data) => {
         if (data && data.error) {
           showErrorModal(data.error);
-        } else {
+        } else if (data) {
           auth.clearJWT(() => success('Account successfully deleted'));
           setRedirect(true);
+        } else if (!data) {
+          setRedirectToNetError(true);
         }
       }) : removeUser({
         userId: props.userId
       }, { t: jwt.token }).then((data) => {
         if (data && data.error) {
           showErrorModal(data.error);
-        } else {
+        } else if (data) {
           success('User successfully deleted');
           setRedirectToTable(true);
           location.reload();
+        } else if (!data) {
+          setRedirectToNetError(true);
         }
       });
   };
@@ -68,6 +73,10 @@ export default function DeleteUser(props) {
 
   if (redirectToTable) {
     return <Redirect to='/manage-users' />;
+  }
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error'/>;
   }
 
   return (

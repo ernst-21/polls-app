@@ -16,6 +16,7 @@ import ManageUsers from './auth/ManageUsers';
 import CreatePoll from './auth/CreatePoll';
 import EditUserProfile from './auth/EditUserProfile';
 import CreateUser from './auth/CreateUser';
+import InfoError from './core/InfoError';
 
 const MainRouter = () => {
   return (
@@ -34,6 +35,7 @@ const MainRouter = () => {
           <Route path="/reset/edit/:token" component={ResetPassword} />
           <Route path="/email" component={EmailRequest} />
           <Route path="/info" component={InfoSuccess} />
+          <Route path="/info-network-error" component={InfoError} />
           <PrivateRoute path="/user/edit/:userId" component={EditProfile} />
           <AdminRoute path="/user/edit-user/:userId" component={EditUserProfile} />
           <Route path="/user/:userId" component={Profile} />

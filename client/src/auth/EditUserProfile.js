@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import auth from './auth-helper';
 import useUploadImage from '../hooks/useUploadImage';
 import { useHttpError } from '../hooks/http-hook';
-import { useParams, Link } from 'react-router-dom';
-import { Avatar, Button, Card, Form, Input, message, Select } from 'antd';
+import { useParams, Link, Redirect } from 'react-router-dom';
+import { Avatar, Button, Card, Form, Input, message, Select, Spin } from 'antd';
 import { read, updateUser } from '../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
 import AvatarUpload from '../user/AvatarUpload';
@@ -38,6 +38,8 @@ const EditUserProfile = (props) => {
   const jwt = auth.isAuthenticated();
   const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
   const [image, setImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = props.userId;
   const adminId = useParams().userId;
@@ -60,6 +62,7 @@ const EditUserProfile = (props) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -72,9 +75,11 @@ const EditUserProfile = (props) => {
     ).then((data) => {
       if (data && data.error) {
         errorMessage(data.error);
-      } else {
+      } else if (data) {
         setUser({ ...data, password: '', redirectToManageUsers: false });
-
+        setIsLoading(false);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
 
@@ -112,19 +117,24 @@ const EditUserProfile = (props) => {
     ).then((data) => {
       if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         setUser({ ...user, userId: data._id, redirectToManageUsers: true });
         form.resetFields();
         location.reload();
         info('User successfully updated');
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
 
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error'/>;
+  }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <Card
+      {isLoading ? (<Spin />) : (<Card
         title='Edit Profile'
         extra={window.location.pathname === `/user/edit-user/${adminId}` ? (
           <Link to={'/user/' + adminId}>Cancel</Link>) : (<a onClick={props.closeSideBar} ref={nodeRef}>Cancel</a>)}
@@ -257,7 +267,8 @@ const EditUserProfile = (props) => {
             </Form.Item>
           </Form>}
         </div>
-      </Card>
+      </Card>)}
+
     </div>
   );
 };

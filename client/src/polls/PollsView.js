@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { list, vote } from './api-polls';
+import {Redirect} from 'react-router-dom';
 import { Col, Table, Row, Space, Card, message, Tag, Skeleton, Empty, Spin } from 'antd';
 import { BarsOutlined, AppstoreOutlined, AppstoreFilled  } from '@ant-design/icons';
 import Poll from './Poll';
@@ -24,6 +25,7 @@ const PollsView = () => {
   const [component, setComponent] = useState(null);
   const [polls, setPolls] = useState([]);
   const [sourceData, setSourceData] = useState([]);
+  const [redirectToNetErrror, setRedirectToNetError] = useState(false);
   const [barsInActive, setBarsInActive] = useState(true);
   const { error, showErrorModal, httpError } = useHttpError();
 
@@ -34,9 +36,11 @@ const PollsView = () => {
     list(signal).then((data) => {
       if (data && data.error) {
         console.log(data.error);
-      } else {
+      } else if (data) {
         setPolls(data);
         setIsLoading(false);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
     return function cleanup() {
@@ -192,15 +196,21 @@ const PollsView = () => {
         list(signal).then((data) => {
           if (data && data.error) {
             console.log(data.error);
-          } else {
+          } else if (data) {
             setPolls(data);
             setIsLoading(false);
+          } else if (!data) {
+            setRedirectToNetError(true);
           }
         });
         success('Poll successfully voted.');
       }
     });
   };
+
+  if (redirectToNetErrror) {
+    return <Redirect to='/info-network-error'/>;
+  }
 
   return (
     <>

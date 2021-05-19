@@ -23,6 +23,7 @@ const tailLayout = {
 const Signup = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -42,11 +43,13 @@ const Signup = (props) => {
       password: values.confirm || undefined
     };
     create(user).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success(data.message);
         setRedirectToReferrer(true);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
@@ -59,6 +62,10 @@ const Signup = (props) => {
 
   if (redirectToReferrer) {
     return (<Redirect to={from} />);
+  }
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
   }
 
   return (

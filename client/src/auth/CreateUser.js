@@ -24,6 +24,7 @@ const tailLayout = {
 
 const CreateUser = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
 
   useEffect(() => {
@@ -45,11 +46,13 @@ const CreateUser = (props) => {
       password: values.confirm || undefined
     };
     create(user).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success('User successfully created');
         setRedirectToReferrer(true);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
@@ -63,6 +66,11 @@ const CreateUser = (props) => {
   if (redirectToReferrer) {
     return (<Redirect to={from} />);
   }
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
+  }
+
   return (
     <div style={{display: 'flex', justifyContent: 'center'}}>
       <Card

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Button, Modal, message, Card, Skeleton, Empty } from 'antd';
 import Profile from '../user/Profile';
+import {Redirect} from 'react-router-dom';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
@@ -13,6 +14,7 @@ const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -40,9 +42,11 @@ const ManageUsers = () => {
     list(signal).then((data) => {
       if (data && data.error) {
         console.log(data.error);
-      } else {
+      } else if (data) {
         setUsers(data);
         setIsLoading(false);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
     return function cleanup() {
@@ -68,17 +72,22 @@ const ManageUsers = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     removeUser({ userId: id }, { t: jwt.token }).then((data) => {
+      if (!data) {
+        setRedirectToNetError(true);
+      }
       if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         console.log(data);
         success('User deleted');
         list(signal).then((data) => {
           if (data && data.error) {
             console.log(data.error);
-          } else {
+          } else if (data) {
             setUsers(data);
             setIsLoading(false);
+          } else if (!data) {
+            setRedirectToNetError(true);
           }
         });
       }
@@ -142,6 +151,10 @@ const ManageUsers = () => {
       )
     }
   ];
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
+  }
 
   return (
     <div>

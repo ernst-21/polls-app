@@ -22,6 +22,7 @@ const tailLayout = {
 
 const ResetPassword = () => {
   const [redirect, setRedirect] = useState(false);
+  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const {httpError, showErrorModal, error} = useHttpError();
   const token = useParams().token;
 
@@ -43,15 +44,21 @@ const ResetPassword = () => {
     resetPass({token: token}, user).then((data) => {
       if (data && data.error) {
         showErrorModal(data.error);
-      } else {
+      } else if (data) {
         success('Password Reset Successful. Please sign in.');
         setRedirect(true);
+      } else if (!data) {
+        setRedirectToNetError(true);
       }
     });
   };
 
   if (redirect) {
     return <Redirect to='/signin'/>;
+  }
+
+  if (redirectToNetError) {
+    return <Redirect to='/info-network-error' />;
   }
 
   return (

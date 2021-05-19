@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'antd';
 import { CSSTransition } from 'react-transition-group';
+import {CloseOutlined} from '@ant-design/icons';
 
 const SideBar = ({ onClick, component, isSidebarOpen }) => {
   return (
@@ -8,10 +8,12 @@ const SideBar = ({ onClick, component, isSidebarOpen }) => {
       timeout={200}
       classNames="slide-in-right"
       in={isSidebarOpen}
+      mountOnEnter
+      unmountOnExit
     >
-      <aside className={`${isSidebarOpen ? 'sidebar show-sidebar' : 'sidebar'}`}>
+      <aside className='sidebar'>
         <div className='sidebar-header'>
-          <Button onClick={onClick}>CLOSE</Button>
+          <CloseOutlined style={{fontSize: '20px'}} onClick={onClick}/>
         </div>
         {component}
       </aside>

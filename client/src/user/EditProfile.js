@@ -7,6 +7,7 @@ import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
 import useUploadImage from '../hooks/useUploadImage';
 import { DeleteOutlined } from '@ant-design/icons';
+import {strongPass, wrongPasswordMessage} from '../config/config';
 
 const layout = {
   labelCol: {
@@ -182,12 +183,12 @@ const EditProfile = () => {
                 },
                 () => ({
                   validator(_, value) {
-                    if (!value || value.length >= 6) {
+                    if (!value || strongPass.test(value)) {
                       return Promise.resolve();
                     }
 
                     return Promise.reject(
-                      new Error('Password must contain at least 6 characters.')
+                      new Error(wrongPasswordMessage)
                     );
                   }
                 })

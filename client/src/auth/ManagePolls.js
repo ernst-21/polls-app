@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { close, list, remove, open } from '../polls/api-polls';
-import { Button, Table, Space, message, Modal, Tag } from 'antd';
+import { Button, Table, Space, message, Modal, Tag, Skeleton, Empty } from 'antd';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
 import { useTableFilter } from '../hooks/useTableFilter';
@@ -10,11 +10,12 @@ import { useTableFilter } from '../hooks/useTableFilter';
 const ManagePolls = () => {
   const jwt = auth.isAuthenticated();
   const [polls, setPolls] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [pollId, setPollId] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
-  const {getColumnSearchProps} = useTableFilter();
+  const { getColumnSearchProps } = useTableFilter();
 
   useEffect(() => {
     if (error) {
@@ -28,6 +29,7 @@ const ManagePolls = () => {
   };
 
   const deletePoll = (id) => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
     remove({ pollId: id }, { t: jwt.token }).then((data) => {
@@ -40,6 +42,7 @@ const ManagePolls = () => {
             console.log(data.error);
           } else {
             setPolls(data);
+            setIsLoading(false);
           }
         });
       }
@@ -47,6 +50,7 @@ const ManagePolls = () => {
   };
 
   const closePoll = (id) => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
     close({ pollId: id }, { t: jwt.token }).then((data) => {
@@ -59,6 +63,7 @@ const ManagePolls = () => {
             console.log(data.error);
           } else {
             setPolls(data);
+            setIsLoading(false);
           }
         });
       }
@@ -66,6 +71,7 @@ const ManagePolls = () => {
   };
 
   const openPoll = (id) => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
     open({ pollId: id }, { t: jwt.token }).then((data) => {
@@ -78,6 +84,7 @@ const ManagePolls = () => {
             console.log(data.error);
           } else {
             setPolls(data);
+            setIsLoading(false);
           }
         });
       }
@@ -122,7 +129,7 @@ const ManagePolls = () => {
             {record}
           </Tag>
         </Space>
-      ),
+      )
     },
     {
       title: 'Action',
@@ -139,6 +146,7 @@ const ManagePolls = () => {
   ];
 
   useEffect(() => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -147,6 +155,7 @@ const ManagePolls = () => {
         console.log(data.error);
       } else {
         setPolls(data);
+        setIsLoading(false);
       }
     });
 
@@ -156,19 +165,19 @@ const ManagePolls = () => {
   }, []);
 
   useEffect(() => {
-    if (polls.length > 0) {
+    if (!isLoading) {
       setSourceData(polls.reverse().map(item => {
         return {
           key: item._id,
           questions: item.question,
           voters: item.voters.length,
           closed: item.closed,
-          isClosed: item.closed  ===  false ? 'OPEN' : 'CLOSED',
+          isClosed: item.closed === false ? 'OPEN' : 'CLOSED',
           isNew: item.voters.length === 0 ? 'NEW' : ''
         };
       }));
     }
-  }, [polls]);
+  }, [polls, isLoading]);
 
   const showModal = (id) => {
     setPollId(id);
@@ -184,13 +193,24 @@ const ManagePolls = () => {
     setIsModalVisible(false);
   };
 
+  const pollsClosed = polls.filter(item => item.closed === true);
+  const pollsNew = polls.filter(item => item.voters.length === 0);
+
   return (
     <>
       <div>
         <Link to='/create-poll'>
           <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
         </Link>
-        <Table columns={columns} dataSource={sourceData} />
+        <div style={{display:'flex', float: 'right', marginRight: '2rem'}}>
+          <p style={{marginRight: '2rem'}}><em>{polls.length} polls</em></p>
+          <p style={{marginRight: '2rem'}}><em>{pollsClosed.length} closed</em></p>
+          {(polls && pollsNew.length > 0) && <p style={{marginRight: '2rem'}}><em>{pollsNew.length} new</em></p>}
+        </div>
+        <Table columns={columns} dataSource={isLoading? [] : sourceData} loaderType='skeleton'
+          locale={{
+            emptyText: isLoading ? <Skeleton paragraph={false} active={true} size='large' /> : <Empty />
+          }} />
         <Modal title="Delete Poll" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
           <p>By clicking OK this poll will be deleted. This action cannot be undone</p>
         </Modal>

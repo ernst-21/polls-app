@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Modal, message, Card } from 'antd';
+import { Space, Table, Button, Modal, message, Card, Skeleton, Empty } from 'antd';
 import Profile from '../user/Profile';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
@@ -7,18 +7,19 @@ import { useHttpError } from '../hooks/http-hook';
 import { list, removeUser } from '../user/api-user';
 import { Link } from 'react-router-dom';
 import SideBar from '../core/SideBar';
-import {useTableFilter} from '../hooks/useTableFilter';
+import { useTableFilter } from '../hooks/useTableFilter';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const [component, setComponent] = useState(null);
   const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
-  const {getColumnSearchProps} = useTableFilter();
+  const { getColumnSearchProps } = useTableFilter();
 
   useEffect(() => {
     if (error) {
@@ -32,6 +33,7 @@ const ManageUsers = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -40,6 +42,7 @@ const ManageUsers = () => {
         console.log(data.error);
       } else {
         setUsers(data);
+        setIsLoading(false);
       }
     });
     return function cleanup() {
@@ -48,7 +51,7 @@ const ManageUsers = () => {
   }, []);
 
   useEffect(() => {
-    if (users.length > 0) {
+    if (!isLoading) {
       setSourceData(users.map(item => {
         return {
           key: item._id,
@@ -58,9 +61,10 @@ const ManageUsers = () => {
         };
       }));
     }
-  }, [users]);
+  }, [users, isLoading]);
 
   const deleteUser = (id) => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
     removeUser({ userId: id }, { t: jwt.token }).then((data) => {
@@ -74,6 +78,7 @@ const ManageUsers = () => {
             console.log(data.error);
           } else {
             setUsers(data);
+            setIsLoading(false);
           }
         });
       }
@@ -87,7 +92,7 @@ const ManageUsers = () => {
 
   const viewProfile = (id) => {
     setCollapsed(true);
-    setComponent(<Card><Profile userId={id} editProfile={() => editUser(id)}/></Card>);
+    setComponent(<Card><Profile userId={id} editProfile={() => editUser(id)} /></Card>);
   };
 
   const showModal = (id) => {
@@ -143,16 +148,22 @@ const ManageUsers = () => {
       <Link to='/create-user'>
         <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
       </Link>
-      <Table dataSource={sourceData} columns={columns} />
+      <p style={{ float: 'right', marginRight: '2rem' }}><em>{users.length} users</em></p>
+      <Table
+        dataSource={isLoading ? [] : sourceData}
+        columns={columns} loaderType='skeleton'
+        locale={{
+          emptyText: isLoading ? <Skeleton paragraph={false} active={true} size='large' /> : <Empty />
+        }} />
       <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
-      {collapsed && <SideBar
-        style={{height: '100vh', witdth: '45%', overflow: 'hidden'}}
+      <SideBar
+        style={{ height: '100vh', width: '45%', overflow: 'hidden' }}
         isSidebarOpen={collapsed}
         component={component}
         onClick={() => setCollapsed(false)}
-      />}
+      />
     </div>
   );
 };

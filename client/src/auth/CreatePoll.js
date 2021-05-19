@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Space, Modal, Card, message } from 'antd';
+import { Form, Input, Button, Space, Modal, Card, message, Tooltip } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Poll from '../polls/Poll';
 import auth from './auth-helper';
@@ -26,9 +26,9 @@ const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
   const [poll, setPoll] = useState();
   const [validateReady, setValidateReady] = useState(false);
-  const [preview, setPreview] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const [validateOptions, setValidateOptions] = useState(false);
+  const [submitReady, setSubmitReady] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -54,20 +54,14 @@ const CreatePoll = () => {
     if (duplicate) {
       Modal.error({
         title: 'Error',
-        content: 'Options must be unique. Please check the given options',
+        content: 'Options must be unique. Please check the given options and remove duplicated values.',
         onOk() {
-          setPreview(false);
           setPoll(undefined);
+          setValidateOptions(false);
         }
       });
-    }
-  };
-
-  const checkOption = async (rule, value) => {
-    if (!value || value.trim().length === 0) {
-      await setValidateReady(false);
     } else {
-      await setValidateReady(true);
+      success('Poll is valid!');
     }
   };
 
@@ -83,7 +77,6 @@ const CreatePoll = () => {
     if (options && options.length >= 2) {
       const noDuplicates = !hasDuplicates(options);
       if (noDuplicates) {
-        setPreview(true);
         setValidateOptions(true);
         setPoll({ question: values.question, options: options });
       }
@@ -97,6 +90,7 @@ const CreatePoll = () => {
         <Poll style={{ marginTop: '1rem' }} question={poll.question} answers={poll.options} />
       ),
       onOk() {
+        setSubmitReady(true);
       }
     });
   };
@@ -146,7 +140,7 @@ const CreatePoll = () => {
             label="Option #1"
             name='first'
             fieldKey='first'
-            rules={[{ required: true, message: 'Option #2 is required' }]}
+            rules={[{ required: true, message: 'Option #1 is required' }]}
           >
             <Input />
           </Form.Item>
@@ -160,14 +154,17 @@ const CreatePoll = () => {
                 async validator(_, value) {
                   if (!value || getFieldValue('first') === value) {
                     await setValidateReady(false);
+                    await setValidateOptions(false);
                   }
                   if (!value || !getFieldValue('question') || !getFieldValue('first')) {
                     await setValidateReady(false);
+                    await setValidateOptions(false);
                   }
                   if (value && getFieldValue('question').trim().length > 0 && getFieldValue('first').trim().length > 0) {
                     await setValidateReady(true);
                   } else {
                     await setValidateReady(false);
+                    await setValidateOptions(false);
                   }
                 }
               })
@@ -175,7 +172,7 @@ const CreatePoll = () => {
           >
             <Input />
           </Form.Item>
-          <Form.List
+          {validateReady && <Form.List
             name="answers"
           >
             {(fields, { add, remove }) => (
@@ -191,60 +188,53 @@ const CreatePoll = () => {
                         rules={[{
                           required: true,
                           message: 'Type an option or close this field to validate the poll'
-                        }, { validator: checkOption }]}
+                        }]}
                       >
                         <Input />
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => {
                         remove(field.name);
                         setValidateReady(true);
-                        setPreview(false);
                       }} />
                     </Space>
                   </div>
                 ))}
-                {!validateOptions && <Form.Item {...tailLayout}>
+                <Form.Item {...tailLayout}>
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                     Add options
                   </Button>
-                </Form.Item>}
+                </Form.Item>
               </>
             )}
-          </Form.List>
+          </Form.List>}
 
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {validateReady && <Form.Item>
-              <Button
-                type='link'
-                onClick={() => validate()}
-              >
-                Validate
-              </Button>
+              <Tooltip placement="topLeft" title="Duplicated options will not be submitted. Please always validate and preview before submitting">
+                <Button
+                  type='link'
+                  onClick={() => validate()}
+                >
+                  Validate
+                </Button>
+              </Tooltip>
 
             </Form.Item>}
-            {validateOptions && preview && <Button
-              type='link'
-              onClick={info}
-            >
-              Preview
-            </Button>}
-            {validateOptions && preview && <Button
-              type='link'
-              onClick={() => {
-                setValidateOptions(false);
-                setPreview(false);
-                setPoll(undefined);
-              }}
-            >
-              Keep adding options
-            </Button>}
+            {validateOptions && <Tooltip placement="topRight" title="Poll will be submitted as shown in preview." >
+              <Button
+                type='link'
+                onClick={info}
+              >
+                Preview
+              </Button>
+            </Tooltip>}
           </div>
           <Form.Item>
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
               <Button htmlType="button" onClick={onReset}>
                 Reset
               </Button>
-              <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions || !validateReady}>
+              <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions || !submitReady}>
                 Submit
               </Button>
             </div>

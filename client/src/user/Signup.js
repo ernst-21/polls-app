@@ -3,6 +3,7 @@ import { create } from './api-user.js';
 import { Link, Redirect } from 'react-router-dom';
 import { useHttpError } from '../hooks/http-hook';
 import { Form, Input, Button, Checkbox, Card, message } from 'antd';
+import {strongPass, wrongPasswordMessage} from '../config/config';
 
 const layout = {
   labelCol: {
@@ -114,12 +115,12 @@ const Signup = (props) => {
               },
               () => ({
                 validator(_, value) {
-                  if (!value || value.length >= 6) {
+                  if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
 
                   return Promise.reject(
-                    new Error('Password must contain at least 6 characters.')
+                    new Error(wrongPasswordMessage)
                   );
                 }
               })

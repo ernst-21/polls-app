@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useHttpError } from '../hooks/http-hook';
-import { Button, Card, Checkbox, Form, Input, message } from 'antd';
+import { Button, Card, Checkbox, Form, Input, message, Select } from 'antd';
 import { create } from '../user/api-user';
 import { Link, Redirect } from 'react-router-dom';
+import {strongPass, wrongPasswordMessage} from '../config/config';
+
+const {Option} = Select;
 
 const layout = {
   labelCol: {
@@ -105,14 +108,12 @@ const CreateUser = (props) => {
           </Form.Item>
           <Form.Item
             name="role"
-            label="Role"
-            rules={[
-              {
-                required: false,
-              }
-            ]}
-          >
-            <Input />
+            label="Role">
+            <Select style={{ width: 120 }}>
+              <Option value="admin">Admin</Option>
+              <Option value="user">User</Option>
+              <Option value="power-user">Power-User</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Password"
@@ -125,12 +126,12 @@ const CreateUser = (props) => {
               },
               () => ({
                 validator(_, value) {
-                  if (!value || value.length >= 6) {
+                  if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
 
                   return Promise.reject(
-                    new Error('Password must contain at least 6 characters.')
+                    new Error(wrongPasswordMessage)
                   );
                 }
               })

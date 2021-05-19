@@ -7,6 +7,7 @@ import { Avatar, Button, Card, Form, Input, message, Select } from 'antd';
 import { read, updateUser } from '../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
 import AvatarUpload from '../user/AvatarUpload';
+import {strongPass, wrongPasswordMessage} from '../config/config';
 
 const { Option } = Select;
 
@@ -210,12 +211,12 @@ const EditUserProfile = (props) => {
                 },
                 () => ({
                   validator(_, value) {
-                    if (!value || value.length >= 6) {
+                    if (!value || strongPass.test(value)) {
                       return Promise.resolve();
                     }
 
                     return Promise.reject(
-                      new Error('Password must contain at least 6 characters.')
+                      new Error(wrongPasswordMessage)
                     );
                   }
                 })

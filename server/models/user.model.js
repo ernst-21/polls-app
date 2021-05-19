@@ -44,7 +44,7 @@ UserSchema.virtual('password')
   });
 
 UserSchema.path('hashed_password').validate(function (v) {
-  if (this._password && this._password.length < 6) {
+  if (this._password && this._password.length < 8) {
     this.invalidate('password', 'Password must be at least 6 characters.');
   }
   if (this.isNew && !this._password) {

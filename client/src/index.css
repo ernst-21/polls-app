@@ -36,10 +36,10 @@ body {
 
 .sidebar-header {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     padding: 1rem 1.5rem;
-    background-color: #b3b3b3;
+    background-color: white;
 }
 
 .sidebar {
@@ -55,13 +55,8 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
     row-gap: 1rem;
-    transition:all 0.3s linear;;
-    transform: translate(-100%);
 }
 
-.show-sidebar {
-    transform: translate(0);
-}
 
 .dynamic-delete-button {
     position: relative;
@@ -80,4 +75,24 @@ body {
     opacity: 0.5;
 }
 
+.slide-in-right-enter {
+    transform: translateX(100%);
+}
+
+.slide-in-right-enter-active {
+    transform: translateX(0);
+    opacity: 1;
+    transition: all 450ms;
+}
+
+.slide-in-right-exit {
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+.slide-in-right-exit-active {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 450ms;
+}
 

@@ -3,6 +3,7 @@ import { Link, Redirect, useParams } from 'react-router-dom';
 import { Button, Card, Form, Input, message } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 import { resetPass } from '../user/api-user';
+import {strongPass, wrongPasswordMessage} from '../config/config';
 
 const layout = {
   labelCol: {
@@ -77,12 +78,12 @@ const ResetPassword = () => {
               },
               () => ({
                 validator(_, value) {
-                  if (!value || value.length >= 6) {
+                  if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
 
                   return Promise.reject(
-                    new Error('Password must contain at least 6 characters.')
+                    new Error(wrongPasswordMessage)
                   );
                 }
               })

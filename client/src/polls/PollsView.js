@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { list, vote } from './api-polls';
-import { Col, Table, Row, Space, Card, message, Tag } from 'antd';
+import { Col, Table, Row, Space, Card, message, Tag, Skeleton, Empty, Spin } from 'antd';
 import { BarsOutlined, AppstoreOutlined, AppstoreFilled  } from '@ant-design/icons';
 import Poll from './Poll';
 import SideBar from '../core/SideBar';
@@ -18,6 +18,7 @@ const isActive = (active) => {
 const PollsView = () => {
   const jwt = auth.isAuthenticated();
   const {getColumnSearchProps} = useTableFilter();
+  const [isLoading, setIsLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [userId, setUserId] = useState('');
   const [component, setComponent] = useState(null);
@@ -26,7 +27,22 @@ const PollsView = () => {
   const [barsInActive, setBarsInActive] = useState(true);
   const { error, showErrorModal, httpError } = useHttpError();
 
-
+  useEffect(() => {
+    setIsLoading(true);
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    list(signal).then((data) => {
+      if (data && data.error) {
+        console.log(data.error);
+      } else {
+        setPolls(data);
+        setIsLoading(false);
+      }
+    });
+    return function cleanup() {
+      abortController.abort();
+    };
+  }, []);
 
   useEffect(() => {
     if (jwt) {
@@ -35,7 +51,7 @@ const PollsView = () => {
   }, [jwt, component]);
 
   useEffect(() => {
-    if (polls.length > 0) {
+    if (!isLoading) {
       setSourceData(polls.reverse().map(item => {
         return {
           key: item._id,
@@ -51,7 +67,10 @@ const PollsView = () => {
         };
       }));
     }
-  }, [polls, userId]);
+  }, [polls, userId, isLoading]);
+
+  const pollsClosed = polls.filter(item => item.closed === true);
+  const pollsNew = polls.filter(item => item.voters.length === 0);
 
   const showAside = (item) => {
     setCollapsed(true);
@@ -148,22 +167,10 @@ const PollsView = () => {
     message.success(msg);
   };
 
-  useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-    list(signal).then((data) => {
-      if (data && data.error) {
-        console.log(data.error);
-      } else {
-        setPolls(data);
-      }
-    });
-    return function cleanup() {
-      abortController.abort();
-    };
-  }, []);
+
 
   const submitVote = (id, value) => {
+    setIsLoading(true);
     const abortController = new AbortController();
     const signal = abortController.signal;
     const user = {
@@ -187,6 +194,7 @@ const PollsView = () => {
             console.log(data.error);
           } else {
             setPolls(data);
+            setIsLoading(false);
           }
         });
         success('Poll successfully voted.');
@@ -217,9 +225,14 @@ const PollsView = () => {
                 setCollapsed(false);
               }} />)}
           </>
+          <div style={{display:'flex', float: 'right', marginRight: '2rem'}}>
+            <p style={{marginRight: '2rem'}}><em>{polls.length} polls</em></p>
+            <p style={{marginRight: '2rem'}}><em>{pollsClosed.length} closed</em></p>
+            {(polls && pollsNew.length > 0) && <p style={{marginRight: '2rem'}}><em>{pollsNew.length} new</em></p>}
+          </div>
         </div>
         <div style={{ marginTop: '1rem' }}>
-          {barsInActive ? (<Row style={{ display: 'flex', justifyContent: 'center' }} gutter={[24, 32]}>
+          {barsInActive ? (!isLoading ? <Row style={{ display: 'flex', justifyContent: 'center' }} gutter={[24, 32]}>
             {polls.reverse().map(item => {
               return <Col key={item._id} className="gutter-row" span={7}><Poll
                 question={item.question}
@@ -232,14 +245,22 @@ const PollsView = () => {
                 onClick={(e) =>handleClick(e, item._id)}
               /></Col>;
             })}
-          </Row>) : (<Table columns={columns} dataSource={sourceData} />)}
+          </Row> : <Spin />) : (<Table
+            columns={columns}
+            // eslint-disable-next-line react/display-name
+            dataSource={isLoading ? [] : sourceData}
+            loaderType='skeleton'
+            locale={{
+              emptyText: isLoading ? <Skeleton paragraph={false} active={true} size='large' /> : <Empty />
+            }}
+          />)}
         </div>
       </div>
-      {collapsed && <SideBar
+      <SideBar
         isSidebarOpen={collapsed}
         component={component}
         onClick={() => setCollapsed(false)}
-      />}
+      />
     </>
   );
 };

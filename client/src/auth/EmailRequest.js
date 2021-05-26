@@ -38,7 +38,6 @@ const EmailRequest = () => {
   const clickSubmit = (values) => {
     const user = {
       email: values.email || undefined,
-
     };
     emailToPass(user).then((data) => {
       if (data && data.error) {

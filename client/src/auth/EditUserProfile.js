@@ -268,7 +268,6 @@ const EditUserProfile = (props) => {
           </Form>}
         </div>
       </Card>)}
-
     </div>
   );
 };

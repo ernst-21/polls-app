@@ -137,7 +137,6 @@ const CreateUser = (props) => {
                   if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
-
                   return Promise.reject(
                     new Error(wrongPasswordMessage)
                   );

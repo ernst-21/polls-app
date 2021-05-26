@@ -16,7 +16,7 @@ const Poll = (props) => {
 
   if (!auth.isAuthenticated() && !props.closed) {
     return (
-      <Card>
+      <Card className='poll-card'>
         <div>
           <Title level={3}>{props.question}</Title>
           <Divider />
@@ -32,7 +32,7 @@ const Poll = (props) => {
     return (
       <>
         {props.closed ? (<Badge.Ribbon text='CLOSED' color='#e63b19'>
-          <Card>
+          <Card className='poll-card'>
             <div>
               <Title level={3}>{props.question}</Title>
               <Divider />
@@ -48,7 +48,7 @@ const Poll = (props) => {
             </div>
             <p><em>voters: {props.voters}</em></p>
           </Card>
-        </Badge.Ribbon>) : (!props.new ? (<Card>
+        </Badge.Ribbon>) : (!props.new ? (<Card className='poll-card'>
           <div>
             <Title level={3}>{props.question}</Title>
             <Divider />
@@ -78,7 +78,7 @@ const Poll = (props) => {
           <p style={{ marginTop: '1rem' }}><em>voters: {props.voters}</em></p>
         </Card>)
           :
-          (<Badge.Ribbon text='NEW' color='#03a31b'><Card>
+          (<Badge.Ribbon text='NEW' color='#03a31b'><Card className='poll-card'>
             <div>
               <Title level={3}>{props.question}</Title>
               <Divider />

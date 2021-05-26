@@ -102,7 +102,6 @@ const CreatePoll = () => {
     setPoll(undefined);
     setValidateOptions(false);
     setValidateReady(false);
-
   };
 
   const clickSubmit = () => {
@@ -214,7 +213,6 @@ const CreatePoll = () => {
               </>
             )}
           </Form.List>}
-
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {validateReady && <Form.Item>
               <Tooltip placement="topLeft" title="Duplicated options will not be submitted. Please always validate and preview before submitting">
@@ -225,7 +223,6 @@ const CreatePoll = () => {
                   Validate
                 </Button>
               </Tooltip>
-
             </Form.Item>}
             {validateOptions && <Tooltip placement="topRight" title="Poll will be submitted as shown in preview." >
               <Button
@@ -250,7 +247,6 @@ const CreatePoll = () => {
       </Card>
     </div>
   );
-
 };
 
 export default CreatePoll;

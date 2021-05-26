@@ -45,6 +45,5 @@ password: powertest
 
 To try it as a user just follow the registration flow of a regular website.
 
-CSS and issues/bugs are still under review and correction. I will highly appreciate if in the meantime you find issues or anything that can be improved.
+CSS and issues/bugs are still under review and correction. I will highly appreciate if in the meantime you find issues or anything that can be improved and let me know.
 
-## Implementation of redirecting in case of network/server down still pending.

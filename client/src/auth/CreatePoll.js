@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {Redirect} from 'react-router-dom';
-import { Form, Input, Button, Space, Modal, Card, message, Tooltip } from 'antd';
+import { Redirect } from 'react-router-dom';
+import { Form, Input, Button, Modal, Card, message, Tooltip } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Poll from '../polls/Poll';
 import auth from './auth-helper';
@@ -13,7 +13,7 @@ const layout = {
     span: 6
   },
   wrapperCol: {
-    span: 16
+    span: 15
   }
 };
 const tailLayout = {
@@ -182,10 +182,10 @@ const CreatePoll = () => {
             name="answers"
           >
             {(fields, { add, remove }) => (
-              <>
+              <React.Fragment>
                 {fields.map(field => (
-                  <div key={field.key} style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Space align="baseline">
+                  <div key={field.key} style={{ display: 'flex'}}>
+                    <div style={{width: '100%'}}>
                       <Form.Item
                         label='Options'
                         {...field}
@@ -196,26 +196,31 @@ const CreatePoll = () => {
                           message: 'Type an option or close this field to validate the poll'
                         }]}
                       >
-                        <Input />
+                        <Input style={{marginLeft: '.5rem'}} />
                       </Form.Item>
+                    </div>
+                    <div style={{ marginTop: '.5rem', marginRight: '.8rem'}}>
                       <MinusCircleOutlined onClick={() => {
                         remove(field.name);
                         setValidateReady(true);
-                      }} />
-                    </Space>
+                      }}  />
+                    </div>
                   </div>
                 ))}
                 <Form.Item {...tailLayout}>
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Add options
-                  </Button>
+                  <div style={{ width: '60%'}}>
+                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                      Add options
+                    </Button>
+                  </div>
                 </Form.Item>
-              </>
+              </React.Fragment>
             )}
           </Form.List>}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {validateReady && <Form.Item>
-              <Tooltip placement="topLeft" title="Duplicated options will not be submitted. Please always validate and preview before submitting">
+              <Tooltip placement="topLeft"
+                title="Duplicated options will not be submitted. Please always validate and preview before submitting">
                 <Button
                   type='link'
                   onClick={() => validate()}
@@ -224,7 +229,7 @@ const CreatePoll = () => {
                 </Button>
               </Tooltip>
             </Form.Item>}
-            {validateOptions && <Tooltip placement="topRight" title="Poll will be submitted as shown in preview." >
+            {validateOptions && <Tooltip placement="topRight" title="Poll will be submitted as shown in preview.">
               <Button
                 type='link'
                 onClick={info}

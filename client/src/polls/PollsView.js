@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { list, vote } from './api-polls';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Col, Table, Row, Space, Card, message, Tag, Skeleton, Empty, Spin } from 'antd';
-import { BarsOutlined, AppstoreOutlined, AppstoreFilled  } from '@ant-design/icons';
+import { BarsOutlined, AppstoreOutlined, AppstoreFilled } from '@ant-design/icons';
 import Poll from './Poll';
-import SideBar from '../core/SideBar';
+import SideDrawer from '../core/SideDrawer';
 import auth from '../auth/auth-helper';
 import { useHttpError } from '../hooks/http-hook';
-import {useTableFilter} from '../hooks/useTableFilter';
+import { useTableFilter } from '../hooks/useTableFilter';
 
 const isActive = (active) => {
   if (active)
@@ -18,7 +18,7 @@ const isActive = (active) => {
 
 const PollsView = () => {
   const jwt = auth.isAuthenticated();
-  const {getColumnSearchProps} = useTableFilter();
+  const { getColumnSearchProps } = useTableFilter();
   const [isLoading, setIsLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [userId, setUserId] = useState('');
@@ -65,7 +65,7 @@ const PollsView = () => {
           answers: item.answers,
           chosenAnswer: item.chosenAnswer,
           closed: item.closed,
-          isClosed: item.closed  ===  false ? 'OPEN' : 'CLOSED',
+          isClosed: item.closed === false ? 'OPEN' : 'CLOSED',
           isNew: item.voters.length === 0 ? 'NEW' : null,
           hasVoted: item.voters.includes(userId)
         };
@@ -89,7 +89,7 @@ const PollsView = () => {
           answers={item.answers}
           closed={item.closed}
           voted={item.voters.includes(userId)}
-          onClick={(e) =>handleClick(e, item.key)}
+          onClick={(e) => handleClick(e, item.key)}
         />
       </Card>
     );
@@ -107,7 +107,7 @@ const PollsView = () => {
       ...getColumnSearchProps('question'),
       title: 'Polls',
       dataIndex: 'question',
-      key: 'question',
+      key: 'question'
     },
     {
       ...getColumnSearchProps('isNew'),
@@ -121,13 +121,13 @@ const PollsView = () => {
             NEW
           </Tag>}
         </span>
-      ),
+      )
 
     },
     {
       title: 'Voters',
       dataIndex: 'voterNumber',
-      key: 'voterNumber',
+      key: 'voterNumber'
     },
     {
       ...getColumnSearchProps('isClosed'),
@@ -141,7 +141,7 @@ const PollsView = () => {
             {record}
           </Tag>
         </Space>
-      ),
+      )
     },
     {
       title: 'Action',
@@ -170,7 +170,6 @@ const PollsView = () => {
   const success = (msg) => {
     message.success(msg);
   };
-
 
 
   const submitVote = (id, value) => {
@@ -209,8 +208,12 @@ const PollsView = () => {
   };
 
   if (redirectToNetErrror) {
-    return <Redirect to='/info-network-error'/>;
+    return <Redirect to='/info-network-error' />;
   }
+
+  const closeDrawer = () => {
+    setCollapsed(false);
+  };
 
   return (
     <>
@@ -235,10 +238,10 @@ const PollsView = () => {
                 setCollapsed(false);
               }} />)}
           </>
-          <div style={{display:'flex', float: 'right', marginRight: '2rem'}}>
-            <p style={{marginRight: '2rem'}}><em>{polls.length} polls</em></p>
-            <p style={{marginRight: '2rem'}}><em>{pollsClosed.length} closed</em></p>
-            {(polls && pollsNew.length > 0) && <p style={{marginRight: '2rem'}}><em>{pollsNew.length} new</em></p>}
+          <div style={{ display: 'flex', float: 'right', marginRight: '2rem' }}>
+            <p style={{ marginRight: '2rem' }}><em>{polls.length} polls</em></p>
+            <p style={{ marginRight: '2rem' }}><em>{pollsClosed.length} closed</em></p>
+            {(polls && pollsNew.length > 0) && <p style={{ marginRight: '2rem' }}><em>{pollsNew.length} new</em></p>}
           </div>
         </div>
         <div style={{ marginTop: '1rem' }}>
@@ -252,7 +255,7 @@ const PollsView = () => {
                 answers={item.answers}
                 closed={item.closed}
                 voted={item.voters.includes(userId)}
-                onClick={(e) =>handleClick(e, item._id)}
+                onClick={(e) => handleClick(e, item._id)}
               /></Col>;
             })}
           </Row> : <Spin />) : (<Table
@@ -266,10 +269,9 @@ const PollsView = () => {
           />)}
         </div>
       </div>
-      <SideBar
-        isSidebarOpen={collapsed}
+      <SideDrawer isSideDrawerOpen={collapsed}
+        onDrawerClose={closeDrawer}
         component={component}
-        onClick={() => setCollapsed(false)}
       />
     </>
   );

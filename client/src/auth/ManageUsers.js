@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Button, Modal, message, Card, Skeleton, Empty } from 'antd';
 import Profile from '../user/Profile';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
 import { useHttpError } from '../hooks/http-hook';
 import { list, removeUser } from '../user/api-user';
 import { Link } from 'react-router-dom';
-import SideBar from '../core/SideBar';
+import SideDrawer from '../core/SideDrawer';
 import { useTableFilter } from '../hooks/useTableFilter';
 
 const ManageUsers = () => {
@@ -156,6 +156,10 @@ const ManageUsers = () => {
     return <Redirect to='/info-network-error' />;
   }
 
+  const closeDrawer = () => {
+    setCollapsed(false);
+  };
+
   return (
     <div>
       <Link to='/create-user'>
@@ -171,11 +175,9 @@ const ManageUsers = () => {
       <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
-      <SideBar
-        style={{ height: '100vh', width: '45%', overflow: 'hidden' }}
-        isSidebarOpen={collapsed}
+      <SideDrawer isSideDrawerOpen={collapsed}
+        onDrawerClose={closeDrawer}
         component={component}
-        onClick={() => setCollapsed(false)}
       />
     </div>
   );

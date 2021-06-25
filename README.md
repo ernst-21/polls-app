@@ -41,7 +41,7 @@ password: admintest
 
 email: poweruser@test.com
 
-password: powertest
+password: Power#user1
 
 To try it as a user just follow the registration flow of a regular website.
 

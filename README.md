@@ -37,11 +37,11 @@ email: admin@test.com
 
 password: admintest
 
-## You can as admin create a user as power-user privileges or sign in as:
+## You can in the admin role create a user with power-user privileges or sign in as:
 
 email: poweruser@test.com
 
-password: powertest
+password: Power#user1
 
 To try it as a user just follow the registration flow of a regular website.
 

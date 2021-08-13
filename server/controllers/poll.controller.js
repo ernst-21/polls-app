@@ -1,7 +1,7 @@
 const Poll = require('../models/poll.model');
 const errorHandler = require('../helpers/dbErrorHandler');
 
-const create = async (req, res, next) => {
+const createPoll = async (req, res, next) => {
   const poll = new Poll(req.body);
   try {
     await poll.save();
@@ -13,7 +13,7 @@ const create = async (req, res, next) => {
     });
   }
 };
-const list = async (req, res) => {
+const listPolls = async (req, res) => {
   try {
     let polls = await Poll.find().select('question answers chosenAnswer _id voters created closed');
     res.json(polls);
@@ -40,11 +40,11 @@ const pollByID = async (req, res, next, id) => {
   }
 };
 
-const read = (req, res) => {
+const readPoll = (req, res) => {
   return res.json(req.profile);
 };
 
-const close = async (req, res) => {
+const closePoll = async (req, res) => {
   try {
     let poll = req.profile;
     poll.closed = true;
@@ -58,7 +58,7 @@ const close = async (req, res) => {
   }
 };
 
-const open = async (req, res) => {
+const openPoll = async (req, res) => {
   try {
     let poll = req.profile;
     poll.closed = false;
@@ -72,7 +72,7 @@ const open = async (req, res) => {
   }
 };
 
-const remove = async (req, res, next) => {
+const removePoll = async (req, res, next) => {
   try {
     let poll = req.profile;
     let deletedPoll = await poll.remove();
@@ -84,7 +84,7 @@ const remove = async (req, res, next) => {
   }
 };
 
-const vote = async (req, res) => {
+const votePoll = async (req, res) => {
   await Poll.findByIdAndUpdate(
     req.params.pollId,
     {
@@ -100,12 +100,12 @@ const vote = async (req, res) => {
   });
 };
 
-exports.create = create;
-exports.list = list;
+exports.createPoll = createPoll;
+exports.listPolls = listPolls;
 exports.pollByID = pollByID;
-exports.read = read;
-exports.remove = remove;
-exports.vote = vote;
-exports.close = close;
-exports.open = open;
+exports.readPoll = readPoll;
+exports.removePoll = removePoll;
+exports.votePoll = votePoll;
+exports.closePoll = closePoll;
+exports.openPoll = openPoll;
 

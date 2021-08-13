@@ -144,8 +144,10 @@ const ManageUsers = () => {
       // eslint-disable-next-line react/display-name
       render: (record) => (
         <Space size="middle">
-          <a onClick={() => showModal(record.key)}>Delete</a>
-          <a onClick={() => editUser(record.key)}>Edit</a>
+          {record.role !== 'admin' && <>
+            <a onClick={() => showModal(record.key)}>Delete</a>
+            <a onClick={() => editUser(record.key)}>Edit</a>
+          </>}
           <a onClick={() => viewProfile(record.key)}>View</a>
         </Space>
       )

@@ -60,7 +60,7 @@ const Profile = (props) => {
         <Title level={3}>Profile</Title>
         <Avatar size={150} src={user.pic} icon={<UserOutlined />} />
         <Title level={2}>{user.name}</Title>
-        {((auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id)
+        {((auth.isAuthenticated().user && auth.isAuthenticated().user._id === user._id && auth.isAuthenticated().user.role !== 'admin')
           ||
           (auth.isAuthenticated().user && auth.isAuthenticated().user._id !== props.userId && auth.isAuthenticated().user.role === 'admin')) &&
         <div style={{ textAlign: 'center' }}>

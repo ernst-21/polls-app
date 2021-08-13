@@ -157,7 +157,6 @@ const EditProfile = () => {
             onFinish={clickSubmit}
           >
             <Form.Item
-              //initialValue={'gshadgajsdgha'}
               label="Username"
               name="name"
               rules={[

@@ -38,11 +38,11 @@ const Navbar = withRouter(({history}) => (
         </Menu.Item>
       </>}
     {auth.isAuthenticated() && <>
-      <Menu.Item style={isActive(history, '/user/' + auth.isAuthenticated().user._id)}>
+      {auth.isAuthenticated().user.role !== 'admin' && <Menu.Item style={isActive(history, '/user/' + auth.isAuthenticated().user._id)}>
         <Link to={'/user/' + auth.isAuthenticated().user._id}>
           <span>My Profile</span>
         </Link>
-      </Menu.Item>
+      </Menu.Item>}
       {
         auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'power-user') && (
           <>

@@ -1,0 +1,8 @@
+.polls {
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+}
+.polls-container {
+    display: block;
+}

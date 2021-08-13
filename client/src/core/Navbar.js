@@ -12,14 +12,14 @@ const Navbar = withRouter(() => (
     </Menu.Item>
     <Menu.Item>
       <Link to="/polls">
-        <span >Polls</span>
+        <span>Polls</span>
       </Link>
     </Menu.Item>
     {
       !auth.isAuthenticated() && <>
         <Menu.Item>
           <Link to="/signup">
-            <span >Sign up
+            <span>Sign up
             </span>
           </Link>
         </Menu.Item>
@@ -36,6 +36,18 @@ const Navbar = withRouter(() => (
           <span>My Profile</span>
         </Link>
       </Menu.Item>
+      {
+        auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'power-user') && (
+          <>
+            <Menu.Item>
+              <Link to="/manage-polls">Manage Polls</Link>
+            </Menu.Item>
+            {auth.isAuthenticated() && auth.isAuthenticated().user.role === 'admin' && <Menu.Item>
+              <Link to="/manage-users">Manage Users</Link>
+            </Menu.Item>}
+          </>
+        )
+      }
       <Menu.Item>
         <SignoutBtn />
       </Menu.Item>

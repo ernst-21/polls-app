@@ -85,7 +85,6 @@ const remove = async (req, res, next) => {
 };
 
 const vote = async (req, res) => {
-
   await Poll.findByIdAndUpdate(
     req.params.pollId,
     {

@@ -9,12 +9,12 @@ const { Header, Content } = Layout;
 
 function App() {
   return (
-    <Layout className="layout">
+    <Layout>
       <BrowserRouter>
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
           <Navbar />
         </Header>
-        <Content style={{ padding: '0 50px', marginTop: 64 }}>
+        <Content style={{ padding: '0 20px', marginTop: 120 }}>
           <MainRouter />
         </Content>
       </BrowserRouter>

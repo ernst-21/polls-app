@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { close, list, remove, open } from '../polls/api-polls';
+import { close, list, remove, open } from '../../polls/api-polls';
 import { Button, Modal, Grid } from 'antd';
-import AboveListBar from '../core/AboveListBar';
-import PollsStats from '../polls/PollsStats';
-import { success } from '../components/Message';
-import auth from './auth-helper';
+import AboveListBar from '../../core/AboveListBar';
+import PollsStats from '../../polls/PollsStats';
+import { success } from '../../components/Message';
+import auth from '../Auth-User/auth-helper';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import PollsTable from '../polls/PollsTable';
+import PollsTable from '../../polls/PollsTable';
 
 const { useBreakpoint } = Grid;
 

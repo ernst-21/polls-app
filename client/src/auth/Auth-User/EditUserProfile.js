@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import auth from './auth-helper';
-import useUploadImage from '../hooks/useUploadImage';
-import { useHttpError } from '../hooks/http-hook';
+import useUploadImage from '../../hooks/useUploadImage';
+import { useHttpError } from '../../hooks/http-hook';
 import { useParams, Link, Redirect } from 'react-router-dom';
 import { Avatar, Button, Card, Form, Input, message, Select, Spin } from 'antd';
-import { read, updateUser } from '../user/api-user';
+import { read, updateUser } from '../../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
-import AvatarUpload from '../user/AvatarUpload';
-import {strongPass, wrongPasswordMessage} from '../config/config';
+import AvatarUpload from '../../user/AvatarUpload';
+import {strongPass, wrongPasswordMessage} from '../../config/config';
 
 const { Option } = Select;
 
@@ -27,7 +27,7 @@ const tailLayout = {
 };
 
 const isAdminRoute = (window, path) => {
-  if (window.location.pathname == path)
+  if (window.location.pathname === path)
     return { width: '50%', marginTop: '1rem' };
   else
     return { width: '100%' };

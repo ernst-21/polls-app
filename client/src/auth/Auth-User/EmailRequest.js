@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Card, Form, Input, message } from 'antd';
-import { emailToPass } from '../user/api-user';
-import { useHttpError } from '../hooks/http-hook';
+import { emailToPass } from '../../user/api-user';
+import { useHttpError } from '../../hooks/http-hook';
 
 const layout = {
   labelCol: {

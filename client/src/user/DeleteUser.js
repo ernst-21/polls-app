@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import auth from './../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 import { remove, removeUser } from './api-user.js';
 import { Redirect } from 'react-router-dom';
 import { Modal, Card, message, Button } from 'antd';

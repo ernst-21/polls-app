@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
-import auth from '../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 import { read } from './api-user';
 import { Typography, Card, Avatar, Spin } from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';

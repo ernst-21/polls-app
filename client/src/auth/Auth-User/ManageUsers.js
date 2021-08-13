@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Button, Modal, message, Card, Skeleton, Empty } from 'antd';
-import Profile from '../user/Profile';
+import Profile from '../../user/Profile';
 import { Redirect } from 'react-router-dom';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
-import { useHttpError } from '../hooks/http-hook';
-import { list, removeUser } from '../user/api-user';
+import { useHttpError } from '../../hooks/http-hook';
+import { list, removeUser } from '../../user/api-user';
 import { Link } from 'react-router-dom';
-import SideDrawer from '../core/SideDrawer';
-import { useTableFilter } from '../hooks/useTableFilter';
+import SideDrawer from '../../core/SideDrawer';
+import { useTableFilter } from '../../hooks/useTableFilter';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();

@@ -2,8 +2,8 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Menu } from 'antd';
 import { HomeFilled } from '@ant-design/icons';
-import auth from '../auth/auth-helper';
-import SignoutBtn from '../auth/Signout';
+import auth from '../auth/Auth-User/auth-helper';
+import SignoutBtn from '../auth/Auth-User/Signout';
 
 const Navbar = withRouter(() => (
   <Menu mode="horizontal" theme='dark'>

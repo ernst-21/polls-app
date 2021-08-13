@@ -2,19 +2,19 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from './core/Home';
 import Signup from './user/Signup';
-import Signin from './auth/Signin';
+import Signin from './auth/Auth-User/Signin';
 import EditProfile from './user/EditProfile';
 import Profile from './user/Profile';
-import { PrivateRoute, AdminRoute, AdminPowerUserRoute } from './auth/PrivateRoute';
-import ResetPassword from './auth/ResetPassword';
-import EmailRequest from './auth/EmailRequest';
+import { PrivateRoute, AdminRoute, AdminPowerUserRoute } from './auth/Auth-User/PrivateRoute';
+import ResetPassword from './auth/Auth-User/ResetPassword';
+import EmailRequest from './auth/Auth-User/EmailRequest';
 import InfoSuccess from './user/InfoSuccess';
 import PollsView from './polls/PollsView';
-import ManagePolls from './auth/ManagePolls';
-import ManageUsers from './auth/ManageUsers';
-import CreatePoll from './auth/CreatePoll';
-import EditUserProfile from './auth/EditUserProfile';
-import CreateUser from './auth/CreateUser';
+import ManagePolls from './auth/Auth-Polls/ManagePolls';
+import ManageUsers from './auth/Auth-User/ManageUsers';
+import CreatePoll from './auth/Auth-Polls/CreatePoll';
+import EditUserProfile from './auth/Auth-User/EditUserProfile';
+import CreateUser from './auth/Auth-User/CreateUser';
 import InfoError from './core/InfoError';
 
 const MainRouter = () => {

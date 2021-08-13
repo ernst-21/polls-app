@@ -10,7 +10,7 @@ import PollsGrid from './PollsGrid';
 import PollsTable from './PollsTable';
 import PollsStats from './PollsStats';
 import PollsViewSelection from './PollsViewSelection';
-import auth from '../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 import './PollsView.css';
 
 const PollsView = () => {

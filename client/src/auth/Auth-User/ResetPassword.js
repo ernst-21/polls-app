@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import { Button, Card, Form, Input, message } from 'antd';
-import { useHttpError } from '../hooks/http-hook';
-import { resetPass } from '../user/api-user';
-import {strongPass, wrongPasswordMessage} from '../config/config';
+import { useHttpError } from '../../hooks/http-hook';
+import { resetPass } from '../../user/api-user';
+import {strongPass, wrongPasswordMessage} from '../../config/config';
 
 const layout = {
   labelCol: {

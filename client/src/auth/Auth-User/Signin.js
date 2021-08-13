@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import auth from './../auth/auth-helper';
+import auth from './auth-helper';
 import { Link, Redirect } from 'react-router-dom';
 import { signin } from './api-auth.js';
-import { useHttpError } from '../hooks/http-hook';
+import { useHttpError } from '../../hooks/http-hook';
 import { Form, Input, Button, Checkbox, Card } from 'antd';
 
 const layout = {

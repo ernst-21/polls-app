@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Input, Button, Modal, Card, message, Tooltip } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import Poll from '../polls/Poll';
-import auth from './auth-helper';
+import Poll from '../../polls/Poll';
+import auth from '../Auth-User/auth-helper';
 import { Link } from 'react-router-dom';
-import { create } from '../polls/api-polls';
-import { useHttpError } from '../hooks/http-hook';
+import { create } from '../../polls/api-polls';
+import { useHttpError } from '../../hooks/http-hook';
 
 const layout = {
   labelCol: {

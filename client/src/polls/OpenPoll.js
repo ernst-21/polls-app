@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Badge, Card, Divider, Progress, Radio } from 'antd';
 import PollTitle from './PollTitle';
-import auth from '../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 
 const VotedPoll = (props) => {
   return (

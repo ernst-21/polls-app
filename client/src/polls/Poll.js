@@ -1,5 +1,5 @@
 import React from 'react';
-import auth from '../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 import LoggedOutOpen from './LoggedOutOpen';
 import { ClosedPoll } from './ClosedPoll';
 import OpenPoll from './OpenPoll';

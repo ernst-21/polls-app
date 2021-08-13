@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import auth from './../auth/auth-helper';
+import auth from '../auth/Auth-User/auth-helper';
 import { read, update } from './api-user.js';
 import { Link, Redirect, useHistory, useParams } from 'react-router-dom';
 import { Avatar, Button, Card, Checkbox, Form, Input, message, Spin } from 'antd';

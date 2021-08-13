@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useHttpError } from '../hooks/http-hook';
+import { useHttpError } from '../../hooks/http-hook';
 import { Button, Card, Checkbox, Form, Input, message, Select } from 'antd';
-import { create } from '../user/api-user';
+import { create } from '../../user/api-user';
 import { Link, Redirect } from 'react-router-dom';
-import {strongPass, wrongPasswordMessage} from '../config/config';
+import {strongPass, wrongPasswordMessage} from '../../config/config';
 
 const {Option} = Select;
 

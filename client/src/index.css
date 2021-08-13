@@ -34,6 +34,13 @@ body {
     background: transparent;
 }
 
+.ant-menu-horizontal > .ant-menu-item-selected a {
+    color: #fff !important;
+}
+
+.ant-menu-horizontal > .ant-menu-item a {
+    color: #e3e3e3 !important;
+}
 
 #components-layout-demo-top {
     float: left;
@@ -46,6 +53,10 @@ body {
 .ant-row-rtl #components-layout-demo-top {
     float: right;
     margin: 16px 0 16px 24px;
+}
+
+.spin {
+    place-self: center;
 }
 
 .sidebar-header {

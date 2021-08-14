@@ -12,8 +12,9 @@
     margin-top: 10px;
 }
 
-.poll-stats-container p em {
+.poll-stats-container p strong {
     margin-top: 10px;
+    font-size: .8rem;
 }
 
 @media(min-width: 650px) {

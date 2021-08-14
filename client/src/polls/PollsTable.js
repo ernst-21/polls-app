@@ -133,8 +133,7 @@ const PollsTable = ({ isLoading, setSourceData, sourceData, polls, userId, setCo
         dataSource={isLoading ? [] : sourceData}
         loaderType="skeleton"
         locale={{
-          emptyText: isLoading ? (Array(10).map(item => (
-            <Skeleton key={item} paragraph={false} active={true} size="large" />))
+          emptyText: isLoading ? (<Skeleton paragraph={false} active={true} size="large" />
           ) : (
             <Empty />
           )

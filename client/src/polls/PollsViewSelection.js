@@ -13,31 +13,27 @@ const isActive = (active) => {
 const PollsViewSelection = (props) => {
   return (
     <div>
-      <>
-        <BarsOutlined
-          style={isActive(!props.barsInActive)}
-          onClick={() => props.setBarsInActive(false)}
+      <BarsOutlined
+        style={isActive(!props.barsInActive)}
+        onClick={() => props.setBarsInActive(false)}
+      />
+      {props.barsInActive ? (
+        <AppstoreFilled
+          style={isActive(props.barsInActive)}
+          onClick={() => {
+            props.setBarsInActive(true);
+            props.setCollapsed(false);
+          }}
         />
-      </>
-      <>
-        {props.barsInActive ? (
-          <AppstoreFilled
-            style={isActive(props.barsInActive)}
-            onClick={() => {
-              props.setBarsInActive(true);
-              props.setCollapsed(false);
-            }}
-          />
-        ) : (
-          <AppstoreOutlined
-            style={isActive(props.barsInActive)}
-            onClick={() => {
-              props.setBarsInActive(true);
-              props.setCollapsed(false);
-            }}
-          />
-        )}
-      </>
+      ) : (
+        <AppstoreOutlined
+          style={isActive(props.barsInActive)}
+          onClick={() => {
+            props.setBarsInActive(true);
+            props.setCollapsed(false);
+          }}
+        />
+      )}
     </div>
   );
 };

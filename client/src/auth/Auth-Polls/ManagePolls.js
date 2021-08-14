@@ -19,7 +19,7 @@ const ManagePolls = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [sourceData, setSourceData] = useState([]);
   const screens = useBreakpoint();
-  const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()));
+  const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()).then(data => data.reverse()));
 
   const queryClient = useQueryClient();
 
@@ -73,7 +73,7 @@ const ManagePolls = () => {
     <div className='polls'>
       <AboveListBar>
         <Link to='/create-poll'>
-          <Button style={{ marginLeft: '1rem', borderRadius: '6px' }} type='primary'>CREATE</Button>
+          <Button type='primary'>CREATE</Button>
         </Link>
         <PollsStats polls={polls}
           pollsClosed={pollsClosed}

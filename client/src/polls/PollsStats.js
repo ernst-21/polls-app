@@ -5,14 +5,14 @@ const PollsStats = (props) => {
   return (
     <div className='poll-stats-container'>
       <p>
-        <em>Polls: {props.polls && props.polls.length}</em>
+        <strong>Polls: {props.polls && props.polls.length}</strong>
       </p>
       <p>
-        <em>Closed: {props.pollsClosed.length}</em>
+        <strong>Closed: {props.pollsClosed.length}</strong>
       </p>
       {props.polls && props.pollsNew.length > 0 && (
         <p>
-          <em>New: {props.pollsNew.length}</em>
+          <strong>New: {props.pollsNew.length}</strong>
         </p>
       )}
     </div>

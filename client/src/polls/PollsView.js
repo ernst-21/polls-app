@@ -22,7 +22,7 @@ const PollsView = () => {
   const [pollsNew, setPollsNew] = useState([]);
   const [sourceData, setSourceData] = useState([]);
   const [barsInActive, setBarsInActive] = useState(true);
-  const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()));
+  const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()).then(data => data.reverse()));
 
   const queryClient = useQueryClient();
 

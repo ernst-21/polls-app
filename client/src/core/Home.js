@@ -9,7 +9,7 @@ const Hello = () => {
     <div className='home-container'>
       <div className='text-container'>
         <h1>Polls System</h1>
-        <p>This is application allows you to see and vote the One-Answer-Telegram-like polls that were published by the admin or the power-user. To vote you will be required to log in or sign up. </p><br/>
+        <p>Vote on these One-Answer-Telegram-like polls that were published by the admin or the power-user. To vote you will be required to log in or sign up. </p><br/>
         <p>I will also let you give a try as admin so you can perform CRUD operations on polls and users.</p>
         {auth.isAuthenticated() ? null : (<Link to="/signin">
           <Button type='primary' size='large'><span>Sign In</span></Button>

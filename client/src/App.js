@@ -14,7 +14,7 @@ function App() {
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
           <Navbar />
         </Header>
-        <Content style={{ padding: '0 20px', marginTop: 120 }}>
+        <Content style={{ padding: '0 20px 10px 20px', marginTop: 100 }}>
           <MainRouter />
         </Content>
       </BrowserRouter>

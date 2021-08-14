@@ -1,32 +1,37 @@
 import React, {memo} from 'react';
-import { Col, Row } from 'antd';
+import Masonry from 'react-masonry-css';
 import Poll from './Poll';
 import './PollsGrid.css';
 
 const PollsGrid = (props) => {
+
+  const breakpointColumnsObj = {
+    default: 3,
+    1100: 2,
+    576: 1
+  };
+
   return (
     <div className="polls-grid-container">
-      <Row className="polls-grid" gutter={[16, 16]}>
+      <Masonry breakpointCols={breakpointColumnsObj}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column">
         {props.polls && props.polls.map((item) => {
           return (
-            <Col xs={{ span: 24 }}
-              sm={{ span: 24 }}
-              md={{ span: 12 }}
-              xl={{ span: 8 }} key={item._id} className="gutter-row">
-              <Poll
-                question={item.question}
-                chosenAnswer={item.chosenAnswer}
-                new={item.voters.length === 0}
-                voters={item.voters.length}
-                answers={item.answers}
-                closed={item.closed}
-                voted={item.voters.includes(props.userId)}
-                onClick={(e) => props.onClick(e, item._id)}
-              />
-            </Col>
+            <Poll
+              key={item.key}
+              question={item.question}
+              chosenAnswer={item.chosenAnswer}
+              new={item.voters.length === 0}
+              voters={item.voters.length}
+              answers={item.answers}
+              closed={item.closed}
+              voted={item.voters.includes(props.userId)}
+              onClick={(e) => props.onClick(e, item._id)}
+            />
           );
         })}
-      </Row>
+      </Masonry>
     </div>
 
 

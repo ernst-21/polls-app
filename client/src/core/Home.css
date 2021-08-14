@@ -1,7 +1,8 @@
 .home-container {
     display: flex;
     flex-direction: column-reverse;
-    text-align: center;
+    /*text-align: center;*/
+    border-radius: 20px;
 }
 
 .text-container {
@@ -20,6 +21,7 @@
 
 .text-container p {
     font-size: 1rem;
+    font-weight: 500;
 }
 
 .text-container button span {
@@ -47,6 +49,8 @@
     .text-container {
         margin-top: 2rem;
         margin-left: 2rem;
+        padding: 2em;
+        text-align: left;
     }
     .text-container h1 {
         font-size: 2rem;

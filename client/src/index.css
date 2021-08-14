@@ -18,6 +18,13 @@ body {
 .ant-layout {
     min-height: 100vh;
     background-color: #d9dae0;
+    background-image: url("https://res.cloudinary.com/ernst1/image/upload/q_100/v1628954826/telegram-bg_orlpr8.jpg");
+    background-size: contain;
+    background-repeat: repeat;
+
+}
+
+.site-layout-background {
 }
 
 .ant-layout-header {

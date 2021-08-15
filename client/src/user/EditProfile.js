@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
-import { read, update } from './api-user.js';
-import { Link, Redirect, useHistory, useParams } from 'react-router-dom';
-import { Avatar, Button, Card, Checkbox, Form, Input, message, Spin } from 'antd';
+import { read, updateProfile } from './api-user.js';
+import { Link, Redirect, useParams, useHistory } from 'react-router-dom';
+import { Avatar, Button, Card, Checkbox, Form, Input, Spin } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
 import useUploadImage from '../hooks/useUploadImage';
 import { DeleteOutlined } from '@ant-design/icons';
 import {strongPass, wrongPasswordMessage} from '../config/config';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { success } from '../components/Message';
 
 const layout = {
   labelCol: {
@@ -25,12 +27,11 @@ const tailLayout = {
 };
 
 const EditProfile = () => {
-  const [user, setUser] = useState();
+  const [setUser] = useState();
+  const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = auth.isAuthenticated();
   const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
-  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState('');
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = useParams().userId;
   const history = useHistory();
@@ -42,40 +43,25 @@ const EditProfile = () => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const errorMessage = (err) => {
-    message.error(err);
-  };
+  const { data: user, isLoading, isError } = useQuery(['user', userId], () => read({ userId: userId}, { t: jwt.token }).then(res => res.json()).then(data => data), { onError: () => setRedirectToSignin(true) });
 
-  const info = (msg) => {
-    message.info(msg);
-  };
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setIsLoading(true);
-    const abortController = new AbortController();
-    const signal = abortController.signal;
+  const { mutate: updateUserMutation } = useMutation((user) => updateProfile({ userId: userId }, { t: jwt.token }, user).then(data => data), {
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.setQueryData(['user', data._id], data);
+      auth.clearJWT(() => history.push('/signin'));
+      success('Account successfully updated. Please sign in');
+    },
+    onError: (data) => console.log(data)
+  });
 
-    read(
-      {
-        userId: userId
-      },
-      { t: jwt.token },
-      signal
-    ).then((data) => {
-      if (data && data.error) {
-        errorMessage(data.error);
-      } else if (data) {
-        setUser({ ...data, password: '', redirectToSignin: false });
-        setIsLoading(false);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
-
-    return function cleanup() {
-      abortController.abort();
-    };
-  }, [userId, jwt.token]);
+  if (auth.isAuthenticated() && redirectToSignin) {
+    return <Redirect to='/' />;
+  } else if (!auth.isAuthenticated()) {
+    return <Redirect to='/signin' />;
+  }
 
   const handleImageChange = (info) => {
     setImage(info.file.originFileObj);
@@ -93,28 +79,10 @@ const EditProfile = () => {
       pic: imageUrl || user.pic || undefined,
       password: values.confirm || undefined
     };
-    update(
-      {
-        userId: userId
-      },
-      {
-        t: jwt.token
-      },
-      usr
-    ).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        setUser({ ...user, userId: data._id, redirectToSignin: true });
-        auth.clearJWT(() => history.push('/signin'));
-        info('Account successfully updated. Please signin');
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    updateUserMutation(usr);
   };
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error'/>;
   }
 

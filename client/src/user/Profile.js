@@ -1,55 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import auth from '../auth/Auth-User/auth-helper';
 import { read } from './api-user';
 import { Typography, Card, Avatar, Spin } from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
 import DeleteUser from './DeleteUser';
+import { useQuery } from 'react-query';
 
 const { Title } = Typography;
 
 const Profile = (props) => {
-  const [user, setUser] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   const [redirectToSignin, setRedirectToSignin] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const jwt = auth.isAuthenticated();
   const userId = useParams().userId;
   const nodeRef = useRef();
 
-  useEffect(() => {
-    setIsLoading(true);
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    read({
-      userId: userId || props.userId
-    }, { t: jwt.token }, signal).then((data) => {
-      if (data && data.error) {
-        setRedirectToSignin(true);
-      } else if (data) {
-        setUser(data);
-        setIsLoading(false);
-      } else if (!data) {
-        setRedirectToNetError(true);
-        setIsLoading(false);
-      }
-    });
-
-    return function cleanup() {
-      abortController.abort();
-    };
-
-  }, [userId, jwt.token, props.userId]);
+  const { data: user, isLoading, isError, error } = useQuery(['user', userId || props.userId], () => read({ userId: userId || props.userId }, { t: jwt.token }).then(res => res.json()).then(data => data), { onError: () => setRedirectToSignin(true) });
 
   if (auth.isAuthenticated() && redirectToSignin) {
     return <Redirect to='/' />;
-  } else if (redirectToSignin) {
+  } else if (!auth.isAuthenticated()) {
     return <Redirect to='/signin' />;
   }
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
+  }
+
+  if (error) {
+    return <Redirect to='/signin' />;
   }
 
   return (

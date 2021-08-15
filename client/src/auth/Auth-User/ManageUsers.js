@@ -5,7 +5,7 @@ import Profile from '../../user/Profile';
 import { Redirect } from 'react-router-dom';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
-import { list, removeUser } from '../../user/api-user';
+import { listUsers, removeUser } from '../../user/api-user';
 import { Link } from 'react-router-dom';
 import SideDrawer from '../../core/SideDrawer';
 import { useTableFilter } from '../../hooks/useTableFilter';
@@ -20,7 +20,7 @@ const ManageUsers = () => {
   const [sourceData, setSourceData] = useState([]);
   const { getColumnSearchProps } = useTableFilter();
 
-  const { data: users = [], isLoading, isError } = useQuery('users', () => list().then(res => res.json()).then(data => data));
+  const { data: users = [], isLoading, isError } = useQuery('users', () => listUsers().then(res => res.json()).then(data => data));
 
   const queryClient = useQueryClient();
 

@@ -12,7 +12,7 @@ export const ClosedPoll = (props) => {
           <div>
             {props.answers.map((answer) => (
               <React.Fragment key={answer}>
-                <p>{answer}</p>
+                <p style={{marginBottom: 0, marginTop: '1.2rem'}}>{answer}</p>
                 <Progress percent={props.percentProgress(answer)} />
               </React.Fragment>
             ))}

@@ -19,7 +19,7 @@ const PollsGrid = (props) => {
         {props.polls && props.polls.map((item) => {
           return (
             <Poll
-              key={item.key}
+              key={item._id}
               question={item.question}
               chosenAnswer={item.chosenAnswer}
               new={item.voters.length === 0}

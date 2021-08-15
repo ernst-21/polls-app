@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Button, Modal, Card, message, Tooltip } from 'antd';
+import { Form, Input, Button, Modal, Card, Tooltip } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Poll from '../../polls/Poll';
 import auth from '../Auth-User/auth-helper';
 import { Link } from 'react-router-dom';
 import { create } from '../../polls/api-polls';
-import { useHttpError } from '../../hooks/http-hook';
+import { useMutation, useQueryClient } from 'react-query';
+import { success } from '../../components/Message';
+import {validate} from '../../utils/pollValidation-wrangler';
 
 const layout = {
   labelCol: {
@@ -26,64 +28,23 @@ const tailLayout = {
 const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
   const [poll, setPoll] = useState();
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [validateReady, setValidateReady] = useState(false);
-  const { error, showErrorModal, httpError } = useHttpError();
   const [validateOptions, setValidateOptions] = useState(false);
   const [submitReady, setSubmitReady] = useState(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (error) {
-      httpError();
-    }
-    return () => showErrorModal(null);
-  }, [error, httpError, showErrorModal]);
+  const queryClient = useQueryClient();
 
-  const success = (msg) => {
-    message.success(msg);
-  };
-
-  const filterOutUndefined = (array) => {
-    return array.filter(item => item !== undefined);
-  };
-
-  const hasDuplicates = (array) => {
-    const newArray = array.map(item => {
-      return item.trim().toLowerCase();
-    });
-    const duplicate = (new Set(newArray)).size !== newArray.length;
-    if (duplicate) {
-      Modal.error({
-        title: 'Error',
-        content: 'Options must be unique. Please check the given options and remove duplicated values.',
-        onOk() {
-          setPoll(undefined);
-          setValidateOptions(false);
-        }
-      });
-    } else {
-      success('Poll is valid!');
+  const { mutate: createMutation, isError } = useMutation((poll) => create(poll, { t: jwt.token }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('polls');
+      success('Poll successfully created');
+      form.resetFields();
+      setValidateReady(false);
+      setValidateOptions(false);
     }
-  };
+  });
 
-  const validate = () => {
-    const values = form.getFieldsValue();
-    const answers = values.answers ? filterOutUndefined(values.answers) : null;
-    const additionalOptions = answers && answers.length > 0 ? answers.map(item => item.option.trim()) : null;
-    const filteredAdditionalOptions = additionalOptions ? additionalOptions.filter(item => item !== '') : null;
-    let options = [values.first, values.second];
-    if (filteredAdditionalOptions) {
-      filteredAdditionalOptions.map(item => options.push(item));
-    }
-    if (options && options.length >= 2) {
-      const noDuplicates = !hasDuplicates(options);
-      if (noDuplicates) {
-        setValidateOptions(true);
-        setPoll({ question: values.question, options: options });
-      }
-    }
-  };
 
   const info = () => {
     Modal.info({
@@ -109,23 +70,10 @@ const CreatePoll = () => {
       question: poll.question,
       answers: poll.options
     };
-    create(finalPoll, {
-      t: jwt.token
-    }).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        success('Poll successfully created');
-        form.resetFields();
-        setValidateReady(false);
-        setValidateOptions(false);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    createMutation(finalPoll);
   };
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
   }
 
@@ -223,7 +171,7 @@ const CreatePoll = () => {
                 title="Duplicated options will not be submitted. Please always validate and preview before submitting">
                 <Button
                   type='link'
-                  onClick={() => validate()}
+                  onClick={() => validate(form, setPoll, setValidateOptions)}
                 >
                   Validate
                 </Button>

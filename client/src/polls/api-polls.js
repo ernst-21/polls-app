@@ -15,38 +15,27 @@ const create = async (poll, credentials) => {
   }
 };
 
-// const list = async () => {
+
+const list = async () => await fetch('http://localhost:5000/api/polls/', {
+  method: 'GET',
+});
+
+// const read = async (params, credentials, signal) => {
 //   try {
-//     let response = await fetch('http://localhost:5000/api/polls/', {
+//     let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
 //       method: 'GET',
-//       //signal: signal
+//       signal: signal,
+//       headers: {
+//         Accept: 'application/json',
+//         'Content-Type': 'application/json',
+//         Authorization: 'Bearer ' + credentials.t
+//       }
 //     });
 //     return await response.json();
 //   } catch (err) {
 //     console.log(err);
 //   }
 // };
-
-const list = async () => await fetch('http://localhost:5000/api/polls/', {
-  method: 'GET',
-});
-
-const read = async (params, credentials, signal) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
-      method: 'GET',
-      signal: signal,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      }
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const update = async (params, credentials, poll) => {
   try {
@@ -113,23 +102,6 @@ const remove = async (params, credentials) => {
   }
 };
 
-// const vote = async (params, credentials, user) => {
-//   try {
-//     let response = await fetch('http://localhost:5000/api/polls/vote/' + params.pollId, {
-//       method: 'PUT',
-//       headers: {
-//         Accept: 'application/json',
-//         'Content-Type': 'application/json',
-//         Authorization: 'Bearer ' + credentials.t
-//       },
-//       body: JSON.stringify(user)
-//     });
-//     return await response.json();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-
 const vote = async(params, credentials, user) => await fetch('http://localhost:5000/api/polls/vote/' + params.pollId, {
   method: 'PUT',
   headers: {
@@ -142,4 +114,4 @@ const vote = async(params, credentials, user) => await fetch('http://localhost:5
 
 
 
-export { create, list, read, update, remove, vote, close, open };
+export { create, list, update, remove, vote, close, open };

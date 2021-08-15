@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { create } from './api-user.js';
+import { createUser } from './api-user.js';
 import { Link, Redirect } from 'react-router-dom';
 import { useHttpError } from '../hooks/http-hook';
 import { Form, Input, Button, Checkbox, Card, message } from 'antd';
@@ -42,7 +42,7 @@ const Signup = (props) => {
       email: values.email || undefined,
       password: values.confirm || undefined
     };
-    create(user).then((data) => {
+    createUser(user).then((data) => {
       if (data && data.error) {
         showErrorModal(data.error);
       } else if (data) {

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
 import { useHttpError } from '../../hooks/http-hook';
-import { Button, Card, Checkbox, Form, Input, message, Select } from 'antd';
-import { create } from '../../user/api-user';
+import { Button, Card, Checkbox, Form, Input, Select } from 'antd';
+import { createUser } from '../../user/api-user';
 import { Link, Redirect } from 'react-router-dom';
 import {strongPass, wrongPasswordMessage} from '../../config/config';
+import { useMutation, useQueryClient } from 'react-query';
+import { success } from '../../components/Message';
 
 const {Option} = Select;
 
@@ -23,9 +25,17 @@ const tailLayout = {
 };
 
 const CreateUser = (props) => {
-  const [redirectToReferrer, setRedirectToReferrer] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: createMutation, isError, isSuccess } = useMutation((user) => createUser(user), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('users');
+      success('User successfully created');
+    }
+  });
+
 
   useEffect(() => {
     if (error) {
@@ -34,9 +44,6 @@ const CreateUser = (props) => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const success = (msg) => {
-    message.success(msg);
-  };
 
   const clickSubmit = (values) => {
     const user = {
@@ -45,16 +52,7 @@ const CreateUser = (props) => {
       role: values.role || undefined,
       password: values.confirm || undefined
     };
-    create(user).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        success('User successfully created');
-        setRedirectToReferrer(true);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    createMutation(user);
   };
 
   const { from } = props.location.state || {
@@ -63,11 +61,11 @@ const CreateUser = (props) => {
     }
   };
 
-  if (redirectToReferrer) {
-    return (<Redirect to={from} />);
+  if (isSuccess) {
+    return <Redirect to={from} />;
   }
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
   }
 

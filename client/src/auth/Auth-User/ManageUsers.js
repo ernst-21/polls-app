@@ -1,58 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Modal, message, Card, Skeleton, Empty } from 'antd';
+import { Space, Table, Button, Modal, Card, Skeleton, Empty } from 'antd';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Profile from '../../user/Profile';
 import { Redirect } from 'react-router-dom';
 import EditUserProfile from './EditUserProfile';
 import auth from './auth-helper';
-import { useHttpError } from '../../hooks/http-hook';
 import { list, removeUser } from '../../user/api-user';
 import { Link } from 'react-router-dom';
 import SideDrawer from '../../core/SideDrawer';
 import { useTableFilter } from '../../hooks/useTableFilter';
+import { success } from '../../components/Message';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
-  const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState('');
   const [collapsed, setCollapsed] = useState(false);
   const [component, setComponent] = useState(null);
-  const { error, showErrorModal, httpError } = useHttpError();
   const [sourceData, setSourceData] = useState([]);
   const { getColumnSearchProps } = useTableFilter();
 
-  useEffect(() => {
-    if (error) {
-      httpError();
+  const { data: users = [], isLoading, isError } = useQuery('users', () => list().then(res => res.json()).then(data => data));
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteMutation } = useMutation((id) => removeUser({ userId: id }, { t: jwt.token }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('users');
+      success('User successfully deleted');
     }
-    return () => showErrorModal(null);
-  }, [error, httpError, showErrorModal]);
-
-  const success = (msg) => {
-    message.success(msg);
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    list(signal).then((data) => {
-      if (data && data.error) {
-        console.log(data.error);
-      } else if (data) {
-        setUsers(data);
-        setIsLoading(false);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
-    return function cleanup() {
-      abortController.abort();
-    };
-  }, []);
+  });
 
   useEffect(() => {
     if (!isLoading) {
@@ -66,33 +43,6 @@ const ManageUsers = () => {
       }));
     }
   }, [users, isLoading]);
-
-  const deleteUser = (id) => {
-    setIsLoading(true);
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-    removeUser({ userId: id }, { t: jwt.token }).then((data) => {
-      if (!data) {
-        setRedirectToNetError(true);
-      }
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        console.log(data);
-        success('User deleted');
-        list(signal).then((data) => {
-          if (data && data.error) {
-            console.log(data.error);
-          } else if (data) {
-            setUsers(data);
-            setIsLoading(false);
-          } else if (!data) {
-            setRedirectToNetError(true);
-          }
-        });
-      }
-    });
-  };
 
   const editUser = (id) => {
     setCollapsed(true);
@@ -111,7 +61,7 @@ const ManageUsers = () => {
 
   const handleOk = () => {
     setIsModalVisible(false);
-    deleteUser(userId);
+    deleteMutation(userId);
   };
 
   const handleCancel = () => {
@@ -154,7 +104,7 @@ const ManageUsers = () => {
     }
   ];
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
   }
 

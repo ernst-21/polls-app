@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
-import { remove, removeUser } from './api-user.js';
+import { removeUser } from './api-user.js';
 import { Redirect } from 'react-router-dom';
 import { Modal, Card, message, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -28,7 +28,7 @@ export default function DeleteUser(props) {
 
   const deleteAccount = () => {
     auth.isAuthenticated().user.role !== 'admin' ?
-      remove({
+      removeUser({
         userId: props.userId
       }, { t: jwt.token }).then((data) => {
         if (data && data.error) {

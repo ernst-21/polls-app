@@ -1,11 +1,11 @@
 import React from 'react';
 import { Drawer } from 'antd';
 
-const SideDrawer = ({component, isSideDrawerOpen, onDrawerClose}) => {
+const SideDrawer = ({component, isSideDrawerOpen, onDrawerClose, width}) => {
   return (
     <div>
       <Drawer
-        width={540}
+        width={width}
         placement="right"
         closable={false}
         onClose={onDrawerClose}

@@ -12,7 +12,7 @@ function App() {
     <Layout>
       <BrowserRouter>
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-          <Navbar />
+          <Navbar/>
         </Header>
         <Content style={{ padding: '0 20px 10px 20px', marginTop: 100 }}>
           <MainRouter />

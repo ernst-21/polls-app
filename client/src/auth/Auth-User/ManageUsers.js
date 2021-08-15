@@ -177,7 +177,7 @@ const ManageUsers = () => {
       <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
-      <SideDrawer isSideDrawerOpen={collapsed}
+      <SideDrawer width={650} isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={component}
       />

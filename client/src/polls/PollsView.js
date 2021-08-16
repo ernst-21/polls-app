@@ -106,6 +106,8 @@ const PollsView = () => {
         )}
       </div>
       <SideDrawer
+        title='Poll Details'
+        placement='right'
         width={560}
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}

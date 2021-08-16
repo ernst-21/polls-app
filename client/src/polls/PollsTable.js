@@ -2,7 +2,7 @@ import React, { useEffect, memo } from 'react';
 import { Card, Empty, Skeleton, Space, Table, Tag, Grid } from 'antd';
 import { useTableFilter } from '../hooks/useTableFilter';
 import Poll from './Poll';
-import './PollsTable.css';
+import '../core/Table.css';
 
 const {useBreakpoint} = Grid;
 

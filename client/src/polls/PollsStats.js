@@ -1,9 +1,9 @@
 import React, {memo} from 'react';
-import './PollStats.css';
+import '../core/Stats.css';
 
 const PollsStats = (props) => {
   return (
-    <div className='poll-stats-container'>
+    <div className='stats-container'>
       <p>
         <strong>Polls: {props.polls && props.polls.length}</strong>
       </p>

@@ -12,6 +12,7 @@ const isActive = (history, path) => {
 };
 
 const MenuItems = (props) => {
+
   return (
     <ul className={props.className}>
       <li style={isActive(props.history, '/')}><Link to="/">

@@ -1,4 +1,4 @@
-.poll-stats-container {
+.stats-container {
     display: flex;
     justify-content: space-between;
     text-align: center;
@@ -7,18 +7,18 @@
     width: 100%;
 }
 
-.poll-stats-container p {
+.stats-container p {
     width: 30%;
     margin-top: 10px;
 }
 
-.poll-stats-container p strong {
+.stats-container p strong {
     margin-top: 10px;
     font-size: .8rem;
 }
 
 @media(min-width: 650px) {
-    .poll-stats-container {
+    .stats-container {
         width: 50%;
         justify-content: flex-end;
     }

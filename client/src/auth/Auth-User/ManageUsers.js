@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Modal, Card, Skeleton, Empty } from 'antd';
+import React, { useState } from 'react';
+import { Button, Modal, Card } from 'antd';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Profile from '../../user/Profile';
 import { Redirect } from 'react-router-dom';
@@ -8,8 +8,10 @@ import auth from './auth-helper';
 import { listUsers, removeUser } from '../../user/api-user';
 import { Link } from 'react-router-dom';
 import SideDrawer from '../../core/SideDrawer';
-import { useTableFilter } from '../../hooks/useTableFilter';
+import AboveListBar from '../../core/AboveListBar';
+import UsersTable from './UsersTable';
 import { success } from '../../components/Message';
+import UsersStats from './UserStats';
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
@@ -18,7 +20,6 @@ const ManageUsers = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [component, setComponent] = useState(null);
   const [sourceData, setSourceData] = useState([]);
-  const { getColumnSearchProps } = useTableFilter();
 
   const { data: users = [], isLoading, isError } = useQuery('users', () => listUsers().then(res => res.json()).then(data => data));
 
@@ -30,19 +31,6 @@ const ManageUsers = () => {
       success('User successfully deleted');
     }
   });
-
-  useEffect(() => {
-    if (!isLoading) {
-      setSourceData(users.map(item => {
-        return {
-          key: item._id,
-          name: item.name,
-          email: item.email,
-          role: item.role
-        };
-      }));
-    }
-  }, [users, isLoading]);
 
   const editUser = (id) => {
     setCollapsed(true);
@@ -68,41 +56,6 @@ const ManageUsers = () => {
     setIsModalVisible(false);
   };
 
-  const columns = [
-    {
-      ...getColumnSearchProps('name'),
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name'
-
-    },
-    {
-      ...getColumnSearchProps('email'),
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email'
-    },
-    {
-      ...getColumnSearchProps('role'),
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role'
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      // eslint-disable-next-line react/display-name
-      render: (record) => (
-        <Space size="middle">
-          {record.role !== 'admin' && <>
-            <a onClick={() => showModal(record.key)}>Delete</a>
-            <a onClick={() => viewProfile(record.key)}>View</a>
-          </>}
-        </Space>
-      )
-    }
-  ];
-
   if (isError) {
     return <Redirect to='/info-network-error' />;
   }
@@ -112,21 +65,23 @@ const ManageUsers = () => {
   };
 
   return (
-    <div>
-      <Link to='/create-user'>
-        <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
-      </Link>
-      <p style={{ float: 'right', marginRight: '2rem' }}><em>{users.length} users</em></p>
-      <Table
-        dataSource={isLoading ? [] : sourceData}
-        columns={columns} loaderType='skeleton'
-        locale={{
-          emptyText: isLoading ? <Skeleton paragraph={false} active={true} size='large' /> : <Empty />
-        }} />
+    <div className='users'>
+      <AboveListBar>
+        <Link to='/create-user'>
+          <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
+        </Link>
+        <UsersStats users={users} />
+      </AboveListBar>
+      <UsersTable isLoading={isLoading} setSourceData={setSourceData} users={users} showModal={showModal}
+        viewProfile={viewProfile} sourceData={sourceData} />
       <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>By clicking OK your account will be deleted. This action cannot be undone</p>
       </Modal>
-      <SideDrawer width={650} isSideDrawerOpen={collapsed}
+      <SideDrawer
+        title='User Details'
+        width={650}
+        placement='right'
+        isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={component}
       />

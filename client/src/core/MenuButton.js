@@ -13,7 +13,10 @@ const MenuButton = (props) => {
     <div>
       <MenuOutlined onClick={() => setCollapsed(true)} className='hamburger-menu' />
       <SideDrawer
-        width={200}
+        drawerStyle={{background: '#778298'}}
+        title='Menu'
+        width={250}
+        placement='left'
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={props.component}

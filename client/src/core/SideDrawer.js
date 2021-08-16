@@ -1,13 +1,17 @@
 import React from 'react';
 import { Drawer } from 'antd';
+import {CloseOutlined} from '@ant-design/icons';
 
-const SideDrawer = ({component, isSideDrawerOpen, onDrawerClose, width}) => {
+const SideDrawer = ({component, isSideDrawerOpen, onDrawerClose, width, placement, title, drawerStyle}) => {
   return (
     <div>
       <Drawer
+        title={title}
+        drawerStyle={drawerStyle}
         width={width}
-        placement="right"
-        closable={false}
+        placement={placement}
+        closable={true}
+        closeIcon={<CloseOutlined />}
         onClose={onDrawerClose}
         visible={isSideDrawerOpen}
       >{component}</Drawer>

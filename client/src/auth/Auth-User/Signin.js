@@ -4,6 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { signin } from './api-auth.js';
 import { useHttpError } from '../../hooks/http-hook';
 import { Form, Input, Button, Checkbox, Card } from 'antd';
+import {useMutation} from 'react-query';
 
 const layout = {
   labelCol: {
@@ -22,8 +23,19 @@ const tailLayout = {
 
 const Signin = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
+
+  const {mutate: signInMutation, isError} = useMutation((user) => signin(user).then(data => data), {
+    onSuccess: (data) => {
+      if (data && !data.error) {
+        auth.authenticate(data, () => {
+          setRedirectToReferrer(true);
+        });
+      } else {
+        showErrorModal(data.error);
+      }
+    }
+  });
 
   useEffect(() => {
     if (error) {
@@ -37,22 +49,12 @@ const Signin = (props) => {
       email: values.email || undefined,
       password: values.password || undefined
     };
-    signin(user).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        auth.authenticate(data, () => {
-          setRedirectToReferrer(true);
-        });
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    signInMutation(user);
   };
 
   const { from } = props.location.state || {
     from: {
-      pathname: '/'
+      pathname: '/polls'
     }
   };
 
@@ -60,7 +62,7 @@ const Signin = (props) => {
     return (<Redirect to={from} />);
   }
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
   }
 
@@ -80,7 +82,6 @@ const Signin = (props) => {
             remember: true
           }}
           onFinish={clickSubmit}
-
         >
           <Form.Item
             name="email"

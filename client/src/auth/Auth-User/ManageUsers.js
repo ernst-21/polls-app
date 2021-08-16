@@ -96,9 +96,8 @@ const ManageUsers = () => {
         <Space size="middle">
           {record.role !== 'admin' && <>
             <a onClick={() => showModal(record.key)}>Delete</a>
-            <a onClick={() => editUser(record.key)}>Edit</a>
+            <a onClick={() => viewProfile(record.key)}>View</a>
           </>}
-          <a onClick={() => viewProfile(record.key)}>View</a>
         </Space>
       )
     }

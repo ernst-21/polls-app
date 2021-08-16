@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { createUser } from './api-user.js';
 import { Link, Redirect } from 'react-router-dom';
 import { useHttpError } from '../hooks/http-hook';
-import { Form, Input, Button, Checkbox, Card, message } from 'antd';
-import {strongPass, wrongPasswordMessage} from '../config/config';
+import { Form, Input, Button, Checkbox, Card } from 'antd';
+import { strongPass, wrongPasswordMessage } from '../config/config';
+import { useMutation } from 'react-query';
+import { success } from '../components/Message';
 
 const layout = {
   labelCol: {
@@ -23,7 +25,20 @@ const tailLayout = {
 const Signup = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
+
+  const { mutate: signUpMutation, isError } = useMutation(
+    (user) => createUser(user).then((data) => data),
+    {
+      onSuccess: (data) => {
+        if (data && !data.error) {
+          setRedirectToReferrer(true);
+          success(data.message);
+        } else {
+          showErrorModal(data.error);
+        }
+      }
+    }
+  );
 
   useEffect(() => {
     if (error) {
@@ -32,26 +47,13 @@ const Signup = (props) => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const success = (msg) => {
-    message.success(msg);
-  };
-
   const clickSubmit = (values) => {
     const user = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.confirm || undefined
     };
-    createUser(user).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        success(data.message);
-        setRedirectToReferrer(true);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    signUpMutation(user);
   };
 
   const { from } = props.location.state || {
@@ -61,15 +63,15 @@ const Signup = (props) => {
   };
 
   if (redirectToReferrer) {
-    return (<Redirect to={from} />);
+    return <Redirect to={from} />;
   }
 
-  if (redirectToNetError) {
-    return <Redirect to='/info-network-error' />;
+  if (isError) {
+    return <Redirect to="/info-network-error" />;
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Card
         title="Register"
         extra={<Link to="/signin">Already registered? Login instead</Link>}
@@ -125,10 +127,7 @@ const Signup = (props) => {
                   if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
-
-                  return Promise.reject(
-                    new Error(wrongPasswordMessage)
-                  );
+                  return Promise.reject(new Error(wrongPasswordMessage));
                 }
               })
             ]}
@@ -152,7 +151,9 @@ const Signup = (props) => {
                   }
 
                   return Promise.reject(
-                    new Error('The two passwords that you entered do not match!')
+                    new Error(
+                      'The two passwords that you entered do not match!'
+                    )
                   );
                 }
               })
@@ -169,12 +170,13 @@ const Signup = (props) => {
               Submit
             </Button>
           </Form.Item>
-          <Link to='/email' style={{ display: 'flex', float: 'right' }}>Forgot password?</Link>
+          <Link to="/email" style={{ display: 'flex', float: 'right' }}>
+            Forgot password?
+          </Link>
         </Form>
       </Card>
     </div>
   );
-}
-;
+};
 
 export default Signup;

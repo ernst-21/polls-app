@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SideDrawer from './SideDrawer';
 import { MenuOutlined } from '@ant-design/icons';
+import MenuItems from './MenuItems';
 
 const MenuButton = (props) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,7 +20,7 @@ const MenuButton = (props) => {
         placement='left'
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
-        component={props.component}
+        component={<nav><MenuItems onClick={closeDrawer} history={props.history} className='links-container_vertical' /></nav>}
       />
     </div>
   );

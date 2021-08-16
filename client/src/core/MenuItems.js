@@ -15,23 +15,23 @@ const MenuItems = (props) => {
 
   return (
     <ul className={props.className}>
-      <li style={isActive(props.history, '/')}><Link to="/">
+      <li onClick={props.onClick} style={isActive(props.history, '/')}><Link to="/">
         <HomeFilled className='home-icon'
           style={isActive(props.history, '/')} /></Link></li>
-      <li style={isActive(props.history, '/polls')}>
+      <li onClick={props.onClick} style={isActive(props.history, '/polls')}>
         <Link to="/polls">
           <span style={isActive(props.history, '/polls')}>Polls</span>
         </Link>
       </li>
       {
         !auth.isAuthenticated() && <>
-          <li style={isActive(props.history, '/signup')}>
+          <li onClick={props.onClick} style={isActive(props.history, '/signup')}>
             <Link to="/signup">
               <span style={isActive(props.history, '/signup')}>Sign up
               </span>
             </Link>
           </li>
-          <li style={isActive(props.history, '/signin')}>
+          <li onClick={props.onClick} style={isActive(props.history, '/signin')}>
             <Link to="/signin">
               <span style={isActive(props.history, '/signin')}>Sign In
               </span>
@@ -40,7 +40,7 @@ const MenuItems = (props) => {
         </>}
       {auth.isAuthenticated() && <>
         {auth.isAuthenticated().user.role !== 'admin' &&
-        <li style={isActive(props.history, '/user/' + auth.isAuthenticated().user._id)}>
+        <li onClick={props.onClick} style={isActive(props.history, '/user/' + auth.isAuthenticated().user._id)}>
           <Link to={'/user/' + auth.isAuthenticated().user._id}>
             <span style={isActive(props.history, '/user/' + auth.isAuthenticated().user._id)}>My Profile</span>
           </Link>
@@ -49,11 +49,11 @@ const MenuItems = (props) => {
         {
           auth.isAuthenticated() && (auth.isAuthenticated().user.role === 'admin' || auth.isAuthenticated().user.role === 'power-user') && (
             <>
-              <li style={isActive(props.history, '/manage-polls')}>
+              <li onClick={props.onClick} style={isActive(props.history, '/manage-polls')}>
                 <Link to="/manage-polls"><span style={isActive(props.history, '/manage-polls')}>Manage Polls</span></Link>
               </li>
               {auth.isAuthenticated() && auth.isAuthenticated().user.role === 'admin' &&
-              <li style={isActive(props.history, '/manage-users')}>
+              <li onClick={props.onClick} style={isActive(props.history, '/manage-users')}>
                 <Link to="/manage-users"><span style={isActive(props.history, '/manage-users')}>Manage Users</span></Link>
               </li>
               }

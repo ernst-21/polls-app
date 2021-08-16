@@ -6,7 +6,7 @@ import MenuButton from './MenuButton';
 
 const Navbar = withRouter(({ history }) => (
   <nav>
-    <MenuButton history={history} component={<nav><MenuItems history={history} className='links-container_vertical' /></nav>}/>
+    <MenuButton history={history} />
     <MenuItems history={history} className='links-container_horizontal' />
   </nav>
 ));

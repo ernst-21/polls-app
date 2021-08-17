@@ -74,7 +74,7 @@ const Profile = (props) => {
                     <h4>Edit</h4>
                   </a>
                 )}
-              <DeleteUser userId={user._id || props.userId} />
+              <DeleteUser closeSideBar={props.closeSideBar} userId={user._id || props.userId} />
             </div>
           )}
         </div>

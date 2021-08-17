@@ -1,21 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
-import { removeUser } from './api-user.js';
+import { removeUser, removeProfile } from './api-user.js';
 import { Redirect } from 'react-router-dom';
-import { Modal, message, Button } from 'antd';
+import { Modal, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useHttpError } from '../hooks/http-hook';
+import { useMutation, useQueryClient } from 'react-query';
+import {success} from '../components/Message';
 
 import './DeleteButton.css';
 
 export default function DeleteUser(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const [redirectToTable, setRedirectToTable] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
-
   const jwt = auth.isAuthenticated();
+
+  const { closeSideBar } = props;
+
+  const queryClient = useQueryClient();
+
+  const { mutate: removeProfileMutation } = useMutation(
+    () =>
+      removeProfile(
+        {
+          userId: props.userId
+        },
+        { t: jwt.token }
+      ).then((data) => data),
+    {
+      onSuccess: (data) => {
+        if (data) {
+          queryClient.invalidateQueries('users');
+          auth.clearJWT(() => success('Account successfully deleted'));
+          setRedirect(true);
+        } else {
+          showErrorModal(data.error);
+        }
+      }
+    }
+  );
+  const { mutate: removeUserMutation, isError } = useMutation(
+    () =>
+      removeUser(
+        {
+          userId: props.userId
+        },
+        { t: jwt.token }
+      ).then((data) => data),
+    {
+      onSuccess: (data) => {
+        if (data) {
+          success('User successfully deleted');
+          queryClient.invalidateQueries('users');
+          closeSideBar(true);
+          setRedirectToTable(true);
+        } else {
+          showErrorModal(data.error);
+        }
+      }
+    }
+  );
 
   useEffect(() => {
     if (error) {
@@ -24,43 +70,10 @@ export default function DeleteUser(props) {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const success = (msg) => {
-    message.success(msg);
-  };
-
   const deleteAccount = () => {
     auth.isAuthenticated().user.role !== 'admin'
-      ? removeUser(
-        {
-          userId: props.userId
-        },
-        { t: jwt.token }
-      ).then((data) => {
-        if (data && data.error) {
-          showErrorModal(data.error);
-        } else if (data) {
-          auth.clearJWT(() => success('Account successfully deleted'));
-          setRedirect(true);
-        } else if (!data) {
-          setRedirectToNetError(true);
-        }
-      })
-      : removeUser(
-        {
-          userId: props.userId
-        },
-        { t: jwt.token }
-      ).then((data) => {
-        if (data && data.error) {
-          showErrorModal(data.error);
-        } else if (data) {
-          success('User successfully deleted');
-          setRedirectToTable(true);
-          location.reload();
-        } else if (!data) {
-          setRedirectToNetError(true);
-        }
-      });
+      ? removeProfileMutation()
+      : removeUserMutation();
   };
 
   const showModal = () => {
@@ -84,7 +97,7 @@ export default function DeleteUser(props) {
     return <Redirect to="/manage-users" />;
   }
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to="/info-network-error" />;
   }
 

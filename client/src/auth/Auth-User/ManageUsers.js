@@ -42,7 +42,7 @@ const ManageUsers = () => {
 
   const viewProfile = (id) => {
     setCollapsed(true);
-    setComponent(<Card><Profile userId={id} editProfile={() => editUser(id)} /></Card>);
+    setComponent(<Card><Profile closeSideBar={() => setCollapsed(false)} userId={id} editProfile={() => editUser(id)} /></Card>);
   };
 
   const showModal = (id) => {

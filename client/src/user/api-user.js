@@ -1,5 +1,6 @@
 const createUser = async (user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/', {
       method: 'POST',
       headers: {
@@ -14,12 +15,13 @@ const createUser = async (user) => {
   }
 };
 
-
+// eslint-disable-next-line
 const listUsers = async () => await fetch('http://localhost:5000/api/users/', {
   method: 'GET'
 });
 
 const read = async (params, credentials) => {
+  // eslint-disable-next-line
   return await fetch('http://localhost:5000/api/users/' + params.userId, {
     method: 'GET',
     headers: {
@@ -33,6 +35,7 @@ const read = async (params, credentials) => {
 
 const updateProfile = async (params, credentials, user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/' + params.userId, {
       method: 'PUT',
       headers: {
@@ -51,6 +54,7 @@ const updateProfile = async (params, credentials, user) => {
 
 const updateUser = async (params, credentials, user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/edit-user/' + params.userId, {
       method: 'PUT',
       headers: {
@@ -69,6 +73,7 @@ const updateUser = async (params, credentials, user) => {
 
 const removeProfile = async (params, credentials) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/' + params.userId, {
       method: 'DELETE',
       headers: {
@@ -85,6 +90,7 @@ const removeProfile = async (params, credentials) => {
 
 const removeUser = async (params, credentials) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/remove-user/' + params.userId, {
       method: 'DELETE',
       headers: {
@@ -101,6 +107,7 @@ const removeUser = async (params, credentials) => {
 
 const emailToPass = async (user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/reset', {
       method: 'POST',
       headers: {
@@ -117,6 +124,7 @@ const emailToPass = async (user) => {
 
 const resetPass = async (params, user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/api/users/reset-password/' + params.token, {
       method: 'PUT',
       headers: {

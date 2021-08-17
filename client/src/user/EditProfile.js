@@ -34,7 +34,6 @@ const EditProfile = () => {
 
   const { mutate: updateUserMutation } = useMutation((user) => updateProfile({ userId: userId }, { t: jwt.token }, user).then(data => data), {
     onSuccess: (data) => {
-      console.log(data);
       queryClient.setQueryData(['user', data._id], data);
       auth.clearJWT(() => history.push('/signin'));
       success('Account successfully updated. Please sign in');

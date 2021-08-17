@@ -31,7 +31,7 @@ export default function DeleteUser(props) {
       ).then((data) => data),
     {
       onSuccess: (data) => {
-        if (data) {
+        if (data && !data.error) {
           queryClient.invalidateQueries('users');
           auth.clearJWT(() => success('Account successfully deleted'));
           setRedirect(true);

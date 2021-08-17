@@ -1,18 +1,33 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
-import { Button, Card, Form, Input, message, Grid } from 'antd';
+import { Button, Card, Form, Input, Grid } from 'antd';
 import { useHttpError } from '../../hooks/http-hook';
 import { resetPass } from '../../user/api-user';
-import {strongPass, wrongPasswordMessage} from '../../config/config';
+import { strongPass, wrongPasswordMessage } from '../../config/config';
+import { useMutation } from 'react-query';
+import { success } from '../../components/Message';
 
-const {useBreakpoint} = Grid;
+const { useBreakpoint } = Grid;
 
 const ResetPassword = () => {
   const [redirect, setRedirect] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
-  const {httpError, showErrorModal, error} = useHttpError();
+  const { httpError, showErrorModal, error } = useHttpError();
   const token = useParams().token;
   const screens = useBreakpoint();
+
+  const { mutate: resetPassMutation, isError } = useMutation(
+    (user) => resetPass({ token: token }, user).then((data) => data),
+    {
+      onSuccess: (data) => {
+        if (data && !data.error) {
+          success('Password Reset Successful. Please sign in.');
+          setRedirect(true);
+        } else {
+          showErrorModal(data.error);
+        }
+      }
+    }
+  );
 
   useEffect(() => {
     if (error) {
@@ -21,48 +36,31 @@ const ResetPassword = () => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const success = (msg) => {
-    message.success(msg);
-  };
-
   const clickSubmit = (values) => {
     const user = {
-      password: values.password || undefined,
+      password: values.password || undefined
     };
-    resetPass({token: token}, user).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        success('Password Reset Successful. Please sign in.');
-        setRedirect(true);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    resetPassMutation(user);
   };
 
   if (redirect) {
-    return <Redirect to='/signin'/>;
+    return <Redirect to="/signin" />;
   }
 
-  if (redirectToNetError) {
-    return <Redirect to='/info-network-error' />;
+  if (isError) {
+    return <Redirect to="/info-network-error" />;
   }
 
   return (
     <div className="form-card-container">
       <Card
         title="Reset Password"
-        extra={<Link to='/signin'>Cancel</Link>}
+        extra={<Link to="/signin">Cancel</Link>}
         className={screens.xs === true ? 'drawer-card' : 'form-card'}
       >
-        <Form
-          name="basic"
-          onFinish={clickSubmit}
-          className="form-container"
-        >
+        <Form name="basic" onFinish={clickSubmit} className="form-container">
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             label="Enter new password:"
             name="password"
             hasFeedback
@@ -76,10 +74,7 @@ const ResetPassword = () => {
                   if (!value || strongPass.test(value)) {
                     return Promise.resolve();
                   }
-
-                  return Promise.reject(
-                    new Error(wrongPasswordMessage)
-                  );
+                  return Promise.reject(new Error(wrongPasswordMessage));
                 }
               })
             ]}
@@ -87,7 +82,7 @@ const ResetPassword = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             name="confirm"
             label="Confirm new password"
             dependencies={['password']}
@@ -104,7 +99,9 @@ const ResetPassword = () => {
                   }
 
                   return Promise.reject(
-                    new Error('The two passwords that you entered do not match!')
+                    new Error(
+                      'The two passwords that you entered do not match!'
+                    )
                   );
                 }
               })

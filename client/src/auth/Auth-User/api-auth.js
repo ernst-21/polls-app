@@ -1,5 +1,6 @@
 const signin = async (user) => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/auth/signin', {
       method: 'POST',
       headers: {
@@ -17,6 +18,7 @@ const signin = async (user) => {
 
 const signout = async () => {
   try {
+    // eslint-disable-next-line
     let response = await fetch('http://localhost:5000/auth/signout/', { method: 'GET' });
     return await response.json();
   } catch (err) {

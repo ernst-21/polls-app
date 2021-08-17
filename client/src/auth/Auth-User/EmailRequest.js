@@ -1,16 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Card, Form, Input, message, Grid } from 'antd';
+import { Button, Card, Form, Input, Grid } from 'antd';
 import { emailToPass } from '../../user/api-user';
 import { useHttpError } from '../../hooks/http-hook';
+import {useMutation} from 'react-query';
+import {success} from '../../components/Message';
 
 const {useBreakpoint} = Grid;
 
 const EmailRequest = () => {
   const [redirect, setRedirect] = useState(false);
-  const [redirectToNetError, setRedirectToNetError] = useState(false);
   const {httpError, showErrorModal, error} = useHttpError();
   const screens = useBreakpoint();
+
+  const {mutate: emailToPassMutation, isError} = useMutation((user) => emailToPass(user).then(data => data), {
+    onSuccess: data => {
+      if (data && !data.error) {
+        success(data.message);
+        setRedirect(true);
+      } else {
+        showErrorModal(data.error);
+      }
+    }
+  });
 
   useEffect(() => {
     if (error) {
@@ -19,31 +31,18 @@ const EmailRequest = () => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const success = (msg) => {
-    message.success(msg);
-  };
-
   const clickSubmit = (values) => {
     const user = {
       email: values.email || undefined,
     };
-    emailToPass(user).then((data) => {
-      if (data && data.error) {
-        showErrorModal(data.error);
-      } else if (data) {
-        success(data.message);
-        setRedirect(true);
-      } else if (!data) {
-        setRedirectToNetError(true);
-      }
-    });
+    emailToPassMutation(user);
   };
 
   if (redirect) {
     return <Redirect to='/info'/>;
   }
 
-  if (redirectToNetError) {
+  if (isError) {
     return <Redirect to='/info-network-error' />;
   }
 

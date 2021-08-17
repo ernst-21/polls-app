@@ -2,10 +2,11 @@ import React, { useState, useRef } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import auth from '../auth/Auth-User/auth-helper';
 import { read } from './api-user';
-import { Typography, Avatar, Spin, Grid } from 'antd';
+import { Typography, Avatar, Grid } from 'antd';
 import { UserOutlined, EditOutlined } from '@ant-design/icons';
 import DeleteUser from './DeleteUser';
 import { useQuery } from 'react-query';
+import SpinLoader from '../components/SpinLoader';
 
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
@@ -43,7 +44,7 @@ const Profile = (props) => {
   return (
     <div className="profile-card-container">
       {isLoading ? (
-        <Spin />
+        <SpinLoader />
       ) : (
         <div className={screens.xs === true ? 'profile-drawer-card' : 'profile-card'}>
           <Title level={3}>Profile</Title>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {Card, Typography} from 'antd';
 import {Link} from 'react-router-dom';
 import {CheckCircleTwoTone} from '@ant-design/icons';
@@ -14,4 +14,4 @@ const InfoSuccess = () => {
   );
 };
 
-export default InfoSuccess;
+export default memo(InfoSuccess);

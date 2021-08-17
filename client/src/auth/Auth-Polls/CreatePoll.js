@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Input, Button, Modal, Card, Tooltip, Grid } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -200,5 +200,5 @@ const CreatePoll = () => {
   );
 };
 
-export default CreatePoll;
+export default memo(CreatePoll);
 

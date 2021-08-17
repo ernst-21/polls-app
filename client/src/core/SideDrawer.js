@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import { Drawer } from 'antd';
 import {CloseOutlined} from '@ant-design/icons';
 
@@ -19,4 +19,4 @@ const SideDrawer = ({component, isSideDrawerOpen, onDrawerClose, width, placemen
   );
 };
 
-export default SideDrawer;
+export default memo(SideDrawer);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import auth from './auth-helper';
 import { Link, Redirect } from 'react-router-dom';
 import { signin } from './api-auth.js';
@@ -118,4 +118,4 @@ const Signin = (props) => {
   );
 };
 
-export default Signin;
+export default memo(Signin);

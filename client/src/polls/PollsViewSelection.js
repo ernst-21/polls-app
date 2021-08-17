@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
   AppstoreFilled,
   AppstoreOutlined,
@@ -38,4 +38,4 @@ const PollsViewSelection = (props) => {
   );
 };
 
-export default PollsViewSelection;
+export default memo(PollsViewSelection);

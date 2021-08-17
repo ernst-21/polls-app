@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { list, vote } from './api-polls';
 import { Redirect } from 'react-router-dom';
-import { Spin, Grid } from 'antd';
+import { Grid } from 'antd';
+import SpinLoader from '../components/SpinLoader';
 import { success } from '../components/Message';
 import SideDrawer from '../core/SideDrawer';
 import AboveListBar from '../core/AboveListBar';
@@ -71,10 +72,6 @@ const PollsView = () => {
     setCollapsed(false);
   };
 
-  if (isLoading) {
-    return <Spin />;
-  }
-
   return (
     <div className="polls">
       <AboveListBar>
@@ -94,7 +91,7 @@ const PollsView = () => {
           !isLoading ? (
             <PollsGrid polls={polls} onClick={handleClick} userId={userId} />
           ) : (
-            <Spin />
+            <SpinLoader />
           )
         ) : (
           <PollsTable

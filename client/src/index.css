@@ -35,6 +35,12 @@ body {
 .upload-avatar__container {
     display: flex;
     justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.photo-icon-container {
+    display: flex;
+    flex-direction: column;
 }
 
 nav {
@@ -123,8 +129,9 @@ nav .links-container_vertical li a span {
     margin: 16px 0 16px 24px;
 }
 
-.spin {
-    place-self: center;
+.spin-loader-container {
+    text-align: center;
+    margin-top: 4rem;
 }
 
 .sidebar-header {

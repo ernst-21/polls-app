@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, { useEffect, memo} from 'react';
 import { useHttpError } from '../../hooks/http-hook';
 import { Button, Card, Checkbox, Form, Input, Select, Grid } from 'antd';
 import { createUser } from '../../user/api-user';
@@ -174,4 +174,4 @@ const CreateUser = (props) => {
   );
 };
 
-export default CreateUser;
+export default memo(CreateUser);

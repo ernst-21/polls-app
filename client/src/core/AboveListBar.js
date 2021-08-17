@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import './AboveListBar.css';
 
 const AboveListBar = (props) => {
@@ -9,4 +9,4 @@ const AboveListBar = (props) => {
   );
 };
 
-export default AboveListBar;
+export default memo(AboveListBar);

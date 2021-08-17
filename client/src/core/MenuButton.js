@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import SideDrawer from './SideDrawer';
 import {Grid} from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
@@ -30,4 +30,4 @@ const MenuButton = (props) => {
   );
 };
 
-export default MenuButton;
+export default memo(MenuButton);

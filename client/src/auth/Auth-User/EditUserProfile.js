@@ -3,18 +3,18 @@ import auth from './auth-helper';
 import useUploadImage from '../../hooks/useUploadImage';
 import { useHttpError } from '../../hooks/http-hook';
 import { Redirect } from 'react-router-dom';
-import { Avatar, Button, Card, Form, Input, Select, Spin } from 'antd';
+import { Avatar, Button, Card, Form, Input, Select } from 'antd';
 import { read, updateUser } from '../../user/api-user';
 import { DeleteOutlined } from '@ant-design/icons';
 import AvatarUpload from '../../user/AvatarUpload';
 import { strongPass, wrongPasswordMessage } from '../../config/config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { success } from '../../components/Message';
+import SpinLoader from '../../components/SpinLoader';
 
 const { Option } = Select;
 
 const EditUserProfile = (props) => {
-  const [setUser] = useState();
   const jwt = auth.isAuthenticated();
   const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
   const [image, setImage] = useState('');
@@ -45,6 +45,7 @@ const EditUserProfile = (props) => {
       onSuccess: (data) => {
         form.resetFields();
         queryClient.setQueryData(['user', data._id], data);
+        console.log(data);
         queryClient.invalidateQueries('users');
         success('Account successfully updated.');
       },
@@ -93,7 +94,7 @@ const EditUserProfile = (props) => {
   return (
     <div className="form-card-container">
       {isLoading ? (
-        <Spin />
+        <SpinLoader />
       ) : (
         <Card
           title="Edit Profile"
@@ -116,15 +117,15 @@ const EditUserProfile = (props) => {
             </p>
             <div className="upload-avatar__container">
               {user && user.pic ? (
-                <>
+                <div className='photo-icon-container'>
                   <Avatar size={110} src={user.pic} alt="avatar" />{' '}
                   {user.pic && (
                     <DeleteOutlined
                       style={{ marginTop: '.4rem' }}
-                      onClick={() => setUser({ ...user, pic: '' })}
+                      onClick={() => queryClient.setQueryData(['user', user._id], {...user, pic: ''})}
                     />
                   )}
-                </>
+                </div>
               ) : (
                 <AvatarUpload
                   onChange={handleImageChange}

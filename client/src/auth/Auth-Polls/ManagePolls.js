@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { close, list, remove, open } from '../../polls/api-polls';
 import { Button, Modal, Grid } from 'antd';
@@ -100,4 +100,4 @@ const ManagePolls = () => {
   );
 };
 
-export default ManagePolls;
+export default memo(ManagePolls);

@@ -3,27 +3,15 @@ import auth from './auth-helper';
 import { Link, Redirect } from 'react-router-dom';
 import { signin } from './api-auth.js';
 import { useHttpError } from '../../hooks/http-hook';
-import { Form, Input, Button, Checkbox, Card } from 'antd';
+import { Form, Input, Button, Checkbox, Card, Grid } from 'antd';
 import {useMutation} from 'react-query';
 
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+const {useBreakpoint} = Grid;
 
 const Signin = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
+  const screens = useBreakpoint();
 
   const {mutate: signInMutation, isError} = useMutation((user) => signin(user).then(data => data), {
     onSuccess: (data) => {
@@ -67,16 +55,15 @@ const Signin = (props) => {
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div className="form-card-container">
       <Card
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
         title="Login"
         extra={
           <Link to="/signup">Don&apos;t have an account? Sign Up instead</Link>
         }
-        style={{ width: '50%', marginTop: '1rem' }}
       >
         <Form
-          {...layout}
           name="basic"
           initialValues={{
             remember: true
@@ -84,6 +71,7 @@ const Signin = (props) => {
           onFinish={clickSubmit}
         >
           <Form.Item
+            labelCol={{ span: 24 }}
             name="email"
             label="E-mail"
             rules={[
@@ -100,6 +88,7 @@ const Signin = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{ span: 24 }}
             label="Password"
             name="password"
             rules={[
@@ -111,16 +100,18 @@ const Signin = (props) => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+          <Form.Item name="remember" valuePropName="checked">
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
-          <Form.Item {...tailLayout}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
-          <Link to='/email' style={{ display: 'flex', float: 'right' }}>Forgot password?</Link>
+          <Link to="/email" style={{ display: 'flex', float: 'right' }}>
+            Forgot password?
+          </Link>
         </Form>
       </Card>
     </div>

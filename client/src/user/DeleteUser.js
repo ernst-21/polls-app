@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
 import { removeUser } from './api-user.js';
 import { Redirect } from 'react-router-dom';
-import { Modal, Card, message, Button } from 'antd';
+import { Modal, message, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useHttpError } from '../hooks/http-hook';
+
+import './DeleteButton.css';
 
 export default function DeleteUser(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -27,10 +29,13 @@ export default function DeleteUser(props) {
   };
 
   const deleteAccount = () => {
-    auth.isAuthenticated().user.role !== 'admin' ?
-      removeUser({
-        userId: props.userId
-      }, { t: jwt.token }).then((data) => {
+    auth.isAuthenticated().user.role !== 'admin'
+      ? removeUser(
+        {
+          userId: props.userId
+        },
+        { t: jwt.token }
+      ).then((data) => {
         if (data && data.error) {
           showErrorModal(data.error);
         } else if (data) {
@@ -39,9 +44,13 @@ export default function DeleteUser(props) {
         } else if (!data) {
           setRedirectToNetError(true);
         }
-      }) : removeUser({
-        userId: props.userId
-      }, { t: jwt.token }).then((data) => {
+      })
+      : removeUser(
+        {
+          userId: props.userId
+        },
+        { t: jwt.token }
+      ).then((data) => {
         if (data && data.error) {
           showErrorModal(data.error);
         } else if (data) {
@@ -68,28 +77,34 @@ export default function DeleteUser(props) {
   };
 
   if (redirect) {
-    return <Redirect to='/' />;
+    return <Redirect to="/" />;
   }
 
   if (redirectToTable) {
-    return <Redirect to='/manage-users' />;
+    return <Redirect to="/manage-users" />;
   }
 
   if (redirectToNetError) {
-    return <Redirect to='/info-network-error'/>;
+    return <Redirect to="/info-network-error" />;
   }
 
   return (
-    <>
-      <Card>
-        <Button onClick={showModal} style={{ color: 'red' }}>DELETE ACCOUNT<DeleteOutlined /></Button>
-
-      </Card>
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>By clicking OK your account will be deleted. This action cannot be undone</p>
+    <div className="delete-btn-container">
+      <Button onClick={showModal} className="delete-btn">
+        DELETE ACCOUNT
+        <DeleteOutlined />
+      </Button>
+      <Modal
+        title="Basic Modal"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>
+          By clicking OK your account will be deleted. This action cannot be
+          undone
+        </p>
       </Modal>
-    </>
+    </div>
   );
-
 }
-

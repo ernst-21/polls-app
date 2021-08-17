@@ -1,0 +1,15 @@
+.delete-btn-container {
+    text-align: center;
+    justify-content: center;
+    display: flex;
+}
+
+.delete-btn {
+    text-align: center;
+    color: red;
+}
+
+.delete-btn:hover {
+    border: 1px solid red;
+    color: red;
+}

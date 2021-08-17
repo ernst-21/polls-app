@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal, Card } from 'antd';
+import { Button, Modal, Card, Grid } from 'antd';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Profile from '../../user/Profile';
 import { Redirect } from 'react-router-dom';
@@ -13,6 +13,8 @@ import UsersTable from './UsersTable';
 import { success } from '../../components/Message';
 import UsersStats from './UserStats';
 
+const {useBreakpoint} = Grid;
+
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,6 +22,7 @@ const ManageUsers = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [component, setComponent] = useState(null);
   const [sourceData, setSourceData] = useState([]);
+  const screens = useBreakpoint();
 
   const { data: users = [], isLoading, isError } = useQuery('users', () => listUsers().then(res => res.json()).then(data => data));
 
@@ -79,7 +82,7 @@ const ManageUsers = () => {
       </Modal>
       <SideDrawer
         title='User Details'
-        width={650}
+        width={screens.xs === true ? '100%' : '50%'}
         placement='right'
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}

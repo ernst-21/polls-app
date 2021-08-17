@@ -21,7 +21,6 @@ body {
     background-image: url("https://res.cloudinary.com/ernst1/image/upload/q_100/v1628954826/telegram-bg_orlpr8.jpg");
     background-size: contain;
     background-repeat: repeat;
-
 }
 
 .ant-layout-header {
@@ -31,6 +30,11 @@ body {
     margin-top: 0;
     background: #356d9b;
     align-items: center;
+}
+
+.upload-avatar__container {
+    display: flex;
+    justify-content: center;
 }
 
 nav {
@@ -160,51 +164,6 @@ nav .links-container_vertical li a span {
     row-gap: 1rem;
 }
 
-
-.dynamic-delete-button {
-    position: relative;
-    top: 4px;
-    margin: 0 8px;
-    color: #999;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.dynamic-delete-button:hover {
-    color: #777;
-}
-
-.dynamic-delete-button[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.slide-in-right-enter {
-    transform: translateX(100%);
-}
-
-.slide-in-right-enter-active {
-    transform: translateX(0);
-    opacity: 1;
-    transition: all 450ms;
-}
-
-.slide-in-right-exit {
-    transform: translateX(0%);
-    opacity: 1;
-}
-
-.gutter-row {
-    width: 100%;
-}
-
-.slide-in-right-exit-active {
-    transform: translateX(100%);
-    opacity: 0;
-    transition: all 450ms;
-}
-
 .poll-card {
     border-radius: 6px;
 }
@@ -215,6 +174,50 @@ nav .links-container_vertical li a span {
     top: -4px;
     border: 1px solid #cccccc;
     background-color: white;
+}
+
+.form-card-container {
+    display: flex;
+    justify-content: center;
+    place-self: center;
+}
+
+.profile-card-container {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-card, .profile-drawer-card {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: white;
+    padding: 1em;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-card {
+    width: 50%;
+}
+
+.profile-drawer-card {
+    width: 100%;
+}
+
+.form-card, .drawer-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-card {
+    width: 45%;
+    justify-content: center;
+}
+
+.drawer-card {
+    width: 100%;
 }
 
 

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import SideDrawer from './SideDrawer';
+import {Grid} from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import MenuItems from './MenuItems';
 
+const {useBreakpoint} = Grid;
+
 const MenuButton = (props) => {
   const [collapsed, setCollapsed] = useState(false);
+  const screens = useBreakpoint();
 
   const closeDrawer = () => {
     setCollapsed(false);
@@ -16,7 +20,7 @@ const MenuButton = (props) => {
       <SideDrawer
         drawerStyle={{background: '#778298'}}
         title='Menu'
-        width={250}
+        width={screens.xs === true ? '100%' : '80%'}
         placement='left'
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}

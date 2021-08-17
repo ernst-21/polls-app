@@ -7,24 +7,9 @@ import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
 import useUploadImage from '../hooks/useUploadImage';
 import { DeleteOutlined } from '@ant-design/icons';
-import {strongPass, wrongPasswordMessage} from '../config/config';
+import { strongPass, wrongPasswordMessage } from '../config/config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { success } from '../components/Message';
-
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 4,
-    span: 16
-  }
-};
 
 const EditProfile = () => {
   const [setUser] = useState();
@@ -43,7 +28,7 @@ const EditProfile = () => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const { data: user, isLoading, isError } = useQuery(['user', userId], () => read({ userId: userId}, { t: jwt.token }).then(res => res.json()).then(data => data), { onError: () => setRedirectToSignin(true) });
+  const { data: user, isLoading, isError } = useQuery(['user', userId], () => read({ userId: userId }, { t: jwt.token }).then(res => res.json()).then(data => data), { onError: () => setRedirectToSignin(true) });
 
   const queryClient = useQueryClient();
 
@@ -83,137 +68,152 @@ const EditProfile = () => {
   };
 
   if (isError) {
-    return <Redirect to='/info-network-error'/>;
+    return <Redirect to='/info-network-error' />;
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
-      {isLoading ? (<Spin />) : (<Card
-        title='Edit Profile'
-        extra={<Link to={`/user/${userId}`}>Cancel</Link>}
-        style={{ width: '60%', marginTop: '1rem' }}
-      >
-        <div>
-          <p style={{ display: 'flex', justifyContent: 'center', fontSize: '12px' }}>* Empty values will not overwrite
-            your actual credentials.</p>
-          {user && user.pic ? (
+    <div className="form-card-container">
+      {isLoading ? (
+        <Spin />
+      ) : (
+        <Card
+          className="form-card"
+          title="Edit Profile"
+          extra={<Link to={`/user/${userId}`}>Cancel</Link>}
+        >
+          <div>
+            <p
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                fontSize: '12px'
+              }}
+            >
+              * Empty values will not overwrite your actual credentials.
+            </p>
             <div className="upload-avatar__container">
-              <Avatar size={110} src={user.pic} alt='avatar' />
-              {user.pic && (
-                <DeleteOutlined style={{ marginTop: '.4rem' }} onClick={() => setUser({ ...user, pic: '' })} />
+              {user && user.pic ? (
+                <>
+                  <Avatar size={110} src={user.pic} alt="avatar" />{' '}
+                  {user.pic && (
+                    <DeleteOutlined
+                      style={{ marginTop: '.4rem' }}
+                      onClick={() => setUser({ ...user, pic: '' })}
+                    />
+                  )}
+                </>
+              ) : (
+                <AvatarUpload
+                  onChange={handleImageChange}
+                  customRequest={() => uploadPic(image)}
+                  handleDelete={handleImgDelete}
+                  url={imageUrl}
+                  src={imageUrl}
+                  img={image}
+                />
               )}
             </div>
-          ) : (
-            <AvatarUpload
-              onChange={handleImageChange}
-              customRequest={() => uploadPic(image)}
-              handleDelete={handleImgDelete}
-              url={imageUrl}
-              src={imageUrl}
-              img={image}
-            />
-          )}
-
-          {user && <Form
-            {...layout}
-            name="basic"
-            initialValues={{
-              remember: false,
-              name: user.name,
-              email: user.email,
-            }}
-            onFinish={clickSubmit}
-          >
-            <Form.Item
-              label="Username"
-              name="name"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please input your username!'
-                }
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              initialValue={user ? user.email : 'hh'}
-              name="email"
-              label="E-mail"
-              rules={[
-                {
-                  type: 'email',
-                  message: 'The input is not valid E-mail!'
-                },
-                {
-                  required: false
-                }
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="New Password"
-              name="password"
-              hasFeedback
-              rules={[
-                {
-                  required: false
-                },
-                () => ({
-                  validator(_, value) {
-                    if (!value || strongPass.test(value)) {
-                      return Promise.resolve();
+            {user && (
+              <Form
+                name="basic"
+                initialValues={{
+                  remember: false,
+                  name: user.name,
+                  email: user.email
+                }}
+                onFinish={clickSubmit}
+              >
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Username:"
+                  name="name"
+                  rules={[
+                    {
+                      required: false,
+                      message: 'Please input your username!'
                     }
-
-                    return Promise.reject(
-                      new Error(wrongPasswordMessage)
-                    );
-                  }
-                })
-              ]}
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="confirm"
-              label="Confirm New Password"
-              dependencies={['password']}
-              hasFeedback
-              rules={[
-                {
-                  required: false
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (getFieldValue('password') === value) {
-                      return Promise.resolve();
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  initialValue={user ? user.email : 'hh'}
+                  name="email"
+                  label="E-mail"
+                  rules={[
+                    {
+                      type: 'email',
+                      message: 'The input is not valid E-mail!'
+                    },
+                    {
+                      required: false
                     }
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="New Password:"
+                  name="password"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: false
+                    },
+                    () => ({
+                      validator(_, value) {
+                        if (!value || strongPass.test(value)) {
+                          return Promise.resolve();
+                        }
 
-                    return Promise.reject(
-                      new Error(
-                        'Passwords do not match!'
-                      )
-                    );
-                  }
-                })
-              ]}
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
+                        return Promise.reject(new Error(wrongPasswordMessage));
+                      }
+                    })
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  name="confirm"
+                  label="Confirm New Password"
+                  dependencies={['password']}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: false
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
 
-            <Form.Item {...tailLayout}>
-              <Button type="primary" htmlType="submit">
-                Update
-              </Button>
-            </Form.Item>
-          </Form>}
-        </div>
-      </Card>)}
+                        return Promise.reject(
+                          new Error('Passwords do not match!')
+                        );
+                      }
+                    })
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item name="remember" valuePropName="checked">
+                  <Checkbox>Remember me</Checkbox>
+                </Form.Item>
 
+                <Form.Item>
+                  <Button type="primary" htmlType="submit">
+                    Update
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 };

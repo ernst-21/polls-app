@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { list, vote } from './api-polls';
 import { Redirect } from 'react-router-dom';
-import { Spin } from 'antd';
+import { Spin, Grid } from 'antd';
 import { success } from '../components/Message';
 import SideDrawer from '../core/SideDrawer';
 import AboveListBar from '../core/AboveListBar';
@@ -13,6 +13,8 @@ import PollsViewSelection from './PollsViewSelection';
 import auth from '../auth/Auth-User/auth-helper';
 import './PollsView.css';
 
+const {useBreakpoint} = Grid;
+
 const PollsView = () => {
   const jwt = auth.isAuthenticated();
   const [collapsed, setCollapsed] = useState(false);
@@ -22,6 +24,8 @@ const PollsView = () => {
   const [pollsNew, setPollsNew] = useState([]);
   const [sourceData, setSourceData] = useState([]);
   const [barsInActive, setBarsInActive] = useState(true);
+  const screens = useBreakpoint();
+
   const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()).then(data => data.reverse()));
 
   const queryClient = useQueryClient();
@@ -108,7 +112,7 @@ const PollsView = () => {
       <SideDrawer
         title='Poll Details'
         placement='right'
-        width={560}
+        width={screens.xs === true ? '100%' : '45%'}
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={component}

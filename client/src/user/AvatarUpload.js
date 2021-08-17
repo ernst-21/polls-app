@@ -19,7 +19,7 @@ function beforeUpload(file) {
 const AvatarUpload = (props) => {
 
   const uploadButton = (
-    <div>
+    <div className='avatar-upload'>
       {props.img ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>

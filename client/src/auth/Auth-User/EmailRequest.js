@@ -1,28 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Card, Form, Input, message } from 'antd';
+import { Button, Card, Form, Input, message, Grid } from 'antd';
 import { emailToPass } from '../../user/api-user';
 import { useHttpError } from '../../hooks/http-hook';
 
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+const {useBreakpoint} = Grid;
 
 const EmailRequest = () => {
   const [redirect, setRedirect] = useState(false);
   const [redirectToNetError, setRedirectToNetError] = useState(false);
   const {httpError, showErrorModal, error} = useHttpError();
+  const screens = useBreakpoint();
 
   useEffect(() => {
     if (error) {
@@ -60,14 +48,13 @@ const EmailRequest = () => {
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div className="form-card-container">
       <Card
-        title="Please enter your e-mail to update your password."
+        title={screens.xs === true ? 'Enter e-mail to update password' : 'Please enter your e-mail to update your password.'}
         extra={<Link to="/signin">Cancel</Link>}
-        style={{ width: '50%', marginTop: '1rem' }}
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
       >
         <Form
-          {...layout}
           name="basic"
           initialValues={{
             remember: true
@@ -75,8 +62,9 @@ const EmailRequest = () => {
           onFinish={clickSubmit}
         >
           <Form.Item
+            labelCol={{span: 24}}
             name="email"
-            label="E-mail"
+            label="E-mail:"
             rules={[
               {
                 type: 'email',
@@ -90,7 +78,7 @@ const EmailRequest = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item {...tailLayout}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

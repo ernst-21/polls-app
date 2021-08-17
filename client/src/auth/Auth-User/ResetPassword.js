@@ -1,30 +1,18 @@
 import React, {useState, useEffect} from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
-import { Button, Card, Form, Input, message } from 'antd';
+import { Button, Card, Form, Input, message, Grid } from 'antd';
 import { useHttpError } from '../../hooks/http-hook';
 import { resetPass } from '../../user/api-user';
 import {strongPass, wrongPasswordMessage} from '../../config/config';
 
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+const {useBreakpoint} = Grid;
 
 const ResetPassword = () => {
   const [redirect, setRedirect] = useState(false);
   const [redirectToNetError, setRedirectToNetError] = useState(false);
   const {httpError, showErrorModal, error} = useHttpError();
   const token = useParams().token;
+  const screens = useBreakpoint();
 
   useEffect(() => {
     if (error) {
@@ -62,20 +50,20 @@ const ResetPassword = () => {
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div className="form-card-container">
       <Card
         title="Reset Password"
         extra={<Link to='/signin'>Cancel</Link>}
-        style={{ width: '50%', marginTop: '1rem' }}
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
       >
         <Form
-          {...layout}
           name="basic"
           onFinish={clickSubmit}
           className="form-container"
         >
           <Form.Item
-            label="Enter new password"
+            labelCol={{span: 24}}
+            label="Enter new password:"
             name="password"
             hasFeedback
             rules={[
@@ -99,6 +87,7 @@ const ResetPassword = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="confirm"
             label="Confirm new password"
             dependencies={['password']}
@@ -123,7 +112,7 @@ const ResetPassword = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item {...tailLayout}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

@@ -2,29 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { createUser } from './api-user.js';
 import { Link, Redirect } from 'react-router-dom';
 import { useHttpError } from '../hooks/http-hook';
-import { Form, Input, Button, Checkbox, Card } from 'antd';
+import { Form, Input, Button, Checkbox, Card, Grid } from 'antd';
 import { strongPass, wrongPasswordMessage } from '../config/config';
 import { useMutation } from 'react-query';
 import { success } from '../components/Message';
 
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+const {useBreakpoint} = Grid;
 
 const Signup = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
+  const screens = useBreakpoint();
 
   const { mutate: signUpMutation, isError } = useMutation(
     (user) => createUser(user).then((data) => data),
@@ -71,14 +59,13 @@ const Signup = (props) => {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div className='form-card-container' >
       <Card
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
         title="Register"
         extra={<Link to="/signin">Already registered? Login instead</Link>}
-        style={{ width: '50%', marginTop: '1rem' }}
       >
         <Form
-          {...layout}
           name="basic"
           initialValues={{
             remember: true
@@ -86,6 +73,7 @@ const Signup = (props) => {
           onFinish={clickSubmit}
         >
           <Form.Item
+            labelCol={{span: 24}}
             label="Username"
             name="name"
             rules={[
@@ -98,6 +86,7 @@ const Signup = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="email"
             label="E-mail"
             rules={[
@@ -114,6 +103,7 @@ const Signup = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             label="Password"
             name="password"
             hasFeedback
@@ -135,6 +125,7 @@ const Signup = (props) => {
             <Input.Password />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="confirm"
             label="Confirm Password"
             dependencies={['password']}
@@ -161,11 +152,14 @@ const Signup = (props) => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+          <Form.Item
+            name="remember" valuePropName="checked"
+          >
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
-          <Form.Item {...tailLayout}>
+          <Form.Item
+          >
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

@@ -12,7 +12,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { success } from '../components/Message';
 
 const EditProfile = () => {
-  const [setUser] = useState();
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = auth.isAuthenticated();
   const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
@@ -92,15 +91,15 @@ const EditProfile = () => {
             </p>
             <div className="upload-avatar__container">
               {user && user.pic ? (
-                <>
+                <div className='photo-icon-container'>
                   <Avatar size={110} src={user.pic} alt="avatar" />{' '}
                   {user.pic && (
                     <DeleteOutlined
                       style={{ marginTop: '.4rem' }}
-                      onClick={() => setUser({ ...user, pic: '' })}
+                      onClick={() => queryClient.setQueryData(['user', user._id], {...user, pic: ''})}
                     />
                   )}
-                </>
+                </div>
               ) : (
                 <AvatarUpload
                   onChange={handleImageChange}

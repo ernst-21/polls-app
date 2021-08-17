@@ -45,7 +45,6 @@ const EditUserProfile = (props) => {
       onSuccess: (data) => {
         form.resetFields();
         queryClient.setQueryData(['user', data._id], data);
-        console.log(data);
         queryClient.invalidateQueries('users');
         success('Account successfully updated.');
       },

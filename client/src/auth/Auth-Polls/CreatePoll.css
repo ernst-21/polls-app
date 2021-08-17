@@ -1,0 +1,30 @@
+.option-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.option-input-container {
+    width: 95%;
+}
+
+.minus-circle {
+    margin-top: 1rem;
+}
+
+.create-poll_button-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+@media(max-width: 576px) {
+    .create-poll_button-container {
+        flex-direction: column;
+    }
+    .option-input-container {
+        width: 90%;
+    }
+    .create-poll_reset-btn {
+        margin-bottom: 1rem;
+    }
+}

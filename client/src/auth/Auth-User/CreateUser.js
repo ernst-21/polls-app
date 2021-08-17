@@ -1,31 +1,19 @@
 import React, { useEffect} from 'react';
 import { useHttpError } from '../../hooks/http-hook';
-import { Button, Card, Checkbox, Form, Input, Select } from 'antd';
+import { Button, Card, Checkbox, Form, Input, Select, Grid } from 'antd';
 import { createUser } from '../../user/api-user';
 import { Link, Redirect } from 'react-router-dom';
 import {strongPass, wrongPasswordMessage} from '../../config/config';
 import { useMutation, useQueryClient } from 'react-query';
 import { success } from '../../components/Message';
 
-const {Option} = Select;
+const {useBreakpoint} = Grid;
 
-const layout = {
-  labelCol: {
-    span: 8
-  },
-  wrapperCol: {
-    span: 16
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+const {Option} = Select;
 
 const CreateUser = (props) => {
   const { error, showErrorModal, httpError } = useHttpError();
+  const screens = useBreakpoint();
 
   const queryClient = useQueryClient();
 
@@ -70,14 +58,13 @@ const CreateUser = (props) => {
   }
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div className='form-card-container'>
       <Card
         title="Create User"
         extra={<Link to="/manage-users">Cancel</Link>}
-        style={{ width: '50%', marginTop: '1rem' }}
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
       >
         <Form
-          {...layout}
           name="basic"
           initialValues={{
             remember: true
@@ -85,6 +72,7 @@ const CreateUser = (props) => {
           onFinish={clickSubmit}
         >
           <Form.Item
+            labelCol={{span: 24}}
             label="Username"
             name="name"
             rules={[
@@ -97,6 +85,7 @@ const CreateUser = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="email"
             label="E-mail"
             rules={[
@@ -113,6 +102,7 @@ const CreateUser = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="role"
             label="Role">
             <Select style={{ width: 120 }}>
@@ -122,6 +112,7 @@ const CreateUser = (props) => {
             </Select>
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             label="Password"
             name="password"
             hasFeedback
@@ -145,6 +136,7 @@ const CreateUser = (props) => {
             <Input.Password />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             name="confirm"
             label="Confirm Password"
             dependencies={['password']}
@@ -168,10 +160,10 @@ const CreateUser = (props) => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+          <Form.Item name="remember" valuePropName="checked">
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
-          <Form.Item {...tailLayout}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

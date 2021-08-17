@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Input, Button, Modal, Card, Tooltip } from 'antd';
+import { Form, Input, Button, Modal, Card, Tooltip, Grid } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import Poll from '../../polls/Poll';
 import auth from '../Auth-User/auth-helper';
@@ -10,20 +10,9 @@ import { useMutation, useQueryClient } from 'react-query';
 import { success } from '../../components/Message';
 import {validate} from '../../utils/pollValidation-wrangler';
 
-const layout = {
-  labelCol: {
-    span: 6
-  },
-  wrapperCol: {
-    span: 15
-  }
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16
-  }
-};
+import './CreatePoll.css';
+
+const {useBreakpoint} = Grid;
 
 const CreatePoll = () => {
   const jwt = auth.isAuthenticated();
@@ -32,6 +21,8 @@ const CreatePoll = () => {
   const [validateOptions, setValidateOptions] = useState(false);
   const [submitReady, setSubmitReady] = useState(false);
   const [form] = Form.useForm();
+
+  const screens = useBreakpoint();
 
   const queryClient = useQueryClient();
 
@@ -78,19 +69,23 @@ const CreatePoll = () => {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div className='form-card-container'>
       <Card
         title="Create Poll"
         extra={<Link to="/manage-polls">Back to Manage Polls</Link>}
-        style={{ width: '70%', marginTop: '1rem' }}
+        className={screens.xs === true ? 'drawer-card' : 'form-card'}
       >
-        <Form {...layout} form={form} name="dynamic_form_nest_item" onFinish={clickSubmit}>
-          <Form.Item name="question" label="Question"
+        <Form form={form} name="dynamic_form_nest_item" onFinish={clickSubmit}>
+          <Form.Item
+            labelCol={{span: 24}}
+            name="question"
+            label="Question"
             rules={[{ required: true, message: 'Missing question' }]}>
             <Input />
           </Form.Item>
 
           <Form.Item
+            labelCol={{span: 24}}
             label="Option #1"
             name='first'
             fieldKey='first'
@@ -99,6 +94,7 @@ const CreatePoll = () => {
             <Input />
           </Form.Item>
           <Form.Item
+            labelCol={{span: 24}}
             label="Option #2"
             name='second'
             fieldKey='second'
@@ -132,10 +128,12 @@ const CreatePoll = () => {
             {(fields, { add, remove }) => (
               <React.Fragment>
                 {fields.map(field => (
-                  <div key={field.key} style={{ display: 'flex'}}>
-                    <div style={{width: '100%'}}>
+                  <div key={field.key} className='option-container'>
+                    <div className='option-input-container'>
                       <Form.Item
-                        label='Options'
+                        labelCol={{span: 24}}
+                        wrapperCol={{span: 24}}
+                        label='More Options'
                         {...field}
                         name={[field.name, 'option']}
                         fieldKey={[field.fieldKey, 'option']}
@@ -144,10 +142,10 @@ const CreatePoll = () => {
                           message: 'Type an option or close this field to validate the poll'
                         }]}
                       >
-                        <Input style={{marginLeft: '.5rem'}} />
+                        <Input />
                       </Form.Item>
                     </div>
-                    <div style={{ marginTop: '.5rem', marginRight: '.8rem'}}>
+                    <div className='minus-circle'>
                       <MinusCircleOutlined onClick={() => {
                         remove(field.name);
                         setValidateReady(true);
@@ -155,8 +153,8 @@ const CreatePoll = () => {
                     </div>
                   </div>
                 ))}
-                <Form.Item {...tailLayout}>
-                  <div style={{ width: '60%'}}>
+                <Form.Item>
+                  <div>
                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                       Add options
                     </Button>
@@ -187,8 +185,8 @@ const CreatePoll = () => {
             </Tooltip>}
           </div>
           <Form.Item>
-            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <Button htmlType="button" onClick={onReset}>
+            <div className='create-poll_button-container'>
+              <Button className='create-poll_reset-btn' htmlType="button" onClick={onReset}>
                 Reset
               </Button>
               <Button type="primary" htmlType='submit' disabled={!poll || !validateOptions || !submitReady}>

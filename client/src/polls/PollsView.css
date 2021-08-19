@@ -6,3 +6,25 @@
 .polls-container {
     display: block;
 }
+
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+}
+
+.poll-card-search-bar {
+    width: 40%;
+    margin-bottom: 1.5rem;
+}
+
+@media(max-width: 800px) {
+    .poll-card-search-bar {
+        width: 70%;
+    }
+}
+
+@media(max-width: 576px) {
+    .poll-card-search-bar {
+        width: 100%;
+    }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "mern-skeleton",
+  "name": "polls-project",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.15.2",
     "antd-img-crop": "^3.14.1",
+    "fuse.js": "^6.4.6",
     "node-fetch": "^2.6.1",
     "prettier": "^2.2.1",
     "react": "^17.0.2",

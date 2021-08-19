@@ -13,8 +13,10 @@ import PollsStats from './PollsStats';
 import PollsViewSelection from './PollsViewSelection';
 import auth from '../auth/Auth-User/auth-helper';
 import './PollsView.css';
+import PollsSearchBar from './PollsSearchBar';
+import BackToTop from '../components/BackToTop';
 
-const {useBreakpoint} = Grid;
+const { useBreakpoint } = Grid;
 
 const PollsView = () => {
   const jwt = auth.isAuthenticated();
@@ -27,19 +29,31 @@ const PollsView = () => {
   const [barsInActive, setBarsInActive] = useState(true);
   const screens = useBreakpoint();
 
-  const { data: polls = [], isLoading, isError } = useQuery('polls', () => list().then(res => res.json()).then(data => data.reverse()));
+  const { data: polls = [], isLoading, isError } = useQuery('polls', () =>
+    list()
+      .then((res) => res.json())
+      .then((data) => data.reverse())
+  );
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(([id, value]) => vote({ pollId: id }, { t: jwt.token }, {
-    userId: userId,
-    chosenAnswer: value
-  }).then(res => res.json()), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('polls');
-      success('Poll successfully voted ');
+  const { mutate } = useMutation(
+    ([id, value]) =>
+      vote(
+        { pollId: id },
+        { t: jwt.token },
+        {
+          userId: userId,
+          chosenAnswer: value
+        }
+      ).then((res) => res.json()),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('polls');
+        success('Poll successfully voted ');
+      }
     }
-  });
+  );
 
   useEffect(() => {
     if (jwt) {
@@ -53,7 +67,6 @@ const PollsView = () => {
       setPollsNew(polls.filter((item) => item.voters.length === 0));
     }
   }, [polls]);
-
 
   const handleClick = (e, id) => {
     e.preventDefault;
@@ -74,6 +87,9 @@ const PollsView = () => {
 
   return (
     <div className="polls">
+      {barsInActive && (
+        <PollsSearchBar polls={polls} />
+      )}
       <AboveListBar>
         <PollsViewSelection
           barsInActive={barsInActive}
@@ -107,13 +123,14 @@ const PollsView = () => {
         )}
       </div>
       <SideDrawer
-        title='Poll Details'
-        placement='right'
+        title="Poll Details"
+        placement="right"
         width={screens.xs === true ? '100%' : '45%'}
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={component}
       />
+      <BackToTop />
     </div>
   );
 };

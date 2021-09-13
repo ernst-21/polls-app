@@ -1,7 +1,7 @@
-import React from 'react';
 import { Input } from 'antd';
 import Fuse from 'fuse.js';
 import {useQueryClient} from 'react-query';
+import { debounce } from 'throttle-debounce';
 
 import './PollsView.css';
 
@@ -9,7 +9,7 @@ const PollsSearchBar = (props) => {
 
   const queryClient = useQueryClient();
 
-  const searchData = (pattern) => {
+  const searchData = debounce(500, (pattern) => {
     if (!pattern) {
       queryClient.invalidateQueries('polls');
       return;
@@ -29,7 +29,7 @@ const PollsSearchBar = (props) => {
       });
       queryClient.setQueryData(['polls'], matches);
     }
-  };
+  });
 
   return (
     <div className="search-bar-container">

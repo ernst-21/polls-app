@@ -9,6 +9,7 @@ import {useMutation} from 'react-query';
 const {useBreakpoint} = Grid;
 
 const Signin = (props) => {
+  const [form] = Form.useForm();
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const screens = useBreakpoint();
@@ -31,6 +32,13 @@ const Signin = (props) => {
     }
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
+
+  const onFill = () => {
+    form.setFieldsValue({
+      email: 'admin@test.com',
+      password: 'admintest',
+    });
+  };
 
   const clickSubmit = (values) => {
     const user = {
@@ -64,9 +72,10 @@ const Signin = (props) => {
         }
       >
         <Form
+          form={form}
           name="basic"
           initialValues={{
-            remember: true
+            remember: true,
           }}
           onFinish={clickSubmit}
         >
@@ -109,6 +118,7 @@ const Signin = (props) => {
               Submit
             </Button>
           </Form.Item>
+          <Button type='link' onClick={onFill}>Try as admin</Button>
           <Link to="/email" style={{ display: 'flex', float: 'right' }}>
             Forgot password?
           </Link>

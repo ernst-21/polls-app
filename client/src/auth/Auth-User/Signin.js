@@ -118,10 +118,12 @@ const Signin = (props) => {
               Submit
             </Button>
           </Form.Item>
-          <Button type='link' onClick={onFill}>Try as admin</Button>
-          <Link to="/email" style={{ display: 'flex', float: 'right' }}>
-            Forgot password?
-          </Link>
+          <div className='bottom-btns'>
+            <Button type='link' onClick={onFill}>Try as admin</Button>
+            <Link to="/email" >
+              Forgot password?
+            </Link>
+          </div>
         </Form>
       </Card>
     </div>

@@ -26,13 +26,15 @@ const CreatePoll = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: createMutation, isError } = useMutation((poll) => create(poll, { t: jwt.token }), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('polls');
-      success('Poll successfully created');
-      form.resetFields();
-      setValidateReady(false);
-      setValidateOptions(false);
+  const { mutate: createMutation, isError } = useMutation((poll) => create(poll, { t: jwt.token }).then(res => res.json()).then(data => data), {
+    onSuccess: (data) => {
+      if (data && !data.error) {
+        queryClient.invalidateQueries('polls');
+        success('Poll successfully created');
+        form.resetFields();
+        setValidateReady(false);
+        setValidateOptions(false);
+      }
     }
   });
 

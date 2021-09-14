@@ -1,117 +1,64 @@
-const create = async (poll, credentials) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      },
-      body: JSON.stringify(poll)
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
+const create = async (poll, credentials) =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + credentials.t
+    },
+    body: JSON.stringify(poll)
+  });
 
+const list = async () =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/', {
+    method: 'GET'
+  });
 
-const list = async () => await fetch('http://localhost:5000/api/polls/', {
-  method: 'GET',
-});
+const close = async (params, credentials) =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/close/' + params.pollId, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + credentials.t
+    }
+  });
 
-// const read = async (params, credentials, signal) => {
-//   try {
-//     let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
-//       method: 'GET',
-//       signal: signal,
-//       headers: {
-//         Accept: 'application/json',
-//         'Content-Type': 'application/json',
-//         Authorization: 'Bearer ' + credentials.t
-//       }
-//     });
-//     return await response.json();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+const open = async (params, credentials) =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/open/' + params.pollId, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + credentials.t
+    }
+  });
 
-const update = async (params, credentials, poll) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      },
-      body: JSON.stringify(poll)
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
+const remove = async (params, credentials) =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/' + params.pollId, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + credentials.t
+    }
+  });
 
-const close = async (params, credentials) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/close/' + params.pollId, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      }
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
+const vote = async (params, credentials, user) =>
+  // eslint-disable-next-line
+  await fetch('http://localhost:5000/api/polls/vote/' + params.pollId, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + credentials.t
+    },
+    body: JSON.stringify(user)
+  });
 
-const open = async (params, credentials) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/open/' + params.pollId, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      }
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const remove = async (params, credentials) => {
-  try {
-    let response = await fetch('http://localhost:5000/api/polls/' + params.pollId, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
-      }
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const vote = async(params, credentials, user) => await fetch('http://localhost:5000/api/polls/vote/' + params.pollId, {
-  method: 'PUT',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + credentials.t
-  },
-  body: JSON.stringify(user)
-});
-
-
-
-export { create, list, update, remove, vote, close, open };
+export { create, list, remove, vote, close, open };

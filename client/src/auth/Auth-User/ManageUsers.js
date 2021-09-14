@@ -28,7 +28,7 @@ const ManageUsers = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteMutation } = useMutation((id) => removeUser({ userId: id }, { t: jwt.token }), {
+  const { mutate: deleteMutation, status } = useMutation((id) => removeUser({ userId: id }, { t: jwt.token }).then(res => res.json()).then(data => data), {
     onSuccess: () => {
       queryClient.invalidateQueries('users');
       success('User successfully deleted');
@@ -59,7 +59,7 @@ const ManageUsers = () => {
     setIsModalVisible(false);
   };
 
-  if (isError) {
+  if (isError || status === 'error') {
     return <Redirect to='/info-network-error' />;
   }
 

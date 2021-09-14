@@ -185,10 +185,30 @@ nav .links-container_vertical li a span {
     background-color: white;
 }
 
+.ant-progress-success-bg, .ant-progress-bg {
+    position: relative;
+    background-color: #1890ff;
+    border-radius: 100px;
+    transition: all 1s cubic-bezier(0.08, 0.82, 0.17, 1) 1s !important;
+}
+
 .form-card-container {
     display: flex;
     justify-content: center;
     place-self: center;
+}
+
+.bottom-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .bottom-btns {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 
 .profile-card-container {

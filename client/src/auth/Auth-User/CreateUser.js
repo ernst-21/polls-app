@@ -1,6 +1,6 @@
 import React, { useEffect, memo} from 'react';
 import { useHttpError } from '../../hooks/http-hook';
-import { Button, Card, Checkbox, Form, Input, Select, Grid } from 'antd';
+import { Button, Card, Form, Input, Select, Grid } from 'antd';
 import { createUser } from '../../user/api-user';
 import { Link, Redirect } from 'react-router-dom';
 import {strongPass, wrongPasswordMessage} from '../../config/config';
@@ -17,7 +17,7 @@ const CreateUser = (props) => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: createMutation, isError, isSuccess } = useMutation((user) => createUser(user), {
+  const { mutate: createMutation, isError, isSuccess } = useMutation((user) => createUser(user).then(res => res.json()).then(data => data), {
     onSuccess: () => {
       queryClient.invalidateQueries('users');
       success('User successfully created');
@@ -159,9 +159,6 @@ const CreateUser = (props) => {
             ]}
           >
             <Input.Password />
-          </Form.Item>
-          <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

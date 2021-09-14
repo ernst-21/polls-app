@@ -36,9 +36,9 @@ const EditUserProfile = (props) => {
     { onError: () => setRedirectToSignin(true) }
   );
 
-  const { mutate: updateUserMutation } = useMutation(
+  const { mutate: updateUserMutation, status } = useMutation(
     (user) =>
-      updateUser({ userId: props.userId }, { t: jwt.token }, user).then(
+      updateUser({ userId: props.userId }, { t: jwt.token }, user).then(res => res.json()).then(
         (data) => data
       ),
     {
@@ -86,7 +86,7 @@ const EditUserProfile = (props) => {
     closeSideBar(true);
   };
 
-  if (isError) {
+  if (isError || status === 'error') {
     return <Redirect to="/info-network-error" />;
   }
 

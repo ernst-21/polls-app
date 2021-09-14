@@ -23,21 +23,21 @@ const ManagePolls = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteMutation } = useMutation((id) => remove({ pollId: id }, { t: jwt.token }), {
+  const { mutate: deleteMutation } = useMutation((id) => remove({ pollId: id }, { t: jwt.token }).then(res => res.json()).then(data => data), {
     onSuccess: () => {
       queryClient.invalidateQueries('polls');
       success('Poll successfully deleted');
     }
   });
 
-  const { mutate: closeMutation } = useMutation((id) => close({ pollId: id }, { t: jwt.token }), {
+  const { mutate: closeMutation } = useMutation((id) => close({ pollId: id }, { t: jwt.token }).then(res => res.json().then(data => data)), {
     onSuccess: () => {
       queryClient.invalidateQueries('polls');
       success('Poll successfully closed');
     }
   });
 
-  const { mutate: openMutation } = useMutation((id) => open({ pollId: id }, { t: jwt.token }), {
+  const { mutate: openMutation } = useMutation((id) => open({ pollId: id }, { t: jwt.token }).then(res => res.json()).then(data => data), {
     onSuccess: () => {
       queryClient.invalidateQueries('polls');
       success('Poll successfully open');

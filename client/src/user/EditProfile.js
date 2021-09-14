@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
 import { read, updateProfile } from './api-user.js';
 import { Link, Redirect, useParams, useHistory } from 'react-router-dom';
-import { Avatar, Button, Card, Checkbox, Form, Input, Spin } from 'antd';
+import { Avatar, Button, Card, Form, Input, Spin } from 'antd';
 import { useHttpError } from '../hooks/http-hook';
 import AvatarUpload from './AvatarUpload';
 import useUploadImage from '../hooks/useUploadImage';
@@ -31,7 +31,7 @@ const EditProfile = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: updateUserMutation } = useMutation((user) => updateProfile({ userId: userId }, { t: jwt.token }, user).then(data => data), {
+  const { mutate: updateUserMutation, status } = useMutation((user) => updateProfile({ userId: userId }, { t: jwt.token }, user).then(res => res.json()).then(data => data), {
     onSuccess: (data) => {
       queryClient.setQueryData(['user', data._id], data);
       auth.clearJWT(() => history.push('/signin'));
@@ -65,7 +65,7 @@ const EditProfile = () => {
     updateUserMutation(usr);
   };
 
-  if (isError) {
+  if (isError || status === 'error') {
     return <Redirect to='/info-network-error' />;
   }
 
@@ -198,10 +198,6 @@ const EditProfile = () => {
                 >
                   <Input.Password />
                 </Form.Item>
-                <Form.Item name="remember" valuePropName="checked">
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
                     Update

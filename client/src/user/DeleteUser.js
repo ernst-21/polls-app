@@ -21,14 +21,14 @@ export default function DeleteUser(props) {
 
   const queryClient = useQueryClient();
 
-  const { mutate: removeProfileMutation } = useMutation(
+  const { mutate: removeProfileMutation, status } = useMutation(
     () =>
       removeProfile(
         {
           userId: props.userId
         },
         { t: jwt.token }
-      ).then((data) => data),
+      ).then(res => res.json()).then((data) => data),
     {
       onSuccess: (data) => {
         if (data && !data.error) {
@@ -48,7 +48,7 @@ export default function DeleteUser(props) {
           userId: props.userId
         },
         { t: jwt.token }
-      ).then((data) => data),
+      ).then(res => res.json()).then((data) => data),
     {
       onSuccess: (data) => {
         if (data) {
@@ -97,7 +97,7 @@ export default function DeleteUser(props) {
     return <Redirect to="/manage-users" />;
   }
 
-  if (isError) {
+  if (isError || status === 'error') {
     return <Redirect to="/info-network-error" />;
   }
 

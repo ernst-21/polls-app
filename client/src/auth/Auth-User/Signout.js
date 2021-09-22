@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import auth from './auth-helper';
 import { Button } from 'antd';
@@ -16,4 +16,4 @@ const SignoutBtn = () => {
   );
 };
 
-export default memo(SignoutBtn);
+export default SignoutBtn;

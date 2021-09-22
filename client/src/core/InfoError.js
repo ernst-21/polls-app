@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React from 'react';
 import {Card, Typography} from 'antd';
 import {Link} from 'react-router-dom';
 import {CloseCircleTwoTone} from '@ant-design/icons';
@@ -14,4 +14,4 @@ const InfoError = () => {
   );
 };
 
-export default memo(InfoError);
+export default InfoError;

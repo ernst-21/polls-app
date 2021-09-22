@@ -13,7 +13,7 @@ import UsersTable from './UsersTable';
 import { success } from '../../components/Message';
 import UsersStats from './UserStats';
 
-const {useBreakpoint} = Grid;
+const { useBreakpoint } = Grid;
 
 const ManageUsers = () => {
   const jwt = auth.isAuthenticated();
@@ -24,25 +24,47 @@ const ManageUsers = () => {
   const [sourceData, setSourceData] = useState([]);
   const screens = useBreakpoint();
 
-  const { data: users = [], isLoading, isError } = useQuery('users', () => listUsers().then(res => res.json()).then(data => data));
+  const { data: users = [], isLoading, isError } = useQuery('users', () =>
+    listUsers()
+      .then((res) => res.json())
+      .then((data) => data)
+  );
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteMutation, status } = useMutation((id) => removeUser({ userId: id }, { t: jwt.token }).then(res => res.json()).then(data => data), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('users');
-      success('User successfully deleted');
+  const { mutate: deleteMutation, status } = useMutation(
+    (id) =>
+      removeUser({ userId: id }, { t: jwt.token })
+        .then((res) => res.json())
+        .then((data) => data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('users');
+        success('User successfully deleted');
+      }
     }
-  });
+  );
 
   const editUser = (id) => {
     setCollapsed(true);
-    setComponent(<Card><EditUserProfile closeSideBar={() => setCollapsed(false)} userId={id} /></Card>);
+    setComponent(
+      <Card>
+        <EditUserProfile closeSideBar={() => setCollapsed(false)} userId={id} />
+      </Card>
+    );
   };
 
   const viewProfile = (id) => {
     setCollapsed(true);
-    setComponent(<Card><Profile closeSideBar={() => setCollapsed(false)} userId={id} editProfile={() => editUser(id)} /></Card>);
+    setComponent(
+      <Card>
+        <Profile
+          closeSideBar={() => setCollapsed(false)}
+          userId={id}
+          editProfile={() => editUser(id)}
+        />
+      </Card>
+    );
   };
 
   const showModal = (id) => {
@@ -60,7 +82,7 @@ const ManageUsers = () => {
   };
 
   if (isError || status === 'error') {
-    return <Redirect to='/info-network-error' />;
+    return <Redirect to="/info-network-error" />;
   }
 
   const closeDrawer = () => {
@@ -68,22 +90,38 @@ const ManageUsers = () => {
   };
 
   return (
-    <div className='users'>
+    <div className="users">
       <AboveListBar>
-        <Link to='/create-user'>
-          <Button style={{ marginBottom: '1rem' }} type='primary'>CREATE</Button>
+        <Link to="/create-user">
+          <Button style={{ marginBottom: '1rem' }} type="primary">
+            CREATE
+          </Button>
         </Link>
         <UsersStats users={users} />
       </AboveListBar>
-      <UsersTable isLoading={isLoading} setSourceData={setSourceData} users={users} showModal={showModal}
-        viewProfile={viewProfile} sourceData={sourceData} />
-      <Modal title="Delete User" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>By clicking OK your account will be deleted. This action cannot be undone</p>
+      <UsersTable
+        isLoading={isLoading}
+        setSourceData={setSourceData}
+        users={users}
+        showModal={showModal}
+        viewProfile={viewProfile}
+        sourceData={sourceData}
+      />
+      <Modal
+        title="Delete User"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>
+          By clicking OK your account will be deleted. This action cannot be
+          undone
+        </p>
       </Modal>
       <SideDrawer
-        title='User Details'
+        title="User Details"
         width={screens.xs === true ? '100%' : '50%'}
-        placement='right'
+        placement="right"
         isSideDrawerOpen={collapsed}
         onDrawerClose={closeDrawer}
         component={component}

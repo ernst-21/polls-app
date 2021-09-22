@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 
 const UsersStats = (props) => {
   return (
@@ -10,4 +10,4 @@ const UsersStats = (props) => {
   );
 };
 
-export default UsersStats;
+export default memo(UsersStats);

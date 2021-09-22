@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import auth from '../auth/Auth-User/auth-helper';
 import { read } from './api-user';
@@ -84,4 +84,4 @@ const Profile = (props) => {
   );
 };
 
-export default Profile;
+export default memo(Profile);

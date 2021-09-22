@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import auth from '../auth/Auth-User/auth-helper';
 import { removeUser, removeProfile } from './api-user.js';
 import { Redirect } from 'react-router-dom';
@@ -10,7 +10,7 @@ import {success} from '../components/Message';
 
 import './DeleteButton.css';
 
-export default function DeleteUser(props) {
+const DeleteUser = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const [redirectToTable, setRedirectToTable] = useState(false);
@@ -120,4 +120,6 @@ export default function DeleteUser(props) {
       </Modal>
     </div>
   );
-}
+};
+
+export default memo(DeleteUser);

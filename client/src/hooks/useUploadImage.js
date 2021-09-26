@@ -33,7 +33,7 @@ const useUploadImage = () => {
     return <Redirect to="/info-network-error" />;
   }
 
-  return { imageUrl, uploadPic, deleteImageUrl };
+  return { imageUrl, uploadPic, deleteImageUrl, setImageUrl };
 };
 
 export default useUploadImage;

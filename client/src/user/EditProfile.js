@@ -12,10 +12,10 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { success } from '../components/Message';
 
 const EditProfile = () => {
+  console.log('edit profile running');
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = auth.isAuthenticated();
-  const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
-  const [image, setImage] = useState('');
+  const { imageUrl, setImageUrl, uploadPic, deleteImageUrl } = useUploadImage();
   const { error, showErrorModal, httpError } = useHttpError();
   const userId = useParams().userId;
   const history = useHistory();
@@ -27,33 +27,52 @@ const EditProfile = () => {
     return () => showErrorModal(null);
   }, [error, httpError, showErrorModal]);
 
-  const { data: user, isLoading, isError } = useQuery(['user', userId], () => read({ userId: userId }, { t: jwt.token }).then(res => res.json()).then(data => data), { onError: () => setRedirectToSignin(true) });
+  const { data: user, isLoading, isError } = useQuery(
+    ['user', userId],
+    () =>
+      read({ userId: userId }, { t: jwt.token })
+        .then((res) => res.json())
+        .then((data) => data),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnmount: false,
+      refetchOnReconnect: false,
+      retry: false,
+      onError: () => setRedirectToSignin(true)
+    }
+  );
 
   const queryClient = useQueryClient();
 
-  const { mutate: updateUserMutation, status } = useMutation((user) => updateProfile({ userId: userId }, { t: jwt.token }, user).then(res => res.json()).then(data => data), {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user', data._id], data);
-      auth.clearJWT(() => history.push('/signin'));
-      success('Account successfully updated. Please sign in');
-    },
-    onError: (data) => console.log(data)
-  });
-
-  if (auth.isAuthenticated() && redirectToSignin) {
-    return <Redirect to='/' />;
-  } else if (!auth.isAuthenticated()) {
-    return <Redirect to='/signin' />;
-  }
-
-  const handleImageChange = (info) => {
-    setImage(info.file.originFileObj);
-  };
+  const { mutate: updateUserMutation, status } = useMutation(
+    (user) =>
+      updateProfile({ userId: userId }, { t: jwt.token }, user)
+        .then((res) => res.json())
+        .then((data) => data),
+    {
+      onSuccess: (data) => {
+        queryClient.setQueryData(['user', data._id], data);
+        auth.clearJWT(() => history.push('/signin'));
+        success('Account successfully updated. Please sign in');
+      },
+      onError: (data) => console.log(data)
+    }
+  );
 
   const handleImgDelete = () => {
-    setImage('');
+    setImageUrl('');
     deleteImageUrl();
   };
+
+  const handleImageChange = (info) => {
+    setImageUrl(info.file.originFileObj);
+  };
+
+  if (auth.isAuthenticated() && redirectToSignin) {
+    return <Redirect to="/" />;
+  } else if (!auth.isAuthenticated()) {
+    return <Redirect to="/signin" />;
+  }
 
   const clickSubmit = (values) => {
     const usr = {
@@ -66,7 +85,7 @@ const EditProfile = () => {
   };
 
   if (isError || status === 'error') {
-    return <Redirect to='/info-network-error' />;
+    return <Redirect to="/info-network-error" />;
   }
 
   return (
@@ -91,23 +110,28 @@ const EditProfile = () => {
             </p>
             <div className="upload-avatar__container">
               {user && user.pic ? (
-                <div className='photo-icon-container'>
+                <div className="photo-icon-container">
                   <Avatar size={110} src={user.pic} alt="avatar" />{' '}
                   {user.pic && (
                     <DeleteOutlined
                       style={{ marginTop: '.4rem' }}
-                      onClick={() => queryClient.setQueryData(['user', user._id], {...user, pic: ''})}
+                      onClick={() =>
+                        queryClient.setQueryData(['user', user._id], {
+                          ...user,
+                          pic: ''
+                        })
+                      }
                     />
                   )}
                 </div>
               ) : (
                 <AvatarUpload
                   onChange={handleImageChange}
-                  customRequest={() => uploadPic(image)}
+                  customRequest={() => uploadPic(imageUrl)}
                   handleDelete={handleImgDelete}
                   url={imageUrl}
                   src={imageUrl}
-                  img={image}
+                  img={imageUrl}
                 />
               )}
             </div>

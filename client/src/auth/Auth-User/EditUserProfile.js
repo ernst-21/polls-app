@@ -16,8 +16,7 @@ const { Option } = Select;
 
 const EditUserProfile = (props) => {
   const jwt = auth.isAuthenticated();
-  const { imageUrl, uploadPic, deleteImageUrl } = useUploadImage();
-  const [image, setImage] = useState('');
+  const { imageUrl, setImageUrl, uploadPic, deleteImageUrl } = useUploadImage();
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const { error, showErrorModal, httpError } = useHttpError();
   const nodeRef = useRef();
@@ -33,14 +32,20 @@ const EditUserProfile = (props) => {
       read({ userId: props.userId }, { t: jwt.token })
         .then((res) => res.json())
         .then((data) => data),
-    { onError: () => setRedirectToSignin(true) }
+    {
+      refetchOnWindowFocus: false,
+      refetchOnmount: false,
+      refetchOnReconnect: false,
+      retry: false,
+      onError: () => setRedirectToSignin(true)
+    }
   );
 
   const { mutate: updateUserMutation, status } = useMutation(
     (user) =>
-      updateUser({ userId: props.userId }, { t: jwt.token }, user).then(res => res.json()).then(
-        (data) => data
-      ),
+      updateUser({ userId: props.userId }, { t: jwt.token }, user)
+        .then((res) => res.json())
+        .then((data) => data),
     {
       onSuccess: (data) => {
         form.resetFields();
@@ -66,11 +71,11 @@ const EditUserProfile = (props) => {
   }
 
   const handleImageChange = (info) => {
-    setImage(info.file.originFileObj);
+    setImageUrl(info.file.originFileObj);
   };
 
   const handleImgDelete = () => {
-    setImage('');
+    setImageUrl('');
     deleteImageUrl();
   };
 
@@ -116,23 +121,28 @@ const EditUserProfile = (props) => {
             </p>
             <div className="upload-avatar__container">
               {user && user.pic ? (
-                <div className='photo-icon-container'>
+                <div className="photo-icon-container">
                   <Avatar size={110} src={user.pic} alt="avatar" />{' '}
                   {user.pic && (
                     <DeleteOutlined
                       style={{ marginTop: '.4rem' }}
-                      onClick={() => queryClient.setQueryData(['user', user._id], {...user, pic: ''})}
+                      onClick={() =>
+                        queryClient.setQueryData(['user', user._id], {
+                          ...user,
+                          pic: ''
+                        })
+                      }
                     />
                   )}
                 </div>
               ) : (
                 <AvatarUpload
                   onChange={handleImageChange}
-                  customRequest={() => uploadPic(image)}
+                  customRequest={() => uploadPic(imageUrl)}
                   handleDelete={handleImgDelete}
                   url={imageUrl}
                   src={imageUrl}
-                  img={image}
+                  img={imageUrl}
                 />
               )}
             </div>

@@ -2,12 +2,12 @@ import React, { useState, useEffect, memo } from 'react';
 import { createUser } from './api-user.js';
 import { Link, Redirect } from 'react-router-dom';
 import { useHttpError } from '../hooks/http-hook';
-import { Form, Input, Button, Checkbox, Card, Grid } from 'antd';
+import { Form, Input, Button, Card, Grid } from 'antd';
 import { strongPass, wrongPasswordMessage } from '../config/config';
 import { useMutation } from 'react-query';
 import { success } from '../components/Message';
 
-const {useBreakpoint} = Grid;
+const { useBreakpoint } = Grid;
 
 const Signup = (props) => {
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
@@ -15,7 +15,10 @@ const Signup = (props) => {
   const screens = useBreakpoint();
 
   const { mutate: signUpMutation, isError } = useMutation(
-    (user) => createUser(user).then(res => res.json()).then((data) => data),
+    (user) =>
+      createUser(user)
+        .then((res) => res.json())
+        .then((data) => data),
     {
       onSuccess: (data) => {
         if (data && !data.error) {
@@ -59,7 +62,7 @@ const Signup = (props) => {
   }
 
   return (
-    <div className='form-card-container' >
+    <div className="form-card-container">
       <Card
         className={screens.xs === true ? 'drawer-card' : 'form-card'}
         title="Register"
@@ -73,7 +76,7 @@ const Signup = (props) => {
           onFinish={clickSubmit}
         >
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             label="Username"
             name="name"
             rules={[
@@ -86,7 +89,7 @@ const Signup = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             name="email"
             label="E-mail"
             rules={[
@@ -103,7 +106,7 @@ const Signup = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             label="Password"
             name="password"
             hasFeedback
@@ -125,7 +128,7 @@ const Signup = (props) => {
             <Input.Password />
           </Form.Item>
           <Form.Item
-            labelCol={{span: 24}}
+            labelCol={{ span: 24 }}
             name="confirm"
             label="Confirm Password"
             dependencies={['password']}
@@ -152,21 +155,12 @@ const Signup = (props) => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item
-            name="remember" valuePropName="checked"
-          >
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
 
-          <Form.Item
-          >
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
-          <Link to="/email" style={{ display: 'flex', float: 'right' }}>
-            Forgot password?
-          </Link>
         </Form>
       </Card>
     </div>

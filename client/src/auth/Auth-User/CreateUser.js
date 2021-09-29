@@ -1,4 +1,4 @@
-import React, { useEffect, memo} from 'react';
+import React, { useState, useEffect, memo} from 'react';
 import { useHttpError } from '../../hooks/http-hook';
 import { Button, Card, Form, Input, Select, Grid } from 'antd';
 import { createUser } from '../../user/api-user';
@@ -13,14 +13,20 @@ const {Option} = Select;
 
 const CreateUser = (props) => {
   const { error, showErrorModal, httpError } = useHttpError();
+  const [redirectToFrom, setRedirectToFrom] = useState(false);
   const screens = useBreakpoint();
 
   const queryClient = useQueryClient();
 
-  const { mutate: createMutation, isError, isSuccess } = useMutation((user) => createUser(user).then(res => res.json()).then(data => data), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('users');
-      success('User successfully created');
+  const { mutate: createMutation, isError } = useMutation((user) => createUser(user).then(res => res.json()).then(data => data), {
+    onSuccess: (data) => {
+      if (data && !data.error) {
+        queryClient.invalidateQueries('users');
+        success('User successfully created');
+        setRedirectToFrom(true);
+      } else {
+        showErrorModal(data.error);
+      }
     }
   });
 
@@ -49,7 +55,7 @@ const CreateUser = (props) => {
     }
   };
 
-  if (isSuccess) {
+  if (redirectToFrom) {
     return <Redirect to={from} />;
   }
 
